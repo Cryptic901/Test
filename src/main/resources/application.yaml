@@ -1,0 +1,12 @@
+spring:
+  jpa:
+    database: postgresql
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    username: Cryptic
+    password: velkom3161127
+    url: jdbc:postgresql://localhost:5432/library_db
