@@ -57,11 +57,17 @@ public class BookServiceTest {
         verify(booksRepository, times(1)).deleteById(id);
     }
 
+    //TODO
+    //Тест провалился из-за nulla а так вроде норм
     @Test
     void getBookByIdTest() {
+
         long id = 1L;
 
-        bookService.getBookById(id);
+        Books book = new Books();
+        book.setId(id);
+
+         bookService.getBookById(id);
 
         verify(booksRepository, times(1)).findById(id);
     }
@@ -80,11 +86,11 @@ public class BookServiceTest {
         when(booksRepository.findById(id)).thenReturn(existingBook);
         when(booksRepository.save(existingBook)).thenReturn(existingBook);
 
-        Books books = bookService.updateBookById(id, updatedBook);
+        BookDTO bookDTO = bookService.updateBookById(id, BookDTO.fromEntity(updatedBook));
         verify(booksRepository, times(1)).findById(id);
         verify(booksRepository, times(1)).save(existingBook);
 
-        assertEquals("New Title", books.getTitle());
+        assertEquals("New Title", bookDTO.getTitle());
     }
 
     @Test

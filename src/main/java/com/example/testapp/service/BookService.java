@@ -1,9 +1,7 @@
 package com.example.testapp.service;
 
 import com.example.testapp.DTO.BookDTO;
-import com.example.testapp.model.Authors;
 import com.example.testapp.model.Books;
-import com.example.testapp.model.Genres;
 import com.example.testapp.model.Users;
 import com.example.testapp.repository.AuthorsRepository;
 import com.example.testapp.repository.BooksRepository;
@@ -11,6 +9,7 @@ import com.example.testapp.repository.GenresRepository;
 import com.example.testapp.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -37,47 +36,42 @@ public class BookService {
         booksRepository.deleteById(id);
     }
 
+
+    public void setBookParams(Books book, BookDTO bookDTO) {
+        book.setTitle(bookDTO.getTitle());
+        book.setDescription(bookDTO.getDescription());
+        book.setStatus(Books.BookStatus.valueOf(bookDTO.getStatus()));
+
+        if(bookDTO.getAuthorId() != null) {
+            book.setAuthor(authorsRepository.findById(bookDTO.getAuthorId())
+                    .orElseThrow(() -> new RuntimeException("Автор с id " + bookDTO.getAuthorId() + "не найден")));
+        }
+
+        if (bookDTO.getGenreId() != null) {
+            book.setGenre(genresRepository.findById(bookDTO.getGenreId())
+                    .orElseThrow(() -> new RuntimeException("Жанр с id " + bookDTO.getGenreId() + "не найден")));
+        }
+
+        if (bookDTO.getUserId() != null) {
+            book.setUser(usersRepository.findById(bookDTO.getUserId())
+                    .orElseThrow(() -> new RuntimeException("Пользователь с id " + bookDTO.getUserId() + "не найден")));
+        }
+    }
+
     public BookDTO addBook(BookDTO bookDTO) {
         Books bookToAdd = new Books();
-        bookToAdd.setTitle(bookDTO.getTitle());
-        bookToAdd.setDescription(bookDTO.getDescription());
-        bookToAdd.setStatus(Books.BookStatus.valueOf(bookDTO.getStatus()));
-
-        if(bookToAdd.getAuthor() != null) {
-            Authors authors = authorsRepository.findById(bookDTO.getAuthorId()).orElseThrow();
-            bookToAdd.setAuthor(authors);
-        }
-
-        if(bookToAdd.getGenre() != null) {
-            Genres genres = genresRepository.findById(bookDTO.getGenreId()).orElseThrow();
-            bookToAdd.setGenre(genres);
-        }
-
-        if(bookToAdd.getUser() != null) {
-            Users users = usersRepository.findById(bookDTO.getUserId()).orElseThrow();
-            bookToAdd.setUser(users);
-        }
-
-         booksRepository.save(bookToAdd);
-         return BookDTO.fromEntity(bookToAdd);
+        setBookParams(bookToAdd, bookDTO);
+        return BookDTO.fromEntity(booksRepository.save(bookToAdd));
     }
 
-    public Books getBookById(long id) {
-        return booksRepository.findById(id);
+    public BookDTO getBookById(long id) {
+        return BookDTO.fromEntity(booksRepository.findById(id));
     }
 
-    public Books updateBookById(long id, Books book) {
+    public BookDTO updateBookById(long id, BookDTO bookDTO) {
         Books existingBook = booksRepository.findById(id);
-
-        existingBook.setId(book.getId());
-        existingBook.setTitle(book.getTitle());
-        existingBook.setAuthor(book.getAuthor());
-        existingBook.setUser(book.getUser());
-        existingBook.setStatus(book.getStatus());
-        existingBook.setDescription(book.getDescription());
-        existingBook.setGenre(book.getGenre());
-
-        return booksRepository.save(existingBook);
+        setBookParams(existingBook, bookDTO);
+        return BookDTO.fromEntity(booksRepository.save(existingBook));
     }
 
     public List<BookDTO> getAllBooks() {

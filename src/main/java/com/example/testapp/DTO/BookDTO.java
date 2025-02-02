@@ -1,6 +1,8 @@
 package com.example.testapp.DTO;
 
 import com.example.testapp.model.Books;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 
@@ -12,10 +14,13 @@ public class BookDTO implements Serializable {
     private String description;
 
     private String genre; //Название жанра
+    @JsonProperty(value = "genreId", access = JsonProperty.Access.WRITE_ONLY)
     private Long genreId;
     private String author; //Имя автора
+    @JsonProperty(value = "authorId", access = JsonProperty.Access.WRITE_ONLY)
     private Long authorId;
     private String user; //Имя пользователя
+    @JsonProperty(value = "userId", access = JsonProperty.Access.WRITE_ONLY)
     private Long userId;
 
 
@@ -139,8 +144,11 @@ public class BookDTO implements Serializable {
                 ", status='" + status + '\'' +
                 ", description='" + description + '\'' +
                 ", genre='" + genre + '\'' +
+                ", genreId=" + genreId +
                 ", author='" + author + '\'' +
+                ", authorId=" + authorId +
                 ", user='" + user + '\'' +
+                ", userId=" + userId +
                 '}';
     }
 }

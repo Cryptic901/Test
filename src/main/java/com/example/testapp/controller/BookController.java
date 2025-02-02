@@ -25,17 +25,17 @@ public class BookController {
     }
 
     @PostMapping("public/books")
-    public ResponseEntity<BookDTO> addBook(@RequestBody Books book) {
-        return ResponseEntity.ok(bookService.addBook(BookDTO.fromEntity(book)));
+    public ResponseEntity<BookDTO> addBook(@RequestBody BookDTO bookDTO) {
+        return ResponseEntity.ok(bookService.addBook(bookDTO));
     }
 
     @PutMapping("public/books/{id}")
-    public ResponseEntity<Books> updateBookById(@PathVariable long id,@RequestBody Books book) {
-        return ResponseEntity.ok(bookService.updateBookById(id, book));
+    public ResponseEntity<BookDTO> updateBookById(@PathVariable long id,@RequestBody BookDTO bookDTO) {
+        return ResponseEntity.ok(bookService.updateBookById(id, bookDTO));
     }
 
     @GetMapping("public/books/{id}")
-    public ResponseEntity<Books> getBookById(@PathVariable long id) {
+    public ResponseEntity<BookDTO> getBookById(@PathVariable long id) {
         return ResponseEntity.ok(bookService.getBookById(id));
     }
 
