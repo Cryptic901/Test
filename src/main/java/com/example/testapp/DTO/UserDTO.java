@@ -1,47 +1,49 @@
-package com.example.testapp.model;
+package com.example.testapp.DTO;
 
-import com.example.testapp.enums.UserRole;
-import jakarta.persistence.*;
+import com.example.testapp.model.Books;
+import com.example.testapp.model.Users;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
+/* Объект для удобной передачи данных о пользователе */
 
-/* Сущность пользователь */
-@Entity
-public class Users {
+public class UserDTO implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true, name = "user_id")
     private Long id;
 
-    @Column(nullable = false)
     private String username;
 
-    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    private UserRole role;
+    private String role;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
     private List<Books> borrowedBooks;
 
-    public Users(Long id, String username, String email, String password, UserRole role, List<Books> borrowedBooks) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-        this.borrowedBooks = borrowedBooks;
+    public static UserDTO fromEntity(Users user) {
+        UserDTO dto = new UserDTO();
+        dto.setId(user.getId());
+        dto.setUsername(user.getUsername());
+        dto.setEmail(user.getEmail());
+        dto.setPassword(user.getPassword());
+        dto.setUserRole(user.getUserRole() != null ? user.getUserRole().name() : "UNDEFINED");
+        dto.setBorrowedBooks(user.getBorrowedBooks() != null ? user.getBorrowedBooks() : null);
 
+        return dto;
     }
 
-    public Users() {
+    public UserDTO() {}
+
+    public UserDTO(Users user) {
+        this.id = user.getId();
+        this.username = user.getUsername();
+        this.email = user.getEmail();
+        this.password = user.getPassword();
+        this.role = user.getUserRole() != null ? user.getUserRole().name() : "UNDEFINED";
+        this.borrowedBooks = new ArrayList<>();
     }
 
     public Long getId() {
@@ -76,11 +78,11 @@ public class Users {
         this.password = password;
     }
 
-    public UserRole getUserRole() {
+    public String getUserRole() {
         return role;
     }
 
-    public void setUserRole(UserRole role) {
+    public void setUserRole(String role) {
         this.role = role;
     }
 
@@ -94,12 +96,12 @@ public class Users {
 
     @Override
     public String toString() {
-        return "Users{" +
+        return "UserDTO{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", role=" + role +
+                ", role='" + role + '\'' +
                 ", borrowedBooks=" + borrowedBooks +
                 '}';
     }

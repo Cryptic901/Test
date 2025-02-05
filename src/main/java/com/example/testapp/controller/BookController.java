@@ -1,7 +1,6 @@
 package com.example.testapp.controller;
 
 import com.example.testapp.DTO.BookDTO;
-import com.example.testapp.model.Books;
 import com.example.testapp.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +8,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/* Контроллер книг с которым будет взаимодействовать пользователь */
+
 @RestController
+@RequestMapping("api/v1/books")
 public class BookController {
 
     private final BookService bookService;
@@ -19,38 +21,36 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @DeleteMapping("/private/books/{id}")
+
+    //Отправка запроса и получение ответа на удаление книги
+    @DeleteMapping("/delete/{id}")
     public void deleteBookById(@PathVariable long id) {
         bookService.deleteBookById(id);
     }
 
-    @PostMapping("public/books")
+
+    //Отправка запроса и получение ответа на добавление книги
+    @PostMapping("/create")
     public ResponseEntity<BookDTO> addBook(@RequestBody BookDTO bookDTO) {
         return ResponseEntity.ok(bookService.addBook(bookDTO));
     }
 
-    @PutMapping("public/books/{id}")
+    //Отправка запроса и получение ответа на обновление параметра книги
+    @PatchMapping("/update/{id}")
     public ResponseEntity<BookDTO> updateBookById(@PathVariable long id,@RequestBody BookDTO bookDTO) {
         return ResponseEntity.ok(bookService.updateBookById(id, bookDTO));
     }
 
-    @GetMapping("public/books/{id}")
+    //Отправка запроса и получение ответа на получение книги по ID
+    @GetMapping("/get/{id}")
     public ResponseEntity<BookDTO> getBookById(@PathVariable long id) {
         return ResponseEntity.ok(bookService.getBookById(id));
     }
 
-    @GetMapping("/public/books")
+    //Отправка запроса и получение ответа на получение всех книг
+    @GetMapping("/getAll")
     public ResponseEntity<List<BookDTO>> getAllBooks() {
         return ResponseEntity.ok(bookService.getAllBooks());
     }
 
-    @PostMapping("public/books/{bookId}/borrow")
-    public ResponseEntity<String> borrowBookById(@PathVariable long bookId, @RequestParam long userId) {
-        return ResponseEntity.ok(bookService.borrowBookById(bookId, userId));
-    }
-
-    @PostMapping("public/books/{bookId}/return")
-    public ResponseEntity<String> returnBookById(@PathVariable long bookId, @RequestParam long userId) {
-        return ResponseEntity.ok(bookService.returnBookById(bookId, userId));
-    }
 }

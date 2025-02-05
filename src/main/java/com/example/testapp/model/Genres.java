@@ -3,11 +3,13 @@ package com.example.testapp.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+/* Сущность жанр */
+
 @Entity
 public class Genres {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "genre_id", nullable = false)
     private Long id;
 

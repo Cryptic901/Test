@@ -1,20 +1,21 @@
 package com.example.testapp.service;
 
 import com.example.testapp.DTO.BookDTO;
+import com.example.testapp.enums.BookStatus;
 import com.example.testapp.model.Books;
 import com.example.testapp.model.Users;
 import com.example.testapp.repository.AuthorsRepository;
 import com.example.testapp.repository.BooksRepository;
 import com.example.testapp.repository.GenresRepository;
 import com.example.testapp.repository.UsersRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
 
-/// Сервис для реализации логики работы контроллеров
+/* Сервис для обработки данных о книгах */
 
 @Service
 public class BookService {
@@ -32,17 +33,13 @@ public class BookService {
         this.authorsRepository = authorsRepository;
     }
 
-    public void deleteBookById(long id) {
-        booksRepository.deleteById(id);
-    }
-
-
+    //Метод для получения значений из BookDTO и установления их в book
     public void setBookParams(Books book, BookDTO bookDTO) {
         book.setTitle(bookDTO.getTitle());
         book.setDescription(bookDTO.getDescription());
-        book.setStatus(Books.BookStatus.valueOf(bookDTO.getStatus()));
+        book.setStatus(BookStatus.valueOf(bookDTO.getStatus()));
 
-        if(bookDTO.getAuthorId() != null) {
+        if (bookDTO.getAuthorId() != null) {
             book.setAuthor(authorsRepository.findById(bookDTO.getAuthorId())
                     .orElseThrow(() -> new RuntimeException("Автор с id " + bookDTO.getAuthorId() + "не найден")));
         }
@@ -58,54 +55,35 @@ public class BookService {
         }
     }
 
+    //Метод для удаления книги
+    public void deleteBookById(long id) {
+        booksRepository.deleteById(id);
+    }
+
+    //Метод для добавления книги
     public BookDTO addBook(BookDTO bookDTO) {
         Books bookToAdd = new Books();
         setBookParams(bookToAdd, bookDTO);
         return BookDTO.fromEntity(booksRepository.save(bookToAdd));
     }
 
+    //Метод для получения книги по ID
     public BookDTO getBookById(long id) {
         return BookDTO.fromEntity(booksRepository.findById(id));
     }
 
+    //Метод для обновления книги по ID
     public BookDTO updateBookById(long id, BookDTO bookDTO) {
         Books existingBook = booksRepository.findById(id);
         setBookParams(existingBook, bookDTO);
         return BookDTO.fromEntity(booksRepository.save(existingBook));
     }
 
+    //Метод для получения всего списка книг
     public List<BookDTO> getAllBooks() {
         List<Books> books = booksRepository.findAll();
         return books.stream()
                 .map(BookDTO::fromEntity)
                 .toList();
-    }
-
-    public String borrowBookById(long bookId, long userId) {
-        Users user = usersRepository.findById(userId);
-        Books book = booksRepository.findById(bookId);
-
-        if (book.getUser() != null) {
-            throw new RuntimeException("Book is already borrowed!");
-        }
-
-        book.setUser(user);
-        booksRepository.save(book);
-
-        return "Book borrowed successfully!";
-    }
-
-    public String returnBookById(long userId, long bookId) {
-
-        Books book = booksRepository.findById(bookId);
-
-        if (book.getUser() == null || !book.getUser().getId().equals(userId)) {
-            throw new RuntimeException("Book is not borrowed!");
-        }
-
-        book.setUser(null);
-        booksRepository.save(book);
-
-        return "Book returned successfully!";
     }
 }

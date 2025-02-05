@@ -1,6 +1,9 @@
 package com.example.testapp.model;
 
+import com.example.testapp.enums.BookStatus;
 import jakarta.persistence.*;
+
+/* Сущность книга */
 
 @Entity
 public class Books {
@@ -29,13 +32,6 @@ public class Books {
 
     @Column(length = 1000)
     private String description;
-
-    public enum BookStatus {
-        AVAILABLE,
-        BORROWED,
-        RETURNED,
-        UNKNOWN;
-    }
 
     public Long getId() {
         return id;

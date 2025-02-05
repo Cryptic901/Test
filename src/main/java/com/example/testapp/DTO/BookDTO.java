@@ -1,11 +1,11 @@
 package com.example.testapp.DTO;
 
 import com.example.testapp.model.Books;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 
+/* Объект для удобной передачи данных о книгах */
 public class BookDTO implements Serializable {
 
     private Long id;
@@ -14,13 +14,13 @@ public class BookDTO implements Serializable {
     private String description;
 
     private String genre; //Название жанра
-    @JsonProperty(value = "genreId", access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(value = "genre_id", access = JsonProperty.Access.WRITE_ONLY)
     private Long genreId;
     private String author; //Имя автора
-    @JsonProperty(value = "authorId", access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(value = "author_id", access = JsonProperty.Access.WRITE_ONLY)
     private Long authorId;
     private String user; //Имя пользователя
-    @JsonProperty(value = "userId", access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(value = "user_id", access = JsonProperty.Access.WRITE_ONLY)
     private Long userId;
 
 
@@ -38,7 +38,6 @@ public class BookDTO implements Serializable {
         dto.setAuthor(book.getAuthor() != null ? book.getAuthor().getName() : "Автор не указан");
         dto.setGenre(book.getGenre() != null ? book.getGenre().getName() : "Жанр не указан");
         dto.setUser(book.getUser() != null ? book.getUser().getUsername() : "Книга свободна");
-
 
         return dto;
     }
