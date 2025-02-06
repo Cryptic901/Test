@@ -24,13 +24,18 @@ public class UserDTO implements Serializable {
     private List<Books> borrowedBooks;
 
     public static UserDTO fromEntity(Users user) {
+        if (user == null) {
+            return null;
+        }
+
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
         dto.setPassword(user.getPassword());
         dto.setUserRole(user.getUserRole() != null ? user.getUserRole().name() : "UNDEFINED");
-        dto.setBorrowedBooks(user.getBorrowedBooks() != null ? user.getBorrowedBooks() : null);
+        dto.setBorrowedBooks(user.getBorrowedBooks() != null
+                ? new ArrayList<>(user.getBorrowedBooks()) : new ArrayList<>());
 
         return dto;
     }
@@ -91,7 +96,14 @@ public class UserDTO implements Serializable {
     }
 
     public void setBorrowedBooks(List<Books> borrowedBooks) {
-        this.borrowedBooks.addAll(borrowedBooks);
+        if(this.borrowedBooks == null) {
+            this.borrowedBooks = new ArrayList<>();
+        }
+        this.borrowedBooks.clear();
+
+        if(this.borrowedBooks != null) {
+            this.borrowedBooks.addAll(borrowedBooks);
+        }
     }
 
     @Override

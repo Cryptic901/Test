@@ -53,7 +53,7 @@ public class UserService {
     }
 
     public UserDTO getUserByUsername(String username) {
-        return UserDTO.fromEntity(usersRepository.finByUsername(username));
+        return UserDTO.fromEntity(usersRepository.findByUsername(username));
     }
 
     public UserDTO findById(long id) {
@@ -81,6 +81,10 @@ public class UserService {
             throw new RuntimeException("Book is already borrowed!");
         }
 
+        if(user.getBorrowedBooks() == null) {
+            user.setBorrowedBooks(new ArrayList<>());
+        }
+
         //Получение списка из аттрибутов пользователя и добавление книги в список
         List<Books> booksList = user.getBorrowedBooks();
         booksList.add(book);
@@ -106,6 +110,11 @@ public class UserService {
         //Обработка если книга не занята
         if (book.getStatus() != BookStatus.BORROWED || book.getUser().getId() != userId) {
             throw new RuntimeException("Book is not borrowed!");
+        }
+
+        // Удаляем книгу из списка пользователя, если он её вернул
+        if(user.getBorrowedBooks() != null) {
+            user.getBorrowedBooks().remove(book);
         }
 
         //Получение списка из аттрибутов пользователя и удаление книги из списка

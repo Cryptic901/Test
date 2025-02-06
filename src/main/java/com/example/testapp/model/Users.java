@@ -3,6 +3,7 @@ package com.example.testapp.model;
 import com.example.testapp.enums.UserRole;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -89,7 +90,14 @@ public class Users {
     }
 
     public void setBorrowedBooks(List<Books> borrowedBooks) {
-        this.borrowedBooks.addAll(borrowedBooks);
+        if(this.borrowedBooks == null) {
+            this.borrowedBooks = new ArrayList<>();
+        }
+        this.borrowedBooks.clear();
+
+        if(this.borrowedBooks != null) {
+            this.borrowedBooks.addAll(borrowedBooks);
+        }
     }
 
     @Override
