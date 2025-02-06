@@ -1,10 +1,9 @@
-package com.example.testapp;
+package com.example.testapp.service;
 
 import com.example.testapp.DTO.BookDTO;
 import com.example.testapp.enums.BookStatus;
 import com.example.testapp.model.Books;
 import com.example.testapp.repository.BooksRepository;
-import com.example.testapp.service.BookService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,7 +31,7 @@ public class BookServiceTest {
 
         Books books = new Books();
         books.setTitle("Book 1");
-        books.setDescription("Nigger");
+        books.setDescription("desc");
         books.setStatus(BookStatus.UNKNOWN);
 
         when(booksRepository.save(any(Books.class))).thenReturn(books);

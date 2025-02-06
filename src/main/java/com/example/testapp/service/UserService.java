@@ -81,7 +81,7 @@ public class UserService {
             throw new RuntimeException("Book is already borrowed!");
         }
 
-        if(user.getBorrowedBooks() == null) {
+        if (user.getBorrowedBooks() == null) {
             user.setBorrowedBooks(new ArrayList<>());
         }
 
@@ -113,7 +113,7 @@ public class UserService {
         }
 
         // Удаляем книгу из списка пользователя, если он её вернул
-        if(user.getBorrowedBooks() != null) {
+        if (user.getBorrowedBooks() != null) {
             user.getBorrowedBooks().remove(book);
         }
 

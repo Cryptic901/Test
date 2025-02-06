@@ -1,4 +1,4 @@
-package com.example.testapp;
+package com.example.testapp.service;
 
 import com.example.testapp.DTO.UserDTO;
 import com.example.testapp.enums.BookStatus;
@@ -7,7 +7,6 @@ import com.example.testapp.model.Books;
 import com.example.testapp.model.Users;
 import com.example.testapp.repository.BooksRepository;
 import com.example.testapp.repository.UsersRepository;
-import com.example.testapp.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -34,26 +33,14 @@ public class UserServiceTest {
 
     @InjectMocks
     private UserService userService;
+
     @Test
     void createUser_Success() {
         // Arrange
-        UserDTO userDTO = new UserDTO();
-        userDTO.setUsername("testUser");
-        userDTO.setEmail("test@test.com");
-        userDTO.setPassword("password");
-        userDTO.setUserRole("USER");
-        userDTO.setBorrowedBooks(new ArrayList<>());
-
-        Users savedUser = new Users();
-        savedUser.setId(1L);
-        savedUser.setUsername("testUser");
-        savedUser.setEmail("test@test.com");
-        savedUser.setPassword("password");
-        savedUser.setUserRole(UserRole.USER);
-        savedUser.setBorrowedBooks(new ArrayList<>());
+        UserDTO userDTO = new UserDTO(new Users(1L, "testUser", "test@test.com", "password", UserRole.USER, new ArrayList<>()));
+        Users savedUser = new Users(1L, "testUser", "test@test.com", "password", UserRole.USER, new ArrayList<>());
 
         when(usersRepository.save(any(Users.class))).thenReturn(savedUser);
-
         // Act
         UserDTO result = userService.createUser(userDTO);
 
@@ -200,8 +187,6 @@ public class UserServiceTest {
         verify(usersRepository, times(1)).findById(userId);
         verify(usersRepository, never()).save(any(Users.class));
     }
-
-
 
     @Test
     void borrowBookById_Success() {

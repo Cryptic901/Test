@@ -21,7 +21,6 @@ public class BookController {
         this.bookService = bookService;
     }
 
-
     //Отправка запроса и получение ответа на удаление книги
     @DeleteMapping("/delete/{id}")
     public void deleteBookById(@PathVariable long id) {
