@@ -32,6 +32,9 @@ public class UserService {
         user.setUsername(userDTO.getUsername());
         user.setEmail(userDTO.getEmail());
         user.setPassword(userDTO.getPassword());
+        if (userDTO.getUserRole() == null || userDTO.getUserRole().isEmpty()) {
+            throw new IllegalArgumentException("Role cannot be null or empty");
+        }
         user.setUserRole(UserRole.valueOf(userDTO.getUserRole()));
         user.setBorrowedBooks(userDTO.getBorrowedBooks());
     }

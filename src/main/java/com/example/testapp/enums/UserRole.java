@@ -1,5 +1,5 @@
 package com.example.testapp.enums;
 
 public enum UserRole {
-    ADMIN, USER, READER,
+    ADMIN, USER, READER, UNDEFINED
 }

@@ -6,6 +6,7 @@ import com.example.testapp.model.Users;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /* Объект для удобной передачи данных о пользователе */
 
@@ -35,7 +36,7 @@ public class UserDTO implements Serializable {
         dto.setPassword(user.getPassword());
         dto.setUserRole(user.getUserRole() != null ? user.getUserRole().name() : "UNDEFINED");
         dto.setBorrowedBooks(user.getBorrowedBooks() != null
-                ? new ArrayList<>(user.getBorrowedBooks()) : new ArrayList<>());
+                ? user.getBorrowedBooks().stream().filter(Objects::nonNull).toList() : new ArrayList<>());
 
         return dto;
     }
@@ -47,7 +48,7 @@ public class UserDTO implements Serializable {
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.password = user.getPassword();
-        this.role = user.getUserRole() != null ? user.getUserRole().name() : "UNDEFINED";
+        this.role = (user.getUserRole() != null) ? user.getUserRole().name() : "UNDEFINED";
         this.borrowedBooks = new ArrayList<>();
     }
 
@@ -98,11 +99,8 @@ public class UserDTO implements Serializable {
     public void setBorrowedBooks(List<Books> borrowedBooks) {
         if(this.borrowedBooks == null) {
             this.borrowedBooks = new ArrayList<>();
-        }
-        this.borrowedBooks.clear();
-
-        if(this.borrowedBooks != null) {
-            this.borrowedBooks.addAll(borrowedBooks);
+        } else {
+            this.borrowedBooks = new ArrayList<>(borrowedBooks);
         }
     }
 
