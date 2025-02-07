@@ -108,7 +108,7 @@ public class UserServiceTest {
         when(usersRepository.findById(userId)).thenReturn(user);
 
         // Act
-        UserDTO result = userService.findById(userId);
+        UserDTO result = userService.getUserById(userId);
 
         // Assert
         assertNotNull(result);

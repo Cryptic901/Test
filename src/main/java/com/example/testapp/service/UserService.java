@@ -56,7 +56,7 @@ public class UserService {
         return UserDTO.fromEntity(usersRepository.findByUsername(username));
     }
 
-    public UserDTO findById(long id) {
+    public UserDTO getUserById(long id) {
         return UserDTO.fromEntity(usersRepository.findById(id));
     }
 
