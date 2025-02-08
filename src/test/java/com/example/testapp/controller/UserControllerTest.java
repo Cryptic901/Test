@@ -20,8 +20,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = UserController.class)
 class UserControllerTest {
@@ -76,14 +75,17 @@ class UserControllerTest {
 
         //Arrange
         UserDTO userDTO = new UserDTO();
+        userDTO.setUsername("Cryptic");
 
         //Act
         when(userService.getUserByUsername("Cryptic")).thenReturn(userDTO);
 
         //Assert
-        mockMvc.perform(get("/api/v1/users/Cryptic")
+        mockMvc.perform(get("/api/v1/users/get/username/Cryptic")
                         .with(csrf()))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.username").value("Cryptic"));
     }
 
     @Test
@@ -92,14 +94,17 @@ class UserControllerTest {
 
         //Arrange
         UserDTO userDTO = new UserDTO();
+        userDTO.setId(1L);
 
         //Act
-        when(userService.getUserById(eq(1L))).thenReturn(userDTO);
+        when(userService.getUserById(1L)).thenReturn(userDTO);
 
         //Assert
-        mockMvc.perform(get("/api/v1/users/1")
+        mockMvc.perform(get("/api/v1/users/get/id/1")
                         .with(csrf()))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(1));
     }
 
     @Test

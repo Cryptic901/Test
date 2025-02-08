@@ -31,12 +31,12 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @GetMapping("/get/{username}")
+    @GetMapping("/get/username/{username}")
     public ResponseEntity<UserDTO> getUserByUsername(@PathVariable String username) {
         return ResponseEntity.ok(userService.getUserByUsername(username));
     }
 
-    @GetMapping("/get/{userId}")
+    @GetMapping("/get/id/{userId}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable long userId) {
         return ResponseEntity.ok(userService.getUserById(userId));
     }
