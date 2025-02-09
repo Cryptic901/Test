@@ -2,11 +2,11 @@ package com.example.testapp.DTO;
 
 import com.example.testapp.model.Books;
 import com.example.testapp.model.Users;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /* Объект для удобной передачи данных о пользователе */
 
@@ -25,30 +25,26 @@ public class UserDTO implements Serializable {
     private List<Books> borrowedBooks;
 
     public static UserDTO fromEntity(Users user) {
-        if (user == null) {
-            return null;
-        }
-
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
         dto.setPassword(user.getPassword());
-        dto.setUserRole(user.getUserRole() != null ? user.getUserRole().name() : "UNDEFINED");
+        dto.setUserRole(user.getUserRole() != null ? user.getUserRole().toString() : "UNDEFINED");
         dto.setBorrowedBooks(user.getBorrowedBooks() != null
-                ? user.getBorrowedBooks().stream().filter(Objects::nonNull).toList() : new ArrayList<>());
-
+                ? new ArrayList<>(user.getBorrowedBooks()) : new ArrayList<>());
         return dto;
     }
 
-    public UserDTO() {}
+    public UserDTO() {
+    }
 
     public UserDTO(Users user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.password = user.getPassword();
-        this.role = (user.getUserRole() != null) ? user.getUserRole().name() : "UNDEFINED";
+        this.role = user.getUserRole() != null ? user.getUserRole().toString() : "UNDEFINED";
         this.borrowedBooks = new ArrayList<>();
     }
 
@@ -97,10 +93,13 @@ public class UserDTO implements Serializable {
     }
 
     public void setBorrowedBooks(List<Books> borrowedBooks) {
-        if(this.borrowedBooks == null) {
+        if (this.borrowedBooks == null) {
             this.borrowedBooks = new ArrayList<>();
-        } else {
-            this.borrowedBooks = new ArrayList<>(borrowedBooks);
+        }
+        this.borrowedBooks.clear();
+
+        if (this.borrowedBooks != null) {
+            this.borrowedBooks.addAll(borrowedBooks);
         }
     }
 
