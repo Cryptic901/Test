@@ -32,15 +32,16 @@ public class UserService {
         user.setUsername(userDTO.getUsername());
         user.setEmail(userDTO.getEmail());
         user.setPassword(userDTO.getPassword());
-        if (userDTO.getUserRole() == null || userDTO.getUserRole().isEmpty()) {
-            throw new IllegalArgumentException("Role cannot be null or empty");
-        }
         user.setUserRole(UserRole.valueOf(userDTO.getUserRole()));
         user.setBorrowedBooks(userDTO.getBorrowedBooks());
     }
 
 
     public UserDTO createUser(UserDTO userDTO) {
+        if (userDTO.getUsername() == null || userDTO.getEmail() == null || userDTO.getPassword() == null) {
+            throw new IllegalArgumentException("Parameters are null");
+        }
+
         Users user = new Users();
         setUserParams(user, userDTO);
         return UserDTO.fromEntity(usersRepository.save(user));
@@ -69,7 +70,14 @@ public class UserService {
         return UserDTO.fromEntity(usersRepository.save(user));
     }
 
+    @Transactional
     public void deleteUserById(long id) {
+        UserDTO user = getUserById(id);
+        if(user.getBorrowedBooks() != null || !user.getBorrowedBooks().isEmpty()) {
+            for(long bookId = 0L; bookId < user.getBorrowedBooks().size(); bookId++) {
+                returnBookById(user.getBorrowedBooks().get(Math.toIntExact(bookId)), id);
+            }
+        }
         usersRepository.deleteById(id);
     }
 
@@ -89,8 +97,8 @@ public class UserService {
         }
 
         //Получение списка из аттрибутов пользователя и добавление книги в список
-        List<Books> booksList = user.getBorrowedBooks();
-        booksList.add(book);
+        List<Long> booksList = user.getBorrowedBooks();
+        booksList.add(book.getId());
 
         //Изменение статуса книги
         book.setUser(user);
@@ -117,12 +125,12 @@ public class UserService {
 
         // Удаляем книгу из списка пользователя, если он её вернул
         if (user.getBorrowedBooks() != null) {
-            user.getBorrowedBooks().remove(book);
+            user.getBorrowedBooks().remove(book.getId());
         }
 
         //Получение списка из аттрибутов пользователя и удаление книги из списка
-        List<Books> booksList = user.getBorrowedBooks();
-        booksList.remove(book);
+        List<Long> booksList = user.getBorrowedBooks();
+        booksList.remove(book.getId());
 
         //Изменение статуса книги
         book.setUser(null);

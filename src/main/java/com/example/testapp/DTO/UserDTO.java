@@ -1,6 +1,5 @@
 package com.example.testapp.DTO;
 
-import com.example.testapp.model.Books;
 import com.example.testapp.model.Users;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -20,9 +19,10 @@ public class UserDTO implements Serializable {
 
     private String password;
 
+    @JsonProperty("role")
     private String role;
 
-    private List<Books> borrowedBooks;
+    private List<Long> borrowedBooks;
 
     public static UserDTO fromEntity(Users user) {
         UserDTO dto = new UserDTO();
@@ -30,7 +30,7 @@ public class UserDTO implements Serializable {
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
         dto.setPassword(user.getPassword());
-        dto.setUserRole(user.getUserRole() != null ? user.getUserRole().toString() : "UNDEFINED");
+        dto.setUserRole(user.getUserRole() != null ? user.getUserRole().name() : "UNDEFINED");
         dto.setBorrowedBooks(user.getBorrowedBooks() != null
                 ? new ArrayList<>(user.getBorrowedBooks()) : new ArrayList<>());
         return dto;
@@ -80,6 +80,7 @@ public class UserDTO implements Serializable {
         this.password = password;
     }
 
+    @JsonProperty("role")
     public String getUserRole() {
         return role;
     }
@@ -88,17 +89,17 @@ public class UserDTO implements Serializable {
         this.role = role;
     }
 
-    public List<Books> getBorrowedBooks() {
+    public List<Long> getBorrowedBooks() {
         return borrowedBooks;
     }
 
-    public void setBorrowedBooks(List<Books> borrowedBooks) {
+    public void setBorrowedBooks(List<Long> borrowedBooks) {
         if (this.borrowedBooks == null) {
             this.borrowedBooks = new ArrayList<>();
         }
         this.borrowedBooks.clear();
 
-        if (this.borrowedBooks != null) {
+        if (borrowedBooks != null) {
             this.borrowedBooks.addAll(borrowedBooks);
         }
     }

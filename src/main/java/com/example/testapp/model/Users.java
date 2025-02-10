@@ -26,14 +26,12 @@ public class Users {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role")
     private UserRole role;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
-    private List<Books> borrowedBooks;
+    @ElementCollection
+    private List<Long> borrowedBooks = new ArrayList<>();
 
-    public Users(Long id, String username, String email, String password, UserRole role, List<Books> borrowedBooks) {
+    public Users(Long id, String username, String email, String password, UserRole role, List<Long> borrowedBooks) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -86,17 +84,17 @@ public class Users {
         this.role = role;
     }
 
-    public List<Books> getBorrowedBooks() {
+    public List<Long> getBorrowedBooks() {
         return borrowedBooks;
     }
 
-    public void setBorrowedBooks(List<Books> borrowedBooks) {
+    public void setBorrowedBooks(List<Long> borrowedBooks) {
         if(this.borrowedBooks == null) {
             this.borrowedBooks = new ArrayList<>();
         }
         this.borrowedBooks.clear();
 
-        if(this.borrowedBooks != null) {
+        if(borrowedBooks != null) {
             this.borrowedBooks.addAll(borrowedBooks);
         }
     }

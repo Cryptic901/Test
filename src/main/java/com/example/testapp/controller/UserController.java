@@ -22,7 +22,7 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<UserDTO> createUser(UserDTO userDTO) {
+    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
         return ResponseEntity.ok(userService.createUser(userDTO));
     }
 
@@ -42,7 +42,7 @@ public class UserController {
     }
 
     @PatchMapping("/update/{userId}")
-    public ResponseEntity<UserDTO> updateUserById(@PathVariable long userId, UserDTO userDTO) {
+    public ResponseEntity<UserDTO> updateUserById(@PathVariable long userId,@RequestBody UserDTO userDTO) {
         return ResponseEntity.ok(userService.updateUserById(userId, userDTO));
     }
 
