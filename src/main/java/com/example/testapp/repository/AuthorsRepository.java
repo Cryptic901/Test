@@ -11,6 +11,6 @@ import java.util.Optional;
 @Repository
 public interface AuthorsRepository extends JpaRepository<Authors, Long> {
 
-    Authors findById(long id);
+    Optional<Authors> findById(long id);
 
 }

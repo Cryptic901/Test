@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -85,7 +86,7 @@ public class UserServiceTest {
         user.setUsername(username);
         user.setEmail("test@test.com");
 
-        when(usersRepository.findByUsername(username)).thenReturn(user);
+        when(usersRepository.findByUsername(username)).thenReturn(Optional.of(user));
 
         // Act
         UserDTO result = userService.getUserByUsername(username);
@@ -105,7 +106,7 @@ public class UserServiceTest {
         user.setId(userId);
         user.setUsername("testUser");
 
-        when(usersRepository.findById(userId)).thenReturn(user);
+        when(usersRepository.findById(userId)).thenReturn(Optional.of(user));
 
         // Act
         UserDTO result = userService.getUserById(userId);
@@ -136,7 +137,7 @@ public class UserServiceTest {
         updatedUser.setEmail("updated@test.com");
         updatedUser.setUserRole(UserRole.ADMIN);
 
-        when(usersRepository.findById(userId)).thenReturn(existingUser);
+        when(usersRepository.findById(userId)).thenReturn(Optional.of(existingUser));
         when(usersRepository.save(any(Users.class))).thenReturn(updatedUser);
 
         // Act
@@ -209,7 +210,6 @@ public class UserServiceTest {
         // Создаем пользователя
         Users user = new Users();
         user.setId(userId);
-
         // Создаем DTO с книгами
         UserDTO userDTO = new UserDTO();
         userDTO.setId(userId);
@@ -225,6 +225,7 @@ public class UserServiceTest {
         book2.setId(bookId2);
         book2.setStatus(BookStatus.BORROWED);
         book2.setUser(user);  // Устанавливаем связь с пользователем
+        user.setBorrowedBooks(Arrays.asList(book1.getId(), book2.getId()));
 
         UserService spyUserService = spy(userService);
 
@@ -232,8 +233,8 @@ public class UserServiceTest {
         doReturn(userDTO).when(spyUserService).getUserById(userId);
 
         // Мокаем findById для книг
-        when(booksRepository.findById(bookId1)).thenReturn(book1);
-        when(booksRepository.findById(bookId2)).thenReturn(book2);
+        when(booksRepository.findById(bookId1)).thenReturn(Optional.of(book1));
+        when(booksRepository.findById(bookId2)).thenReturn(Optional.of(book2));
         doNothing().when(usersRepository).deleteById(userId);
 
         // Мокаем сохранение книг
@@ -263,8 +264,8 @@ public class UserServiceTest {
         book.setUser(null);
         book.setStatus(BookStatus.AVAILABLE);
 
-        when(booksRepository.findById(bookId)).thenReturn(book);
-        when(usersRepository.findById(userId)).thenReturn(user);
+        when(booksRepository.findById(bookId)).thenReturn(Optional.of(book));
+        when(usersRepository.findById(userId)).thenReturn(Optional.of(user));
         when(booksRepository.save(any(Books.class))).thenReturn(book);
 
         String result = userService.borrowBookById(bookId, userId);
@@ -295,8 +296,8 @@ public class UserServiceTest {
         book.setUser(user2);
         book.setStatus(BookStatus.BORROWED);
 
-        when(booksRepository.findById(bookId)).thenReturn(book);
-        when(usersRepository.findById(userId)).thenReturn(user1);
+        when(booksRepository.findById(bookId)).thenReturn(Optional.of(book));
+        when(usersRepository.findById(userId)).thenReturn(Optional.of(user1));
 
         Exception exception = assertThrows(RuntimeException.class,
                 () -> userService.borrowBookById(bookId, userId));

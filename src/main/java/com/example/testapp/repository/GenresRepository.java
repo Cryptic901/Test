@@ -1,5 +1,6 @@
 package com.example.testapp.repository;
 
+import com.example.testapp.model.Books;
 import com.example.testapp.model.Genres;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -11,5 +12,5 @@ import java.util.Optional;
 @Repository
 public interface GenresRepository extends JpaRepository<Genres, Long> {
 
-    Genres findById(long id);
+    Optional<Genres> findById(long id);
 }

@@ -4,13 +4,13 @@ import com.example.testapp.model.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 /* Репозиторий для получения и передачи информации в базу данных о пользователях */
 
 @Repository
 public interface UsersRepository extends JpaRepository<Users, Long> {
 
-    Users findById(long id);
-    Users findByUsername(String username);
-
-    boolean existsByUsername(String username);
+    Optional<Users> findById(long id);
+    Optional<Users> findByUsername(String username);
 }

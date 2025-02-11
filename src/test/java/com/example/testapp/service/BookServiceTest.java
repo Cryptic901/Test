@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -61,7 +62,7 @@ public class BookServiceTest {
         Books book = new Books();
         book.setId(id);
 
-        when(booksRepository.findById(id)).thenReturn(book);
+        when(booksRepository.findById(id)).thenReturn(Optional.of(book));
 
          bookService.getBookById(id);
 
@@ -79,7 +80,7 @@ public class BookServiceTest {
         Books updatedBook = new Books();
         updatedBook.setTitle("New Title");
 
-        when(booksRepository.findById(id)).thenReturn(existingBook);
+        when(booksRepository.findById(id)).thenReturn(Optional.of(existingBook));
         when(booksRepository.save(existingBook)).thenReturn(existingBook);
 
         BookDTO bookDTO = bookService.updateBookById(id, BookDTO.fromEntity(updatedBook));

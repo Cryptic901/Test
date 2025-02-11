@@ -57,15 +57,18 @@ public class UserService {
     }
 
     public UserDTO getUserByUsername(String username) {
-        return UserDTO.fromEntity(usersRepository.findByUsername(username));
+        return UserDTO.fromEntity(usersRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username)));
     }
 
     public UserDTO getUserById(long id) {
-        return UserDTO.fromEntity(usersRepository.findById(id));
+        return UserDTO.fromEntity(usersRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id)));
     }
 
     public UserDTO updateUserById(long id, UserDTO userDTO) {
-        Users user = usersRepository.findById(id);
+        Users user = usersRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
         setUserParams(user, userDTO);
         return UserDTO.fromEntity(usersRepository.save(user));
     }
@@ -89,8 +92,10 @@ public class UserService {
     @Transactional
     public String borrowBookById(long bookId, long userId) {
 
-        Users user = usersRepository.findById(userId);
-        Books book = booksRepository.findById(bookId);
+        Users user = usersRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+        Books book = booksRepository.findById(bookId)
+                .orElseThrow(() -> new RuntimeException("Book not found with id: " + bookId));
 
         //Обработка если книга уже занята
         if (book.getStatus() != BookStatus.AVAILABLE) {
@@ -120,8 +125,10 @@ public class UserService {
     @Transactional
     public String returnBookById(long bookId, long userId) {
 
-        Books book = booksRepository.findById(bookId);
-        Users user = usersRepository.findById(userId);
+        Books book = booksRepository.findById(bookId)
+                .orElseThrow(() -> new RuntimeException("Book not found with id: " + bookId));
+        Users user = usersRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
         //Обработка если книга не занята
         if (book.getStatus() != BookStatus.BORROWED || book.getUser().getId() != userId) {

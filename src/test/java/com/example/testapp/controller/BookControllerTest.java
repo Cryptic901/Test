@@ -42,7 +42,7 @@ class BookControllerTest {
         doNothing().when(bookService).deleteBookById(1L);
 
         //Assert
-        mockMvc.perform(delete("/api/v1/books/delete/1 ")
+        mockMvc.perform(delete("/api/v1/books/delete/1")
                         .with(csrf()))
                         .andExpect(status().isOk());
     }

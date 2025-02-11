@@ -3,12 +3,10 @@ package com.example.testapp.service;
 import com.example.testapp.DTO.BookDTO;
 import com.example.testapp.enums.BookStatus;
 import com.example.testapp.model.Books;
-import com.example.testapp.model.Users;
 import com.example.testapp.repository.AuthorsRepository;
 import com.example.testapp.repository.BooksRepository;
 import com.example.testapp.repository.GenresRepository;
 import com.example.testapp.repository.UsersRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -69,12 +67,14 @@ public class BookService {
 
     //Метод для получения книги по ID
     public BookDTO getBookById(long id) {
-        return BookDTO.fromEntity(booksRepository.findById(id));
+        return BookDTO.fromEntity(booksRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Book not found with id: " + id)));
     }
 
     //Метод для обновления книги по ID
     public BookDTO updateBookById(long id, BookDTO bookDTO) {
-        Books existingBook = booksRepository.findById(id);
+        Books existingBook = booksRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
         setBookParams(existingBook, bookDTO);
         return BookDTO.fromEntity(booksRepository.save(existingBook));
     }
