@@ -25,6 +25,7 @@ public class UserDTO implements Serializable {
     private List<Long> borrowedBooks;
 
     public static UserDTO fromEntity(Users user) {
+        if (user == null) return null;
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
         dto.setUsername(user.getUsername());

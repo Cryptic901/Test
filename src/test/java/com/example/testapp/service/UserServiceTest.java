@@ -155,10 +155,19 @@ public class UserServiceTest {
     void deleteUserById_Success() {
         // Arrange
         long userId = 1L;
+
+        // Создаем DTO которое будет возвращать getUserById
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(userId);
+        userDTO.setBorrowedBooks(new ArrayList<>());
+
+        // Мокаем только необходимые методы
+        UserService spyUserService = spy(userService);
+        doReturn(userDTO).when(spyUserService).getUserById(userId);
         doNothing().when(usersRepository).deleteById(userId);
 
         // Act
-        userService.deleteUserById(userId);
+        spyUserService.deleteUserById(userId);
 
         // Assert
         verify(usersRepository, times(1)).deleteById(userId);
@@ -170,8 +179,10 @@ public class UserServiceTest {
         String username = "nonexistentUser";
         when(usersRepository.findByUsername(username)).thenReturn(null);
 
-        // Act & Assert
-        assertNull(userService.getUserByUsername(username));
+        // Act
+        UserDTO result = userService.getUserByUsername(username);
+        // Assert
+        assertNull(result);
         verify(usersRepository, times(1)).findByUsername(username);
     }
 
@@ -186,6 +197,55 @@ public class UserServiceTest {
         assertThrows(RuntimeException.class, () -> userService.updateUserById(userId, updateDTO));
         verify(usersRepository, times(1)).findById(userId);
         verify(usersRepository, never()).save(any(Users.class));
+    }
+
+    @Test
+    void deleteUserById_WithBooks_Success() {
+        // Arrange
+        long userId = 1L;
+        long bookId1 = 1L;
+        long bookId2 = 2L;
+
+        // Создаем пользователя
+        Users user = new Users();
+        user.setId(userId);
+
+        // Создаем DTO с книгами
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(userId);
+        userDTO.setBorrowedBooks(Arrays.asList(bookId1, bookId2));
+
+        // Создаем книги и устанавливаем им пользователя
+        Books book1 = new Books();
+        book1.setId(bookId1);
+        book1.setStatus(BookStatus.BORROWED);
+        book1.setUser(user);  // Устанавливаем связь с пользователем
+
+        Books book2 = new Books();
+        book2.setId(bookId2);
+        book2.setStatus(BookStatus.BORROWED);
+        book2.setUser(user);  // Устанавливаем связь с пользователем
+
+        UserService spyUserService = spy(userService);
+
+        // Мокаем getUserById
+        doReturn(userDTO).when(spyUserService).getUserById(userId);
+
+        // Мокаем findById для книг
+        when(booksRepository.findById(bookId1)).thenReturn(book1);
+        when(booksRepository.findById(bookId2)).thenReturn(book2);
+        doNothing().when(usersRepository).deleteById(userId);
+
+        // Мокаем сохранение книг
+        when(booksRepository.save(any(Books.class))).thenReturn(book1);
+
+        // Act
+        spyUserService.deleteUserById(userId);
+
+        // Assert
+        verify(usersRepository, times(1)).deleteById(userId);
+        verify(booksRepository, times(1)).findById(bookId1);
+        verify(booksRepository, times(1)).findById(bookId2);
     }
 
     @Test

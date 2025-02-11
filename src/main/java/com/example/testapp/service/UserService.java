@@ -71,15 +71,20 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUserById(long id) {
-        UserDTO user = getUserById(id);
-        if(user.getBorrowedBooks() != null || !user.getBorrowedBooks().isEmpty()) {
-            for(long bookId = 0L; bookId < user.getBorrowedBooks().size(); bookId++) {
-                returnBookById(user.getBorrowedBooks().get(Math.toIntExact(bookId)), id);
+    public void deleteUserById(long userId) {
+        UserDTO user = getUserById(userId);
+        if (user == null) {
+            return;
+        }
+        List<Long> borrowedBooks = user.getBorrowedBooks();
+        if (borrowedBooks != null && !borrowedBooks.isEmpty()) {
+            for (Long bookId : borrowedBooks) {
+                returnBookById(bookId, userId);
             }
         }
-        usersRepository.deleteById(id);
+        usersRepository.deleteById(userId);
     }
+
 
     @Transactional
     public String borrowBookById(long bookId, long userId) {
