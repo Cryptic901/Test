@@ -13,8 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,8 +45,13 @@ public class BookServiceTest {
     }
 
     @Test
-    void deleteBookByIdTest() {
+    void deleteBookByIdTest_Success() {
         long id = 1L;
+        Books books = new Books();
+        books.setId(id);
+
+        doNothing().when(booksRepository).deleteById(id);
+        when(booksRepository.existsById(id)).thenReturn(true);
 
         bookService.deleteBookById(id);
 
@@ -55,7 +59,18 @@ public class BookServiceTest {
     }
 
     @Test
-    void getBookByIdTest() {
+    void deleteBookByIdTest_NotFound() {
+        long id = 1L;
+
+        Exception exception = assertThrows(RuntimeException.class, () -> bookService.deleteBookById(id));
+
+        assertEquals("Book not found with id " + id, exception.getMessage());
+
+        verify(booksRepository, never()).deleteById(id);
+    }
+
+    @Test
+    void getBookByIdTest_Success() {
 
         long id = 1L;
 
@@ -65,6 +80,19 @@ public class BookServiceTest {
         when(booksRepository.findById(id)).thenReturn(Optional.of(book));
 
          bookService.getBookById(id);
+
+        verify(booksRepository, times(1)).findById(id);
+    }
+
+    @Test
+    void getBookByIdTest_NotFound() {
+
+        long id = 1L;
+
+        when(booksRepository.findById(id)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(RuntimeException.class, () -> bookService.getBookById(id));
+        assertEquals("Book not found with id: " + id, exception.getMessage());
 
         verify(booksRepository, times(1)).findById(id);
     }

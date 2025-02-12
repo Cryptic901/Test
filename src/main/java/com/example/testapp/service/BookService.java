@@ -39,22 +39,25 @@ public class BookService {
 
         if (bookDTO.getAuthorId() != null) {
             book.setAuthor(authorsRepository.findById(bookDTO.getAuthorId())
-                    .orElseThrow(() -> new RuntimeException("Автор с id " + bookDTO.getAuthorId() + "не найден")));
+                    .orElseThrow(() -> new RuntimeException("Author with id " + bookDTO.getAuthorId() + "not found")));
         }
 
         if (bookDTO.getGenreId() != null) {
             book.setGenre(genresRepository.findById(bookDTO.getGenreId())
-                    .orElseThrow(() -> new RuntimeException("Жанр с id " + bookDTO.getGenreId() + "не найден")));
+                    .orElseThrow(() -> new RuntimeException("Genre with id " + bookDTO.getGenreId() + "not found")));
         }
 
         if (bookDTO.getUserId() != null) {
             book.setUser(usersRepository.findById(bookDTO.getUserId())
-                    .orElseThrow(() -> new RuntimeException("Пользователь с id " + bookDTO.getUserId() + "не найден")));
+                    .orElseThrow(() -> new RuntimeException("User with id " + bookDTO.getUserId() + "not found")));
         }
     }
 
     //Метод для удаления книги
     public void deleteBookById(long id) {
+        if (!booksRepository.existsById(id)) {
+            throw new RuntimeException("Book not found with id " + id);
+        }
         booksRepository.deleteById(id);
     }
 

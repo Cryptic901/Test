@@ -41,7 +41,6 @@ public class UserService {
         if (userDTO.getUsername() == null || userDTO.getEmail() == null || userDTO.getPassword() == null) {
             throw new IllegalArgumentException("Parameters are null");
         }
-
         Users user = new Users();
         setUserParams(user, userDTO);
         return UserDTO.fromEntity(usersRepository.save(user));
@@ -57,7 +56,7 @@ public class UserService {
     }
 
     public UserDTO getUserByUsername(String username) {
-        return UserDTO.fromEntity(usersRepository.findByUsername(username)
+        return UserDTO.fromEntity(usersRepository.findUsersByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found with username: " + username)));
     }
 
@@ -91,11 +90,11 @@ public class UserService {
 
     @Transactional
     public String borrowBookById(long bookId, long userId) {
+        Books book = booksRepository.findById(bookId)
+                .orElseThrow(() -> new RuntimeException("Book not found or already borrowed with id: " + bookId));
 
         Users user = usersRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
-        Books book = booksRepository.findById(bookId)
-                .orElseThrow(() -> new RuntimeException("Book not found with id: " + bookId));
+                .orElseThrow(() -> new RuntimeException("User not found or has reached the maximum of borrowed books with id: " + userId));
 
         //Обработка если книга уже занята
         if (book.getStatus() != BookStatus.AVAILABLE) {
@@ -128,11 +127,15 @@ public class UserService {
         Books book = booksRepository.findById(bookId)
                 .orElseThrow(() -> new RuntimeException("Book not found with id: " + bookId));
         Users user = usersRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+                .orElseThrow(() -> new RuntimeException("User not found or not borrow a book with id: " + userId));
 
         //Обработка если книга не занята
-        if (book.getStatus() != BookStatus.BORROWED || book.getUser().getId() != userId) {
+        if (book.getStatus() != BookStatus.BORROWED) {
             throw new RuntimeException("Book is not borrowed!");
+        }
+
+        if (!book.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Book borrowed by another user!");
         }
 
         // Удаляем книгу из списка пользователя, если он её вернул

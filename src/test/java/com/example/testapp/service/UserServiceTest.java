@@ -20,7 +20,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -86,7 +85,7 @@ public class UserServiceTest {
         user.setUsername(username);
         user.setEmail("test@test.com");
 
-        when(usersRepository.findByUsername(username)).thenReturn(Optional.of(user));
+        when(usersRepository.findUsersByUsername(username)).thenReturn(Optional.of(user));
 
         // Act
         UserDTO result = userService.getUserByUsername(username);
@@ -95,11 +94,11 @@ public class UserServiceTest {
         assertNotNull(result);
         assertEquals(username, result.getUsername());
         assertEquals("test@test.com", result.getEmail());
-        verify(usersRepository, times(1)).findByUsername(username);
+        verify(usersRepository, times(1)).findUsersByUsername(username);
     }
 
     @Test
-    void findById_Success() {
+    void getUserById_Success() {
         // Arrange
         long userId = 1L;
         Users user = new Users();
@@ -178,13 +177,13 @@ public class UserServiceTest {
     void getUserByUsername_UserNotFound() {
         // Arrange
         String username = "nonexistentUser";
-        when(usersRepository.findByUsername(username)).thenReturn(null);
+        when(usersRepository.findUsersByUsername(username)).thenReturn(Optional.empty());
 
         // Act
-        UserDTO result = userService.getUserByUsername(username);
+        Exception exception = assertThrows(RuntimeException.class, () -> userService.getUserByUsername(username));
         // Assert
-        assertNull(result);
-        verify(usersRepository, times(1)).findByUsername(username);
+        assertEquals("User not found with username: " + username, exception.getMessage());
+        verify(usersRepository, times(1)).findUsersByUsername(username);
     }
 
     @Test
@@ -210,6 +209,7 @@ public class UserServiceTest {
         // Создаем пользователя
         Users user = new Users();
         user.setId(userId);
+
         // Создаем DTO с книгами
         UserDTO userDTO = new UserDTO();
         userDTO.setId(userId);
@@ -231,6 +231,7 @@ public class UserServiceTest {
 
         // Мокаем getUserById
         doReturn(userDTO).when(spyUserService).getUserById(userId);
+        when(usersRepository.findById(userId)).thenReturn(Optional.of(user));
 
         // Мокаем findById для книг
         when(booksRepository.findById(bookId1)).thenReturn(Optional.of(book1));
@@ -322,9 +323,9 @@ public class UserServiceTest {
         book.setUser(user);
         book.setStatus(BookStatus.BORROWED);
 
-        doReturn(user).when(usersRepository).findById(userId);
+        doReturn(Optional.of(user)).when(usersRepository).findById(userId);
 
-        doReturn(book).when(booksRepository).findById(anyLong());
+        doReturn(Optional.of(book)).when(booksRepository).findById(bookId);
         doReturn(book).when(booksRepository).save(any(Books.class));
 
         String result = userService.returnBookById(bookId, userId);
@@ -334,10 +335,13 @@ public class UserServiceTest {
         assertEquals(BookStatus.AVAILABLE, book.getStatus());
 
         verify(booksRepository, times(1)).save(book);
+        verify(booksRepository, times(1)).findById(bookId);
+        verify(usersRepository, times(1)).findById(userId);
     }
 
     @Test
     void returnBookById_AlreadyReturned() {
+
         long userId = 1L;
         long bookId = 10L;
 
@@ -351,10 +355,11 @@ public class UserServiceTest {
         book.setUser(null);
         book.setStatus(BookStatus.AVAILABLE);
 
-        doReturn(book).when(booksRepository).findById(anyLong());
+        doReturn(Optional.of(book)).when(booksRepository).findById(bookId);
+        doReturn(Optional.of(user)).when(usersRepository).findById(userId);
 
         Exception exception = assertThrows(RuntimeException.class,
-                () -> userService.returnBookById(userId, bookId));
+                () -> userService.returnBookById(bookId, userId));
         assertEquals("Book is not borrowed!", exception.getMessage());
 
         verify(booksRepository, never()).save(any(Books.class));
