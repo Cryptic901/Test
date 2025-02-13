@@ -74,10 +74,10 @@ public class UserService {
 
     @Transactional
     public void deleteUserById(long userId) {
-        UserDTO user = getUserById(userId);
-        if (user == null) {
-            return;
+        if(!usersRepository.existsById(userId)) {
+            throw new RuntimeException("User not found with id: " + userId);
         }
+        UserDTO user = getUserById(userId);
         List<Long> borrowedBooks = user.getBorrowedBooks();
         if (borrowedBooks != null && !borrowedBooks.isEmpty()) {
             for (Long bookId : borrowedBooks) {
