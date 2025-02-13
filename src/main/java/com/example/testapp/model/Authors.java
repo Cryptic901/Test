@@ -16,8 +16,8 @@ public class Authors {
 
     private String name;
 
-    @OneToMany(mappedBy = "author" , cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Books> bookList;
+    @ElementCollection
+    private List<Long> bookList;
 
     public Long getId() {
         return id;
@@ -35,15 +35,15 @@ public class Authors {
         this.name = name;
     }
 
-    public List<Books> getBookList() {
+    public List<Long> getBookList() {
         return bookList;
     }
 
-    public void setBookList(List<Books> bookList) {
+    public void setBookList(List<Long> bookList) {
         this.bookList = bookList;
     }
 
-    public Authors(Long id, String name, List<Books> bookList) {
+    public Authors(Long id, String name, List<Long> bookList) {
         this.id = id;
         this.name = name;
         this.bookList = bookList;

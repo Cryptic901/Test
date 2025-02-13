@@ -94,7 +94,7 @@ class BookControllerTest {
         when(bookService.getBookById(1L)).thenReturn(bookDTO);
 
         //Assert
-        mockMvc.perform(get("/api/v1/books/get/1"))
+        mockMvc.perform(get("/api/v1/books/get/id/1"))
                 .andExpect(status().isOk());
     }
 
@@ -110,6 +110,22 @@ class BookControllerTest {
 
         //Assert
         mockMvc.perform(get("/api/v1/books/getAll"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    void getBookByIsbnTest() throws Exception {
+
+        //Arrange
+        BookDTO bookDTO = new BookDTO();
+        String isbn = "123";
+
+        //Act
+        when(bookService.getBookByIsbn(isbn)).thenReturn(bookDTO);
+
+        //Assert
+        mockMvc.perform(get("/api/v1/books/get/isbn/123"))
                 .andExpect(status().isOk());
     }
 }

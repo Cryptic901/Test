@@ -112,6 +112,7 @@ public class UserService {
         //Изменение статуса книги
         book.setUser(user);
         book.setStatus(BookStatus.BORROWED);
+        book.setAmount(book.getAmount() - 1);
 
         //Сохранение в репозитории
         usersRepository.save(user);
@@ -150,7 +151,7 @@ public class UserService {
         //Изменение статуса книги
         book.setUser(null);
         book.setStatus(BookStatus.AVAILABLE);
-
+        book.setAmount(book.getAmount() + 1);
         //Сохранение в репозитории
         usersRepository.save(user);
         booksRepository.save(book);

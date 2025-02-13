@@ -19,6 +19,18 @@ public class Books {
     @JoinColumn(name = "author_id")
     private Authors author;
 
+    @Column(unique = true, nullable = false)
+    private String isbn;
+
+    @Column(nullable = false)
+    private String publisher;
+
+    @Column(nullable = false)
+    private String publishedDate;
+
+    @Column(nullable = false)
+    private int amount;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private Users user;
@@ -89,14 +101,51 @@ public class Books {
         this.user = user;
     }
 
-    public Books(Long id, String title, Authors author, Genres genre, BookStatus status, String description, Users user) {
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public String getPublishedDate() {
+        return publishedDate;
+    }
+
+    public void setPublishedDate(String publishedDate) {
+        this.publishedDate = publishedDate;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public Books(Long id, String title, Authors author, String isbn, String publisher, String publishedDate,
+                 int amount, Users user, Genres genre, BookStatus status, String description) {
         this.id = id;
         this.title = title;
         this.author = author;
+        this.isbn = isbn;
+        this.publisher = publisher;
+        this.publishedDate = publishedDate;
+        this.amount = amount;
+        this.user = user;
         this.genre = genre;
         this.status = status;
         this.description = description;
-        this.user = user;
     }
 
     public Books() {
@@ -108,10 +157,14 @@ public class Books {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", author=" + author +
+                ", isbn='" + isbn + '\'' +
+                ", publisher='" + publisher + '\'' +
+                ", publishedDate='" + publishedDate + '\'' +
+                ", amount=" + amount +
+                ", user=" + user +
                 ", genre=" + genre +
                 ", status=" + status +
                 ", description='" + description + '\'' +
-                ", user=" + user +
                 '}';
     }
 }

@@ -41,7 +41,7 @@ public class BookController {
     }
 
     //Отправка запроса и получение ответа на получение книги по ID
-    @GetMapping("/get/{id}")
+    @GetMapping("/get/id/{id}")
     public ResponseEntity<BookDTO> getBookById(@PathVariable long id) {
         return ResponseEntity.ok(bookService.getBookById(id));
     }
@@ -52,4 +52,9 @@ public class BookController {
         return ResponseEntity.ok(bookService.getAllBooks());
     }
 
+    //Отправка запроса и получение ответа на поиск по isbn
+    @GetMapping("/get/isbn/{isbn}")
+    public ResponseEntity<BookDTO> getBookByIsbn(@PathVariable String isbn) {
+        return ResponseEntity.ok(bookService.getBookByIsbn(isbn));
+    }
 }

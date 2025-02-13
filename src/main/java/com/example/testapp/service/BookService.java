@@ -36,6 +36,10 @@ public class BookService {
         book.setTitle(bookDTO.getTitle());
         book.setDescription(bookDTO.getDescription());
         book.setStatus(BookStatus.valueOf(bookDTO.getStatus()));
+        book.setPublisher(bookDTO.getPublisher());
+        book.setPublishedDate(bookDTO.getPublishedDate());
+        book.setIsbn(bookDTO.getIsbn());
+        book.setAmount(bookDTO.getAmount());
 
         if (bookDTO.getAuthorId() != null) {
             book.setAuthor(authorsRepository.findById(bookDTO.getAuthorId())
@@ -72,6 +76,11 @@ public class BookService {
     public BookDTO getBookById(long id) {
         return BookDTO.fromEntity(booksRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Book not found with id: " + id)));
+    }
+
+    public BookDTO getBookByIsbn(String isbn) {
+        return BookDTO.fromEntity(booksRepository.findByIsbn(isbn)
+                .orElseThrow(() -> new RuntimeException("Book not found with isbn: " + isbn)));
     }
 
     //Метод для обновления книги по ID

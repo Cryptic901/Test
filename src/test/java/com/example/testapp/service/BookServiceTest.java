@@ -141,4 +141,32 @@ public class BookServiceTest {
 
         verify(booksRepository, times(1)).findAll();
     }
+
+    @Test
+    void getBookByIsbn_Success() {
+
+        String isbn = "123";
+
+        Books book = new Books();
+        book.setIsbn(isbn);
+
+        when(booksRepository.findByIsbn(isbn)).thenReturn(Optional.of(book));
+
+        bookService.getBookByIsbn(isbn);
+
+        verify(booksRepository, times(1)).findByIsbn(isbn);
+    }
+
+    @Test
+    void getBookByIsbn_NotFound() {
+
+        String isbn = "123";
+
+        when(booksRepository.findByIsbn(isbn)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(RuntimeException.class, () -> bookService.getBookByIsbn(isbn));
+        assertEquals("Book not found with isbn: " + isbn, exception.getMessage());
+
+        verify(booksRepository, times(1)).findByIsbn(isbn);
+    }
 }

@@ -12,6 +12,10 @@ public class BookDTO implements Serializable {
     private String title;
     private String status;
     private String description;
+    private String isbn;
+    private String publisher;
+    private String publishedDate;
+    private int amount;
 
     private String genre; //Название жанра
     @JsonProperty(value = "genre_id", access = JsonProperty.Access.WRITE_ONLY)
@@ -25,19 +29,23 @@ public class BookDTO implements Serializable {
 
 
     public static BookDTO fromEntity(Books book) {
+        if (book == null) return null;
         BookDTO dto = new BookDTO();
         dto.setId(book.getId());
         dto.setTitle(book.getTitle());
         dto.setStatus(book.getStatus() != null ? book.getStatus().name() : "UNKNOWN");
         dto.setDescription(book.getDescription());
+        dto.setIsbn(book.getIsbn());
+        dto.setPublisher(book.getPublisher());
+        dto.setPublishedDate(book.getPublishedDate());
+        dto.setAmount(book.getAmount());
+        dto.setAuthor(book.getAuthor() != null ? book.getAuthor().getName() : "Автор не указан");
+        dto.setGenre(book.getGenre() != null ? book.getGenre().getName() : "Жанр не указан");
+        dto.setUser(book.getUser() != null ? book.getUser().getUsername() : "Книга свободна");
 
         dto.setGenreId(book.getGenre() != null ? book.getGenre().getId() : null);
         dto.setUserId(book.getUser() != null ? book.getUser().getId() : null);
         dto.setAuthorId(book.getAuthor() != null ? book.getAuthor().getId() : null);
-
-        dto.setAuthor(book.getAuthor() != null ? book.getAuthor().getName() : "Автор не указан");
-        dto.setGenre(book.getGenre() != null ? book.getGenre().getName() : "Жанр не указан");
-        dto.setUser(book.getUser() != null ? book.getUser().getUsername() : "Книга свободна");
 
         return dto;
     }
@@ -45,14 +53,23 @@ public class BookDTO implements Serializable {
     public BookDTO() {
     }
 
-    public BookDTO(Books book) {
-        this.id = book.getId();
-        this.title = book.getTitle();
-        this.status = String.valueOf(book.getStatus());
-        this.description = book.getDescription();
-        this.genre = String.valueOf(book.getGenre());
-        this.author = String.valueOf(book.getAuthor());
-        this.user = book.getUser().getUsername();
+    public BookDTO(Long id, String title, String status, String description, String isbn,
+                   String publisher, String publishedDate, int amount, String genre, Long genreId, String author, Long authorId,
+                   String user, Long userId) {
+        this.id = id;
+        this.title = title;
+        this.status = status;
+        this.description = description;
+        this.isbn = isbn;
+        this.publisher = publisher;
+        this.publishedDate = publishedDate;
+        this.amount = amount;
+        this.genre = genre;
+        this.genreId = genreId;
+        this.author = author;
+        this.authorId = authorId;
+        this.user = user;
+        this.userId = userId;
     }
 
     public Long getId() {
@@ -135,6 +152,38 @@ public class BookDTO implements Serializable {
         this.userId = userId;
     }
 
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public String getPublishedDate() {
+        return publishedDate;
+    }
+
+    public void setPublishedDate(String publishedDate) {
+        this.publishedDate = publishedDate;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
     @Override
     public String toString() {
         return "BookDTO{" +
@@ -142,6 +191,10 @@ public class BookDTO implements Serializable {
                 ", title='" + title + '\'' +
                 ", status='" + status + '\'' +
                 ", description='" + description + '\'' +
+                ", isbn='" + isbn + '\'' +
+                ", publisher='" + publisher + '\'' +
+                ", publishedDate='" + publishedDate + '\'' +
+                ", amount=" + amount +
                 ", genre='" + genre + '\'' +
                 ", genreId=" + genreId +
                 ", author='" + author + '\'' +
