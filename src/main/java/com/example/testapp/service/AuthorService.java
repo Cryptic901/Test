@@ -1,8 +1,9 @@
 package com.example.testapp.service;
 
 import com.example.testapp.DTO.AuthorDTO;
-import com.example.testapp.DTO.BookDTO;
+import com.example.testapp.exceptions.EntityNotFoundException;
 import com.example.testapp.model.Authors;
+import com.example.testapp.model.Books;
 import com.example.testapp.repository.AuthorsRepository;
 import com.example.testapp.repository.BooksRepository;
 import com.example.testapp.repository.GenresRepository;
@@ -41,7 +42,7 @@ public class AuthorService {
 
     public AuthorDTO getAuthorById(long id) {
        return AuthorDTO.fromEntity(authorsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Author not found with id: " + id)));
+                .orElseThrow(() -> new EntityNotFoundException("Author not found with id: " + id)));
     }
 
     public List<AuthorDTO> getAllAuthors() {
@@ -53,22 +54,25 @@ public class AuthorService {
 
     public AuthorDTO updateAuthorById(long id, AuthorDTO authorDTO) {
        Authors author = authorsRepository.findById(id)
-               .orElseThrow(() -> new RuntimeException("Author not found with id: " + id));
+               .orElseThrow(() -> new EntityNotFoundException("Author not found with id: " + id));
         setAuthorsParams(author, authorDTO);
        return AuthorDTO.fromEntity(authorsRepository.save(author));
     }
 
     public void deleteAuthorById(long authorId) {
         if (!authorsRepository.existsById(authorId)) {
-            throw new RuntimeException("Author not found with id: " + authorId);
+            throw new EntityNotFoundException("Author not found with id: " + authorId);
         }
         authorsRepository.deleteById(authorId);
     }
 
-    public List<BookDTO> getAllAuthorsBooks(long authorId) {
+    public List<Long> getAllAuthorsBooks(long authorId) {
+        if(!authorsRepository.existsById(authorId)) {
+            throw new EntityNotFoundException("Author not found with id: " + authorId);
+        }
         return booksRepository.findByAuthorId(authorId)
                 .stream()
-                .map(BookDTO::fromEntity)
+                .map(Books::getId)
                 .toList();
     }
 }

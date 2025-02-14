@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class BookServiceTest {
+class BookServiceTest {
 
     @Mock
     private BooksRepository booksRepository;
@@ -27,7 +27,7 @@ public class BookServiceTest {
 
 
     @Test
-    void addBook() {
+    void addBook_Success() {
 
         Books books = new Books();
         books.setTitle("Book 1");
@@ -98,7 +98,7 @@ public class BookServiceTest {
     }
 
     @Test
-    void updateBookByIdTest() {
+    void updateBookById_Success() {
         long id = 1L;
 
         Books existingBook = new Books();
@@ -119,7 +119,7 @@ public class BookServiceTest {
     }
 
     @Test
-    void getAllBooksTest() {
+    void getAllBooks_Success() {
 
         Books book1 = new Books();
         book1.setId(1L);

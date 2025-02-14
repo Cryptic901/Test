@@ -151,6 +151,10 @@ public class Books {
     public Books() {
     }
 
+    public Books(long id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return "Books{" +

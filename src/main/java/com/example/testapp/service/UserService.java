@@ -3,6 +3,7 @@ package com.example.testapp.service;
 import com.example.testapp.DTO.UserDTO;
 import com.example.testapp.enums.BookStatus;
 import com.example.testapp.enums.UserRole;
+import com.example.testapp.exceptions.EntityNotFoundException;
 import com.example.testapp.model.Books;
 import com.example.testapp.model.Users;
 import com.example.testapp.repository.BooksRepository;
@@ -57,17 +58,17 @@ public class UserService {
 
     public UserDTO getUserByUsername(String username) {
         return UserDTO.fromEntity(usersRepository.findUsersByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found with username: " + username)));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username)));
     }
 
     public UserDTO getUserById(long id) {
         return UserDTO.fromEntity(usersRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id)));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id)));
     }
 
     public UserDTO updateUserById(long id, UserDTO userDTO) {
         Users user = usersRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
         setUserParams(user, userDTO);
         return UserDTO.fromEntity(usersRepository.save(user));
     }
@@ -75,7 +76,7 @@ public class UserService {
     @Transactional
     public void deleteUserById(long userId) {
         if(!usersRepository.existsById(userId)) {
-            throw new RuntimeException("User not found with id: " + userId);
+            throw new EntityNotFoundException("User not found with id: " + userId);
         }
         UserDTO user = getUserById(userId);
         List<Long> borrowedBooks = user.getBorrowedBooks();
@@ -126,7 +127,7 @@ public class UserService {
     public String returnBookById(long bookId, long userId) {
 
         Books book = booksRepository.findById(bookId)
-                .orElseThrow(() -> new RuntimeException("Book not found with id: " + bookId));
+                .orElseThrow(() -> new EntityNotFoundException("Book not found with id: " + bookId));
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found or not borrow a book with id: " + userId));
 

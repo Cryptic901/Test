@@ -19,6 +19,10 @@ public class Authors {
     @ElementCollection
     private List<Long> bookList;
 
+    public Authors(long authorId) {
+        this.id = authorId;
+    }
+
     public Long getId() {
         return id;
     }
