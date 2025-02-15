@@ -38,11 +38,14 @@ class BookControllerTest {
     @WithMockUser
     void deleteBookByIdTest() throws Exception {
 
+        //Arrange
+        long id = 1L;
+
         //Act
         doNothing().when(bookService).deleteBookById(1L);
 
         //Assert
-        mockMvc.perform(delete("/api/v1/books/delete/1")
+        mockMvc.perform(delete("/api/v1/books/delete/{id}", id)
                         .with(csrf()))
                         .andExpect(status().isOk());
     }
@@ -70,13 +73,14 @@ class BookControllerTest {
     void updateBookByIdTest() throws Exception {
 
         //Arrange
+        long id = 1L;
         BookDTO bookDTO = new BookDTO();
 
         //Act
         when(bookService.updateBookById(eq(1L), any(BookDTO.class))).thenReturn(bookDTO);
 
         //Assert
-        mockMvc.perform(patch("/api/v1/books/update/1")
+        mockMvc.perform(patch("/api/v1/books/update/{id}", id)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
@@ -88,13 +92,14 @@ class BookControllerTest {
     void getBookByIdTest() throws Exception {
 
         //Arrange
+        long id = 1L;
         BookDTO bookDTO = new BookDTO();
 
         //Act
         when(bookService.getBookById(1L)).thenReturn(bookDTO);
 
         //Assert
-        mockMvc.perform(get("/api/v1/books/get/id/1"))
+        mockMvc.perform(get("/api/v1/books/get/id/{id}", id))
                 .andExpect(status().isOk());
     }
 
@@ -125,7 +130,7 @@ class BookControllerTest {
         when(bookService.getBookByIsbn(isbn)).thenReturn(bookDTO);
 
         //Assert
-        mockMvc.perform(get("/api/v1/books/get/isbn/123"))
+        mockMvc.perform(get("/api/v1/books/get/isbn/{isbn}", isbn))
                 .andExpect(status().isOk());
     }
 }

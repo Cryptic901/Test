@@ -1,6 +1,7 @@
 package com.example.testapp.controller;
 
 import com.example.testapp.DTO.BookDTO;
+import com.example.testapp.DTO.BookShortDTO;
 import com.example.testapp.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +52,9 @@ public class BookController {
     public ResponseEntity<List<BookDTO>> getAllBooks() {
         return ResponseEntity.ok(bookService.getAllBooks());
     }
+
+    @GetMapping("/getAll/short")
+    public ResponseEntity<List<BookShortDTO>> getAllBooksShort() { return ResponseEntity.ok(bookService.getAllBooksShort());}
 
     //Отправка запроса и получение ответа на поиск по isbn
     @GetMapping("/get/isbn/{isbn}")

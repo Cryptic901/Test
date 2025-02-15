@@ -155,6 +155,11 @@ public class Books {
         this.id = id;
     }
 
+    public Books(long id, String title) {
+        this.id = id;
+        this.title = title;
+    }
+
     @Override
     public String toString() {
         return "Books{" +

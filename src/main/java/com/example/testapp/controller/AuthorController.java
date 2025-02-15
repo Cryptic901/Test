@@ -1,6 +1,7 @@
 package com.example.testapp.controller;
 
 import com.example.testapp.DTO.AuthorDTO;
+import com.example.testapp.DTO.BookShortDTO;
 import com.example.testapp.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +48,7 @@ public class AuthorController {
     }
 
     @GetMapping("/getAllBooks/{authorId}")
-    public ResponseEntity<List<Long>> getAllAuthorsBooks(@PathVariable long authorId) {
+    public ResponseEntity<List<BookShortDTO>> getAllAuthorsBooks(@PathVariable long authorId) {
         return ResponseEntity.ok(authorService.getAllAuthorsBooks(authorId));
     }
 }

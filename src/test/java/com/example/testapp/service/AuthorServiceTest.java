@@ -1,6 +1,7 @@
 package com.example.testapp.service;
 
 import com.example.testapp.DTO.AuthorDTO;
+import com.example.testapp.DTO.BookShortDTO;
 import com.example.testapp.exceptions.EntityNotFoundException;
 import com.example.testapp.model.Authors;
 import com.example.testapp.model.Books;
@@ -165,19 +166,24 @@ class AuthorServiceTest {
     void getAllAuthorsBooks_Success() {
         long authorId = 1L;
 
+        List<Books> booksList = List.of(
+                new Books(1L, "Book Title 1"),
+                new Books(2L, "Book Title 2"),
+                new Books(3L, "Book Title 3")
+        );
+
+        List<BookShortDTO> expectedDtoList = List.of(
+                new BookShortDTO(1L, "Book Title 1"),
+                new BookShortDTO(2L, "Book Title 2"),
+                new BookShortDTO(3L, "Book Title 3")
+        );
+
         when(authorsRepository.existsById(authorId)).thenReturn(true);
+        when(booksRepository.findByAuthorId(authorId)).thenReturn(booksList);
 
-        List<Books> books = List.of(
-                new Books(1L),
-                new Books(2L),
-                new Books(3L));
-        List<Long> bookIds = List.of(1L, 2L, 3L);
-
-        when(booksRepository.findByAuthorId(authorId)).thenReturn(books);
-
-        List<Long> bookDTOS = authorService.getAllAuthorsBooks(authorId);
-        assertNotNull(bookDTOS);
-        assertEquals(bookIds, bookDTOS);
+        List<BookShortDTO> result = authorService.getAllAuthorsBooks(authorId);
+        assertNotNull(result);
+        assertEquals(expectedDtoList, result);
 
         verify(authorsRepository, times(1)).existsById(authorId);
         verify(booksRepository, times(1)).findByAuthorId(authorId);

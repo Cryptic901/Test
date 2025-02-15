@@ -4,6 +4,7 @@ import com.example.testapp.model.Books;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /* Объект для удобной передачи данных о книгах */
 public class BookDTO implements Serializable {
@@ -53,23 +54,9 @@ public class BookDTO implements Serializable {
     public BookDTO() {
     }
 
-    public BookDTO(Long id, String title, String status, String description, String isbn,
-                   String publisher, String publishedDate, int amount, String genre, Long genreId, String author, Long authorId,
-                   String user, Long userId) {
+    public BookDTO(long id, String title) {
         this.id = id;
         this.title = title;
-        this.status = status;
-        this.description = description;
-        this.isbn = isbn;
-        this.publisher = publisher;
-        this.publishedDate = publishedDate;
-        this.amount = amount;
-        this.genre = genre;
-        this.genreId = genreId;
-        this.author = author;
-        this.authorId = authorId;
-        this.user = user;
-        this.userId = userId;
     }
 
     public Long getId() {
@@ -202,5 +189,17 @@ public class BookDTO implements Serializable {
                 ", user='" + user + '\'' +
                 ", userId=" + userId +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        BookDTO dto = (BookDTO) o;
+        return amount == dto.amount && Objects.equals(id, dto.id) && Objects.equals(title, dto.title) && Objects.equals(status, dto.status) && Objects.equals(description, dto.description) && Objects.equals(isbn, dto.isbn) && Objects.equals(publisher, dto.publisher) && Objects.equals(publishedDate, dto.publishedDate) && Objects.equals(genre, dto.genre) && Objects.equals(genreId, dto.genreId) && Objects.equals(author, dto.author) && Objects.equals(authorId, dto.authorId) && Objects.equals(user, dto.user) && Objects.equals(userId, dto.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, status, description, isbn, publisher, publishedDate, amount, genre, genreId, author, authorId, user, userId);
     }
 }

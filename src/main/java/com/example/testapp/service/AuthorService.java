@@ -1,9 +1,9 @@
 package com.example.testapp.service;
 
 import com.example.testapp.DTO.AuthorDTO;
+import com.example.testapp.DTO.BookShortDTO;
 import com.example.testapp.exceptions.EntityNotFoundException;
 import com.example.testapp.model.Authors;
-import com.example.testapp.model.Books;
 import com.example.testapp.repository.AuthorsRepository;
 import com.example.testapp.repository.BooksRepository;
 import com.example.testapp.repository.GenresRepository;
@@ -66,13 +66,13 @@ public class AuthorService {
         authorsRepository.deleteById(authorId);
     }
 
-    public List<Long> getAllAuthorsBooks(long authorId) {
+    public List<BookShortDTO> getAllAuthorsBooks(long authorId) {
         if(!authorsRepository.existsById(authorId)) {
             throw new EntityNotFoundException("Author not found with id: " + authorId);
         }
         return booksRepository.findByAuthorId(authorId)
                 .stream()
-                .map(Books::getId)
+                .map(BookShortDTO::fromEntity)
                 .toList();
     }
 }

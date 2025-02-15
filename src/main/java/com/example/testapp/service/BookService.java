@@ -1,6 +1,7 @@
 package com.example.testapp.service;
 
 import com.example.testapp.DTO.BookDTO;
+import com.example.testapp.DTO.BookShortDTO;
 import com.example.testapp.enums.BookStatus;
 import com.example.testapp.exceptions.EntityNotFoundException;
 import com.example.testapp.model.Books;
@@ -97,6 +98,14 @@ public class BookService {
         List<Books> books = booksRepository.findAll();
         return books.stream()
                 .map(BookDTO::fromEntity)
+                .toList();
+    }
+
+    //Метод для получения списка книг с более маленьким количеством параметров
+    public List<BookShortDTO> getAllBooksShort() {
+        List<Books> books = booksRepository.findAll();
+        return books.stream()
+                .map(BookShortDTO::fromEntity)
                 .toList();
     }
 }

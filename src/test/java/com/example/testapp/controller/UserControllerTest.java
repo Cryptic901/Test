@@ -78,10 +78,10 @@ class UserControllerTest {
         userDTO.setUsername("Cryptic");
 
         //Act
-        when(userService.getUserByUsername("Cryptic")).thenReturn(userDTO);
+        when(userService.getUserByUsername(userDTO.getUsername())).thenReturn(userDTO);
 
         //Assert
-        mockMvc.perform(get("/api/v1/users/get/username/Cryptic")
+        mockMvc.perform(get("/api/v1/users/get/username/{username}", userDTO.getUsername())
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -93,14 +93,15 @@ class UserControllerTest {
     void getUserByIdTest() throws Exception {
 
         //Arrange
+        long id = 1L;
         UserDTO userDTO = new UserDTO();
-        userDTO.setId(1L);
+        userDTO.setId(id);
 
         //Act
         when(userService.getUserById(1L)).thenReturn(userDTO);
 
         //Assert
-        mockMvc.perform(get("/api/v1/users/get/id/1")
+        mockMvc.perform(get("/api/v1/users/get/id/{id}", id)
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -112,13 +113,14 @@ class UserControllerTest {
     void updateUserByIdTest() throws Exception {
 
         //Arrange
+        long id = 1L;
         UserDTO userDTO = new UserDTO();
 
         //Act
-        when(userService.updateUserById(1L, userDTO)).thenReturn(userDTO);
+        when(userService.updateUserById(eq(1L), userDTO)).thenReturn(userDTO);
 
         //Assert
-        mockMvc.perform(patch("/api/v1/users/update/1")
+        mockMvc.perform(patch("/api/v1/users/update/{id}", id)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
@@ -129,11 +131,14 @@ class UserControllerTest {
     @WithMockUser
     void deleteUserByIdTest() throws Exception {
 
+        //Arrange
+        long id = 1L;
+
         //Act
         doNothing().when(userService).deleteUserById(eq(1L));
 
         //Assert
-        mockMvc.perform(delete("/api/v1/users/delete/1")
+        mockMvc.perform(delete("/api/v1/users/delete/{id}", id)
                         .with(csrf()))
                 .andExpect(status().isOk());
     }
@@ -151,7 +156,7 @@ class UserControllerTest {
         when(userService.borrowBookById(bookId, userId)).thenReturn(successMessage);
 
         //Assert
-        mockMvc.perform(post("/api/v1/users/2/borrow")
+        mockMvc.perform(post("/api/v1/users/{bookId}/borrow", bookId)
                         .with(csrf())
                         .param("userId", String.valueOf(userId))
                         .contentType(MediaType.TEXT_PLAIN))
@@ -172,7 +177,7 @@ class UserControllerTest {
         when(userService.returnBookById(bookId, userId)).thenReturn(successMessage);
 
         //Assert
-        mockMvc.perform(post("/api/v1/users/2/return")
+        mockMvc.perform(post("/api/v1/users/{bookId}/return", bookId)
         .with(csrf())
                 .param("userId", String.valueOf(userId))
                 .contentType(MediaType.TEXT_PLAIN))
