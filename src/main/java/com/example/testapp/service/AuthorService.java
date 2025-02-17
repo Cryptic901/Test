@@ -4,9 +4,11 @@ import com.example.testapp.DTO.AuthorDTO;
 import com.example.testapp.DTO.BookShortDTO;
 import com.example.testapp.exceptions.EntityNotFoundException;
 import com.example.testapp.model.Authors;
+import com.example.testapp.model.Books;
 import com.example.testapp.repository.AuthorsRepository;
 import com.example.testapp.repository.BooksRepository;
 import com.example.testapp.repository.GenresRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +43,7 @@ public class AuthorService {
     }
 
     public AuthorDTO getAuthorById(long id) {
-       return AuthorDTO.fromEntity(authorsRepository.findById(id)
+        return AuthorDTO.fromEntity(authorsRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Author not found with id: " + id)));
     }
 
@@ -53,21 +55,37 @@ public class AuthorService {
     }
 
     public AuthorDTO updateAuthorById(long id, AuthorDTO authorDTO) {
-       Authors author = authorsRepository.findById(id)
-               .orElseThrow(() -> new EntityNotFoundException("Author not found with id: " + id));
+        Authors author = authorsRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Author not found with id: " + id));
         setAuthorsParams(author, authorDTO);
-       return AuthorDTO.fromEntity(authorsRepository.save(author));
+        return AuthorDTO.fromEntity(authorsRepository.save(author));
     }
 
+    @Transactional
     public void deleteAuthorById(long authorId) {
+
         if (!authorsRepository.existsById(authorId)) {
             throw new EntityNotFoundException("Author not found with id: " + authorId);
+        }
+
+        Authors author = authorsRepository.findById(authorId)
+                .orElseThrow(() -> new EntityNotFoundException("Author not found with id: " + authorId));
+
+        if (!author.getBookList().isEmpty()) {
+            for (Long id : author.getBookList()) {
+                Books book = booksRepository.findById(id)
+                        .orElseThrow(() -> new EntityNotFoundException("Book not found with id: " + id));
+
+                book.setAuthor(null);
+                booksRepository.save(book);
+                booksRepository.deleteById(id);
+            }
         }
         authorsRepository.deleteById(authorId);
     }
 
     public List<BookShortDTO> getAllAuthorsBooks(long authorId) {
-        if(!authorsRepository.existsById(authorId)) {
+        if (!authorsRepository.existsById(authorId)) {
             throw new EntityNotFoundException("Author not found with id: " + authorId);
         }
         return booksRepository.findByAuthorId(authorId)

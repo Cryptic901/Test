@@ -4,6 +4,7 @@ import com.example.testapp.DTO.BookDTO;
 import com.example.testapp.DTO.BookShortDTO;
 import com.example.testapp.enums.BookStatus;
 import com.example.testapp.exceptions.EntityNotFoundException;
+import com.example.testapp.model.Authors;
 import com.example.testapp.model.Books;
 import com.example.testapp.repository.AuthorsRepository;
 import com.example.testapp.repository.BooksRepository;
@@ -11,7 +12,9 @@ import com.example.testapp.repository.GenresRepository;
 import com.example.testapp.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -60,10 +63,17 @@ public class BookService {
     }
 
     //Метод для удаления книги
+    @Transactional
     public void deleteBookById(long id) {
         if (!booksRepository.existsById(id)) {
             throw new EntityNotFoundException("Book not found with id " + id);
         }
+        Books book = booksRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Book not found with id " + id));
+        Authors authors = authorsRepository.findById(book.getAuthor().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Author not found with id " + book.getAuthor().getId()));
+        authors.getBookList().remove(book.getId());
+        authorsRepository.save(authors);
         booksRepository.deleteById(id);
     }
 
@@ -71,7 +81,20 @@ public class BookService {
     public BookDTO addBook(BookDTO bookDTO) {
         Books bookToAdd = new Books();
         setBookParams(bookToAdd, bookDTO);
-        return BookDTO.fromEntity(booksRepository.save(bookToAdd));
+        Books savedBook = booksRepository.save(bookToAdd);
+        Authors author = authorsRepository.findById(bookDTO.getAuthorId())
+                .orElseThrow(() -> new EntityNotFoundException("Author not found with id " + bookDTO.getAuthorId()));
+
+        List<Long> authorBookList = author.getBookList();
+        if(authorBookList == null) {
+            authorBookList = new ArrayList<>();
+        }
+
+        authorBookList.add(savedBook.getId());
+        author.setBookList(authorBookList);
+
+        authorsRepository.save(author);
+        return BookDTO.fromEntity(savedBook);
     }
 
     //Метод для получения книги по ID

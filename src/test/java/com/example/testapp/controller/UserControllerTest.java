@@ -117,7 +117,7 @@ class UserControllerTest {
         UserDTO userDTO = new UserDTO();
 
         //Act
-        when(userService.updateUserById(eq(1L), userDTO)).thenReturn(userDTO);
+        when(userService.updateUserById(eq(1L), any(UserDTO.class))).thenReturn(userDTO);
 
         //Assert
         mockMvc.perform(patch("/api/v1/users/update/{id}", id)

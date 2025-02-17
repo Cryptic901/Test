@@ -165,6 +165,7 @@ public class UserServiceTest {
         UserService spyUserService = spy(userService);
         doReturn(userDTO).when(spyUserService).getUserById(userId);
         doNothing().when(usersRepository).deleteById(userId);
+        when(usersRepository.existsById(userId)).thenReturn(true);
 
         // Act
         spyUserService.deleteUserById(userId);
@@ -236,6 +237,7 @@ public class UserServiceTest {
         // Мокаем findById для книг
         when(booksRepository.findById(bookId1)).thenReturn(Optional.of(book1));
         when(booksRepository.findById(bookId2)).thenReturn(Optional.of(book2));
+        when(usersRepository.existsById(userId)).thenReturn(true);
         doNothing().when(usersRepository).deleteById(userId);
 
         // Мокаем сохранение книг

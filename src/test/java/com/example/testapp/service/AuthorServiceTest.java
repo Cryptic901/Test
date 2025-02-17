@@ -140,16 +140,23 @@ class AuthorServiceTest {
     @Test
     void deleteAuthorById_Success() {
 
-        long id = 1L;
+        long bookId = 1L;
+        long authorId = 2L;
         Authors authors = new Authors();
-        authors.setId(id);
+        authors.setId(bookId);
+        authors.setBookList(List.of(1L, 2L, 3L));
+        Books book = new Books();
+        book.setId(2L);
 
-        doNothing().when(authorsRepository).deleteById(id);
-        when(authorsRepository.existsById(id)).thenReturn(true);
+        doNothing().when(authorsRepository).deleteById(bookId);
+        doNothing().when(booksRepository).delete(book);
+        when(authorsRepository.existsById(bookId)).thenReturn(true);
+        when(booksRepository.existsById(authorId)).thenReturn(true);
+        when(authorsRepository.findById(bookId)).thenReturn(Optional.of(authors));
 
-        authorService.deleteAuthorById(id);
+        authorService.deleteAuthorById(bookId);
 
-        verify(authorsRepository, times(1)).deleteById(id);
+        verify(authorsRepository, times(1)).deleteById(bookId);
 
     }
 
