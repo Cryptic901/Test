@@ -2,7 +2,9 @@ package com.example.testapp.service;
 
 import com.example.testapp.DTO.BookDTO;
 import com.example.testapp.enums.BookStatus;
+import com.example.testapp.model.Authors;
 import com.example.testapp.model.Books;
+import com.example.testapp.repository.AuthorsRepository;
 import com.example.testapp.repository.BooksRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +25,9 @@ class BookServiceTest {
     @Mock
     private BooksRepository booksRepository;
 
+    @Mock
+    private AuthorsRepository authorsRepository;
+
     @InjectMocks
     private BookService bookService;
 
@@ -29,12 +35,21 @@ class BookServiceTest {
     @Test
     void addBook_Success() {
 
+        long authorId = 1L;
+
         Books books = new Books();
         books.setTitle("Book 1");
         books.setDescription("desc");
         books.setStatus(BookStatus.UNKNOWN);
 
+        Authors authors = new Authors();
+        authors.setId(authorId);
+
+        BookDTO bookDTO = new BookDTO();
+        bookDTO.setId(books.getId());
+
         when(booksRepository.save(any(Books.class))).thenReturn(books);
+        when(authorsRepository.findById(bookDTO.getId())).thenReturn(Optional.of(authors));
 
         BookDTO savedBook = bookService.addBook(BookDTO.fromEntity(books));
 
@@ -46,16 +61,23 @@ class BookServiceTest {
 
     @Test
     void deleteBookByIdTest_Success() {
-        long id = 1L;
+        long bookId = 1L;
+        long authorId = 1L;
+        Authors authors = new Authors(authorId);
+        authors.setId(authorId);
+        authors.setBookList(new ArrayList<>(List.of(bookId)));
         Books books = new Books();
-        books.setId(id);
+        books.setId(bookId);
+        books.setAuthor(authors);
 
-        doNothing().when(booksRepository).deleteById(id);
-        when(booksRepository.existsById(id)).thenReturn(true);
+        doNothing().when(booksRepository).deleteById(bookId);
+        when(booksRepository.existsById(bookId)).thenReturn(true);
+        when(booksRepository.findById(bookId)).thenReturn(Optional.of(books));
+        when(authorsRepository.findById(books.getAuthor().getId())).thenReturn(Optional.of(authors));
 
-        bookService.deleteBookById(id);
+        bookService.deleteBookById(bookId);
 
-        verify(booksRepository, times(1)).deleteById(id);
+        verify(booksRepository, times(1)).deleteById(bookId);
     }
 
     @Test

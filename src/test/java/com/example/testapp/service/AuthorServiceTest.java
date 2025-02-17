@@ -133,6 +133,7 @@ class AuthorServiceTest {
 
         Exception exception = assertThrows(EntityNotFoundException.class,
                 () -> authorService.updateAuthorById(id, AuthorDTO.fromEntity(updatedAuthor)));
+
         assertEquals("Author not found with id: " + id, exception.getMessage());
         verify(authorsRepository, times(1)).findById(id);
     }
@@ -141,22 +142,24 @@ class AuthorServiceTest {
     void deleteAuthorById_Success() {
 
         long bookId = 1L;
-        long authorId = 2L;
+        long authorId = 1L;
         Authors authors = new Authors();
-        authors.setId(bookId);
-        authors.setBookList(List.of(1L, 2L, 3L));
+        authors.setId(authorId);
+        authors.setBookList(List.of(1L));
         Books book = new Books();
-        book.setId(2L);
+        book.setId(bookId);
 
         doNothing().when(authorsRepository).deleteById(bookId);
-        doNothing().when(booksRepository).delete(book);
         when(authorsRepository.existsById(bookId)).thenReturn(true);
-        when(booksRepository.existsById(authorId)).thenReturn(true);
         when(authorsRepository.findById(bookId)).thenReturn(Optional.of(authors));
+        when(booksRepository.findById(bookId)).thenReturn(Optional.of(book));
 
         authorService.deleteAuthorById(bookId);
 
         verify(authorsRepository, times(1)).deleteById(bookId);
+        verify(authorsRepository, times(1)).existsById(bookId);
+        verify(authorsRepository, times(1)).findById(bookId);
+        verify(booksRepository, times(1)).findById(bookId);
 
     }
 
