@@ -9,6 +9,7 @@ import java.util.List;
 
 /* Параметры пользователя */
 
+//TODO
 public class UserDetailsImpl implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

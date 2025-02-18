@@ -17,6 +17,7 @@ import java.util.List;
 /* Сервис для обработки данных об авторах */
 
 @Service
+@Transactional
 public class AuthorService {
 
     private final AuthorsRepository authorsRepository;
@@ -61,7 +62,6 @@ public class AuthorService {
         return AuthorDTO.fromEntity(authorsRepository.save(author));
     }
 
-    @Transactional
     public void deleteAuthorById(long authorId) {
 
         if (!authorsRepository.existsById(authorId)) {

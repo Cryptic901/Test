@@ -18,6 +18,7 @@ import java.util.List;
 /* Сервис для обработки пользовательских данных */
 
 @Service
+@Transactional
 public class UserService {
 
     private final BooksRepository booksRepository;
@@ -73,9 +74,8 @@ public class UserService {
         return UserDTO.fromEntity(usersRepository.save(user));
     }
 
-    @Transactional
     public void deleteUserById(long userId) {
-        if(!usersRepository.existsById(userId)) {
+        if (!usersRepository.existsById(userId)) {
             throw new EntityNotFoundException("User not found with id: " + userId);
         }
         UserDTO user = getUserById(userId);
@@ -89,7 +89,6 @@ public class UserService {
     }
 
 
-    @Transactional
     public String borrowBookById(long bookId, long userId) {
         Books book = booksRepository.findById(bookId)
                 .orElseThrow(() -> new RuntimeException("Book not found or already borrowed with id: " + bookId));

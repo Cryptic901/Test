@@ -21,6 +21,7 @@ import java.util.List;
 /* Сервис для обработки данных о книгах */
 
 @Service
+@Transactional
 public class BookService {
 
     private final BooksRepository booksRepository;
@@ -63,7 +64,6 @@ public class BookService {
     }
 
     //Метод для удаления книги
-    @Transactional
     public void deleteBookById(long id) {
         if (!booksRepository.existsById(id)) {
             throw new EntityNotFoundException("Book not found with id " + id);
