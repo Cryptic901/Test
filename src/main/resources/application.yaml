@@ -14,3 +14,10 @@ spring:
     user:
       name: admin
       password: admin
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: "/swagger-ui.html"
+  show-actuator: true

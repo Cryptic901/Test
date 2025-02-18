@@ -67,7 +67,7 @@ public class GenreService {
         genresRepository.deleteById(id);
     }
 
-    public GenreDTO getGenreByName(String name) {
-       return genresRepository.getGenreByName(name);
-    }
+//    public GenreDTO getGenreByName(String name) {
+//       return genresRepository.getGenreByName(name);
+//    }
 }
