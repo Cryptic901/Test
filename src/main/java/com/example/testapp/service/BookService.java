@@ -2,10 +2,10 @@ package com.example.testapp.service;
 
 import com.example.testapp.DTO.BookDTO;
 import com.example.testapp.DTO.BookShortDTO;
-import com.example.testapp.enums.BookStatus;
 import com.example.testapp.exceptions.EntityNotFoundException;
 import com.example.testapp.model.Authors;
 import com.example.testapp.model.Books;
+import com.example.testapp.model.Genres;
 import com.example.testapp.repository.AuthorsRepository;
 import com.example.testapp.repository.BooksRepository;
 import com.example.testapp.repository.GenresRepository;
@@ -41,17 +41,14 @@ public class BookService {
     public void setBookParams(Books book, BookDTO bookDTO) {
         book.setTitle(bookDTO.getTitle());
         book.setDescription(bookDTO.getDescription());
-        book.setStatus(BookStatus.valueOf(bookDTO.getStatus()));
         book.setPublisher(bookDTO.getPublisher());
         book.setPublishedDate(bookDTO.getPublishedDate());
         book.setIsbn(bookDTO.getIsbn());
         book.setAmount(bookDTO.getAmount());
-
         if (bookDTO.getAuthorId() != null) {
             book.setAuthor(authorsRepository.findById(bookDTO.getAuthorId())
                     .orElseThrow(() -> new EntityNotFoundException("Author not found with id " + bookDTO.getAuthorId())));
         }
-
         if (bookDTO.getGenreId() != null) {
             book.setGenre(genresRepository.findById(bookDTO.getGenreId())
                     .orElseThrow(() -> new EntityNotFoundException("Genre not found with id " + bookDTO.getGenreId())));
@@ -82,8 +79,12 @@ public class BookService {
         Books bookToAdd = new Books();
         setBookParams(bookToAdd, bookDTO);
         Books savedBook = booksRepository.save(bookToAdd);
+
         Authors author = authorsRepository.findById(bookDTO.getAuthorId())
                 .orElseThrow(() -> new EntityNotFoundException("Author not found with id " + bookDTO.getAuthorId()));
+
+        Genres genre = genresRepository.findById(bookDTO.getGenreId())
+                .orElseThrow(() -> new EntityNotFoundException("Genre not found with id " + bookDTO.getGenreId()));
 
         List<Long> authorBookList = author.getBookList();
         if(authorBookList == null) {
@@ -93,7 +94,10 @@ public class BookService {
         authorBookList.add(savedBook.getId());
         author.setBookList(authorBookList);
 
+        genre.setBookCount(genre.getBookCount() + 1);
+
         authorsRepository.save(author);
+        genresRepository.save(genre);
         return BookDTO.fromEntity(savedBook);
     }
 
@@ -130,5 +134,9 @@ public class BookService {
         return books.stream()
                 .map(BookShortDTO::fromEntity)
                 .toList();
+    }
+
+    public List<BookDTO> getMostPopularBooks() {
+        return booksRepository.sortByBookPopularityDescending();
     }
 }

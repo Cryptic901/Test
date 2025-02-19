@@ -1,12 +1,13 @@
 package com.example.testapp.service;
 
 import com.example.testapp.DTO.UserDTO;
-import com.example.testapp.enums.BookStatus;
 import com.example.testapp.enums.UserRole;
 import com.example.testapp.exceptions.EntityNotFoundException;
 import com.example.testapp.model.Books;
+import com.example.testapp.model.Genres;
 import com.example.testapp.model.Users;
 import com.example.testapp.repository.BooksRepository;
+import com.example.testapp.repository.GenresRepository;
 import com.example.testapp.repository.UsersRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +24,13 @@ public class UserService {
 
     private final BooksRepository booksRepository;
     private final UsersRepository usersRepository;
+    private final GenresRepository genresRepository;
 
     @Autowired
-    public UserService(BooksRepository booksRepository, UsersRepository usersRepository) {
+    public UserService(BooksRepository booksRepository, UsersRepository usersRepository, GenresRepository genresRepository) {
         this.booksRepository = booksRepository;
         this.usersRepository = usersRepository;
+        this.genresRepository = genresRepository;
     }
 
     public void setUserParams(Users user, UserDTO userDTO) {
@@ -91,32 +94,34 @@ public class UserService {
 
     public String borrowBookById(long bookId, long userId) {
         Books book = booksRepository.findById(bookId)
-                .orElseThrow(() -> new RuntimeException("Book not found or already borrowed with id: " + bookId));
+                .orElseThrow(() -> new RuntimeException("Book not found with id: " + bookId));
 
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found or has reached the maximum of borrowed books with id: " + userId));
 
-        //Обработка если книга уже занята
-        if (book.getStatus() != BookStatus.AVAILABLE) {
-            throw new RuntimeException("Book is already borrowed!");
-        }
-
+        Genres genre = genresRepository.findById(book.getGenre().getId())
+                .orElseThrow(() -> new RuntimeException("Genre not found with id: " + book.getGenre().getId()));
         if (user.getBorrowedBooks() == null) {
             user.setBorrowedBooks(new ArrayList<>());
         }
 
+        if(user.getBorrowedBooks().size() > 5) {
+            throw new RuntimeException("Too many borrowed books");
+        }
         //Получение списка из аттрибутов пользователя и добавление книги в список
         List<Long> booksList = user.getBorrowedBooks();
         booksList.add(book.getId());
 
         //Изменение статуса книги
         book.setUser(user);
-        book.setStatus(BookStatus.BORROWED);
         book.setAmount(book.getAmount() - 1);
+        book.setCountOfBorrowingBook(book.getCountOfBorrowingBook() + 1);
+        genre.setCountOfBorrowingBookWithGenre(genre.getCountOfBorrowingBookWithGenre() + 1);
 
         //Сохранение в репозитории
         usersRepository.save(user);
         booksRepository.save(book);
+        genresRepository.save(genre);
 
         return "Book borrowed successfully!";
     }
@@ -130,27 +135,20 @@ public class UserService {
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found or not borrow a book with id: " + userId));
 
-        //Обработка если книга не занята
-        if (book.getStatus() != BookStatus.BORROWED) {
+        if (!user.getBorrowedBooks().contains(bookId)) {
             throw new RuntimeException("Book is not borrowed!");
         }
-
-        if (!book.getUser().getId().equals(userId)) {
-            throw new RuntimeException("Book borrowed by another user!");
-        }
-
         // Удаляем книгу из списка пользователя, если он её вернул
         if (user.getBorrowedBooks() != null) {
-            user.getBorrowedBooks().remove(book.getId());
+            user.getBorrowedBooks().remove(bookId);
         }
 
         //Получение списка из аттрибутов пользователя и удаление книги из списка
         List<Long> booksList = user.getBorrowedBooks();
-        booksList.remove(book.getId());
+        booksList.remove(bookId);
 
         //Изменение статуса книги
         book.setUser(null);
-        book.setStatus(BookStatus.AVAILABLE);
         book.setAmount(book.getAmount() + 1);
         //Сохранение в репозитории
         usersRepository.save(user);

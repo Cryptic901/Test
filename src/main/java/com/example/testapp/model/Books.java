@@ -1,6 +1,5 @@
 package com.example.testapp.model;
 
-import com.example.testapp.enums.BookStatus;
 import jakarta.persistence.*;
 
 /* Сущность книга */
@@ -39,8 +38,7 @@ public class Books {
     @JoinColumn(name = "genre_id")
     private Genres genre;
 
-    @Enumerated(EnumType.STRING)
-    private BookStatus status;
+    private Long countOfBorrowingBook;
 
     @Column(length = 1000)
     private String description;
@@ -77,13 +75,7 @@ public class Books {
         this.genre = genre;
     }
 
-    public BookStatus getStatus() {
-        return status;
-    }
 
-    public void setStatus(BookStatus status) {
-        this.status = status;
-    }
 
     public String getDescription() {
         return description;
@@ -133,8 +125,19 @@ public class Books {
         this.amount = amount;
     }
 
+    public Long getCountOfBorrowingBook() {
+        if (countOfBorrowingBook == null) {
+            countOfBorrowingBook = 0L;
+        }
+        return countOfBorrowingBook;
+    }
+
+    public void setCountOfBorrowingBook(Long countOfBorrowingBook) {
+        this.countOfBorrowingBook = countOfBorrowingBook;
+    }
+
     public Books(Long id, String title, Authors author, String isbn, String publisher, String publishedDate,
-                 int amount, Users user, Genres genre, BookStatus status, String description) {
+                 int amount, Users user, Genres genre, String description, Long countOfBorrowingBook) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -144,8 +147,8 @@ public class Books {
         this.amount = amount;
         this.user = user;
         this.genre = genre;
-        this.status = status;
         this.description = description;
+        this.countOfBorrowingBook = countOfBorrowingBook;
     }
 
     public Books() {
@@ -172,7 +175,7 @@ public class Books {
                 ", amount=" + amount +
                 ", user=" + user +
                 ", genre=" + genre +
-                ", status=" + status +
+                ", countOfBorrowingBook=" + countOfBorrowingBook +
                 ", description='" + description + '\'' +
                 '}';
     }

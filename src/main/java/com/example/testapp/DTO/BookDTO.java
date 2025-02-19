@@ -34,7 +34,6 @@ public class BookDTO implements Serializable {
         BookDTO dto = new BookDTO();
         dto.setId(book.getId());
         dto.setTitle(book.getTitle());
-        dto.setStatus(book.getStatus() != null ? book.getStatus().name() : "UNKNOWN");
         dto.setDescription(book.getDescription());
         dto.setIsbn(book.getIsbn());
         dto.setPublisher(book.getPublisher());

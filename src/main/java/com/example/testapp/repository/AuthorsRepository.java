@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-/* Репозиторий для получения и передачи информации в базу данных о авторах */
+/* Репозиторий для получения и передачи информации в базу данных об авторах */
 
 @Repository
 public interface AuthorsRepository extends JpaRepository<Authors, Long> {

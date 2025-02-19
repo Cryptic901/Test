@@ -67,7 +67,13 @@ public class GenreService {
         genresRepository.deleteById(id);
     }
 
-//    public GenreDTO getGenreByName(String name) {
-//       return genresRepository.getGenreByName(name);
-//    }
+    public GenreDTO getGenreByName(String name) {
+       Genres genre = genresRepository.getGenreByName(name)
+               .orElseThrow(() -> new EntityNotFoundException("Genre not found with name: " + name));
+       return GenreDTO.fromEntity(genre);
+    }
+
+    public List<GenreDTO> getMostPopularGenres() {
+        return genresRepository.sortByGenrePopularityDescending();
+    }
 }

@@ -71,4 +71,9 @@ public class BookController {
     public ResponseEntity<BookDTO> getBookByIsbn(@PathVariable String isbn) {
         return ResponseEntity.ok(bookService.getBookByIsbn(isbn));
     }
+    @GetMapping("/sort/popularityDesc")
+    @Operation(summary = "Сортировка по убыванию популярности", description = "Сортирует книги по количеству раз сколько их брали")
+    public ResponseEntity<List<BookDTO>> getPopularityDesc() {
+        return ResponseEntity.ok(bookService.getMostPopularBooks());
+    }
 }

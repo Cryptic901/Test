@@ -1,16 +1,18 @@
 package com.example.testapp.service;
 
 import com.example.testapp.DTO.UserDTO;
-import com.example.testapp.enums.BookStatus;
 import com.example.testapp.enums.UserRole;
 import com.example.testapp.model.Books;
+import com.example.testapp.model.Genres;
 import com.example.testapp.model.Users;
 import com.example.testapp.repository.BooksRepository;
+import com.example.testapp.repository.GenresRepository;
 import com.example.testapp.repository.UsersRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
@@ -31,6 +33,10 @@ public class UserServiceTest {
     @Mock
     private BooksRepository booksRepository;
 
+    @Mock
+    private GenresRepository genresRepository;
+
+    @Spy
     @InjectMocks
     private UserService userService;
 
@@ -162,12 +168,12 @@ public class UserServiceTest {
         userDTO.setBorrowedBooks(new ArrayList<>());
 
         // Мокаем только необходимые методы
-        UserService spyUserService = spy(userService);
-        doReturn(userDTO).when(spyUserService).getUserById(userId);
+        doReturn(userDTO).when(userService).getUserById(userId);
         doNothing().when(usersRepository).deleteById(userId);
+        when(usersRepository.existsById(userId)).thenReturn(true);
 
         // Act
-        spyUserService.deleteUserById(userId);
+        userService.deleteUserById(userId);
 
         // Assert
         verify(usersRepository, times(1)).deleteById(userId);
@@ -213,25 +219,23 @@ public class UserServiceTest {
         // Создаем DTO с книгами
         UserDTO userDTO = new UserDTO();
         userDTO.setId(userId);
-        userDTO.setBorrowedBooks(Arrays.asList(bookId1, bookId2));
+        userDTO.setBorrowedBooks(List.of(bookId1, bookId2));
 
         // Создаем книги и устанавливаем им пользователя
         Books book1 = new Books();
         book1.setId(bookId1);
-        book1.setStatus(BookStatus.BORROWED);
         book1.setUser(user);  // Устанавливаем связь с пользователем
 
         Books book2 = new Books();
         book2.setId(bookId2);
-        book2.setStatus(BookStatus.BORROWED);
         book2.setUser(user);  // Устанавливаем связь с пользователем
-        user.setBorrowedBooks(Arrays.asList(book1.getId(), book2.getId()));
+        user.setBorrowedBooks(List.of(bookId1,bookId2));
 
-        UserService spyUserService = spy(userService);
 
         // Мокаем getUserById
-        doReturn(userDTO).when(spyUserService).getUserById(userId);
+        doReturn(userDTO).when(userService).getUserById(userId);
         when(usersRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(usersRepository.existsById(userId)).thenReturn(true);
 
         // Мокаем findById для книг
         when(booksRepository.findById(bookId1)).thenReturn(Optional.of(book1));
@@ -242,7 +246,7 @@ public class UserServiceTest {
         when(booksRepository.save(any(Books.class))).thenReturn(book1);
 
         // Act
-        spyUserService.deleteUserById(userId);
+        userService.deleteUserById(userId);
 
         // Assert
         verify(usersRepository, times(1)).deleteById(userId);
@@ -254,6 +258,9 @@ public class UserServiceTest {
     void borrowBookById_Success() {
         long userId = 1L;
         long bookId = 10L;
+        long genreId = 2L;
+        Genres genre = new Genres();
+        genre.setId(1L);
 
         Users user = new Users();
         user.setId(userId);
@@ -262,49 +269,20 @@ public class UserServiceTest {
         Books book = new Books();
         book.setId(bookId);
         book.setTitle("Book 1");
+        book.setGenre(genre);
         book.setUser(null);
-        book.setStatus(BookStatus.AVAILABLE);
 
         when(booksRepository.findById(bookId)).thenReturn(Optional.of(book));
         when(usersRepository.findById(userId)).thenReturn(Optional.of(user));
         when(booksRepository.save(any(Books.class))).thenReturn(book);
+        when(genresRepository.findById(book.getGenre().getId())).thenReturn(Optional.of(genre));
 
         String result = userService.borrowBookById(bookId, userId);
 
         assertEquals("Book borrowed successfully!", result);
         assertEquals(user, book.getUser());
-        assertEquals(BookStatus.BORROWED, book.getStatus());
 
         verify(booksRepository, times(1)).save(book);
-    }
-
-    @Test
-    void borrowBookById_AlreadyBorrowed() {
-        long userId = 1L;
-        long bookId = 10L;
-
-        Users user1 = new Users();
-        user1.setId(userId);
-        user1.setUsername("username1");
-
-        Users user2 = new Users();
-        user2.setId(2L);
-        user2.setUsername("username2");
-
-        Books book = new Books();
-        book.setId(bookId);
-        book.setTitle("Book 1");
-        book.setUser(user2);
-        book.setStatus(BookStatus.BORROWED);
-
-        when(booksRepository.findById(bookId)).thenReturn(Optional.of(book));
-        when(usersRepository.findById(userId)).thenReturn(Optional.of(user1));
-
-        Exception exception = assertThrows(RuntimeException.class,
-                () -> userService.borrowBookById(bookId, userId));
-        assertEquals("Book is already borrowed!", exception.getMessage());
-
-        verify(booksRepository, never()).save(any(Books.class));
     }
 
     @Test
@@ -313,26 +291,25 @@ public class UserServiceTest {
         long bookId = 10L;
 
         Users user = new Users();
-        user.setId(userId);
-        user.setUsername("username");
-        user.setBorrowedBooks(new ArrayList<>());
-
         Books book = new Books();
+
         book.setId(bookId);
         book.setTitle("Book 1");
         book.setUser(user);
-        book.setStatus(BookStatus.BORROWED);
+
+        user.setId(userId);
+        user.setUsername("username");
+        user.setBorrowedBooks(List.of(bookId));
 
         doReturn(Optional.of(user)).when(usersRepository).findById(userId);
-
         doReturn(Optional.of(book)).when(booksRepository).findById(bookId);
         doReturn(book).when(booksRepository).save(any(Books.class));
+        doReturn(user).when(usersRepository).save(any(Users.class));
 
         String result = userService.returnBookById(bookId, userId);
 
         assertEquals("Book returned successfully!", result);
         assertNull(book.getUser());
-        assertEquals(BookStatus.AVAILABLE, book.getStatus());
 
         verify(booksRepository, times(1)).save(book);
         verify(booksRepository, times(1)).findById(bookId);
@@ -353,7 +330,6 @@ public class UserServiceTest {
         book.setId(bookId);
         book.setTitle("Book 1");
         book.setUser(null);
-        book.setStatus(BookStatus.AVAILABLE);
 
         doReturn(Optional.of(book)).when(booksRepository).findById(bookId);
         doReturn(Optional.of(user)).when(usersRepository).findById(userId);
