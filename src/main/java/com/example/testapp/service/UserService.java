@@ -135,17 +135,14 @@ public class UserService {
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found or not borrow a book with id: " + userId));
 
+        List<Long> booksList = user.getBorrowedBooks();
         if (!user.getBorrowedBooks().contains(bookId)) {
             throw new RuntimeException("Book is not borrowed!");
         }
         // Удаляем книгу из списка пользователя, если он её вернул
-        if (user.getBorrowedBooks() != null) {
-            user.getBorrowedBooks().remove(bookId);
+        if (booksList != null) {
+            booksList.remove(book.getId());
         }
-
-        //Получение списка из аттрибутов пользователя и удаление книги из списка
-        List<Long> booksList = user.getBorrowedBooks();
-        booksList.remove(bookId);
 
         //Изменение статуса книги
         book.setUser(null);

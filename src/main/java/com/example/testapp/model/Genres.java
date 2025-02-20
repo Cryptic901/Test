@@ -55,6 +55,9 @@ public class Genres {
     }
 
     public Integer getBookCount() {
+        if (bookCount == null) {
+            bookCount = 0;
+        }
         return bookCount;
     }
 

@@ -3,11 +3,13 @@ package com.example.testapp.service;
 import com.example.testapp.DTO.BookDTO;
 import com.example.testapp.model.Authors;
 import com.example.testapp.model.Books;
+import com.example.testapp.model.Genres;
 import com.example.testapp.repository.AuthorsRepository;
 import com.example.testapp.repository.BooksRepository;
 import com.example.testapp.repository.GenresRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -37,7 +39,38 @@ class BookServiceTest {
 
     @Test
     void addBook_Success() {
-       //TODO
+
+        long bookId = 1L;
+        long authorId = 1L;
+        long genreId = 1L;
+        Authors author = new Authors(authorId);
+        Genres genre = new Genres(genreId);
+        Books book = new Books(bookId);
+        book.setAuthor(author);
+        book.setGenre(genre);
+        BookDTO bookDTO = new BookDTO();
+        bookDTO.setId(bookId);
+        bookDTO.setAuthorId(authorId);
+        bookDTO.setGenreId(genreId);
+
+        when(booksRepository.save(any(Books.class))).thenReturn(book);
+        when(genresRepository.findById(bookDTO.getGenreId())).thenReturn(Optional.of(genre));
+        when(authorsRepository.findById(bookDTO.getAuthorId())).thenReturn(Optional.of(author));
+
+        bookService.setBookParams(book, bookDTO);
+        BookDTO dto = bookService.addBook(bookDTO);
+
+        assertEquals(bookId, dto.getId());
+
+        ArgumentCaptor<Authors> authorCaptor = ArgumentCaptor.forClass(Authors.class);
+        ArgumentCaptor<Genres> genreCaptor = ArgumentCaptor.forClass(Genres.class);
+        verify(authorsRepository, times(1)).save(authorCaptor.capture());
+        verify(genresRepository, times(1)).save(genreCaptor.capture());
+        Authors authors = authorCaptor.getValue();
+        Genres genres = genreCaptor.getValue();
+        assertTrue(author.getBookList().contains(bookId));
+        assertEquals(1, genres.getBookCount());
+        verify(booksRepository, times(1)).save(any(Books.class));
     }
 
     @Test

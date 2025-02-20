@@ -11,7 +11,6 @@ public class BookDTO implements Serializable {
 
     private Long id;
     private String title;
-    private String status;
     private String description;
     private String isbn;
     private String publisher;
@@ -74,13 +73,6 @@ public class BookDTO implements Serializable {
         this.title = title;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 
     public String getDescription() {
         return description;
@@ -175,7 +167,6 @@ public class BookDTO implements Serializable {
         return "BookDTO{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", status='" + status + '\'' +
                 ", description='" + description + '\'' +
                 ", isbn='" + isbn + '\'' +
                 ", publisher='" + publisher + '\'' +
@@ -194,11 +185,11 @@ public class BookDTO implements Serializable {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         BookDTO dto = (BookDTO) o;
-        return amount == dto.amount && Objects.equals(id, dto.id) && Objects.equals(title, dto.title) && Objects.equals(status, dto.status) && Objects.equals(description, dto.description) && Objects.equals(isbn, dto.isbn) && Objects.equals(publisher, dto.publisher) && Objects.equals(publishedDate, dto.publishedDate) && Objects.equals(genre, dto.genre) && Objects.equals(genreId, dto.genreId) && Objects.equals(author, dto.author) && Objects.equals(authorId, dto.authorId) && Objects.equals(user, dto.user) && Objects.equals(userId, dto.userId);
+        return amount == dto.amount && Objects.equals(id, dto.id) && Objects.equals(title, dto.title) && Objects.equals(description, dto.description) && Objects.equals(isbn, dto.isbn) && Objects.equals(publisher, dto.publisher) && Objects.equals(publishedDate, dto.publishedDate) && Objects.equals(genre, dto.genre) && Objects.equals(genreId, dto.genreId) && Objects.equals(author, dto.author) && Objects.equals(authorId, dto.authorId) && Objects.equals(user, dto.user) && Objects.equals(userId, dto.userId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, status, description, isbn, publisher, publishedDate, amount, genre, genreId, author, authorId, user, userId);
+        return Objects.hash(id, title, description, isbn, publisher, publishedDate, amount, genre, genreId, author, authorId, user, userId);
     }
 }

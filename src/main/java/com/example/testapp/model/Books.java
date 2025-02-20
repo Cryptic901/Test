@@ -1,6 +1,9 @@
 package com.example.testapp.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+
+import java.util.Set;
 
 /* Сущность книга */
 
@@ -30,9 +33,9 @@ public class Books {
     @Column(nullable = false)
     private int amount;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private Users user;
+    private Set<Long> borrowedUserIds;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "genre_id")
@@ -75,7 +78,14 @@ public class Books {
         this.genre = genre;
     }
 
+    //TODO
+    public Set<Long> getBorrowedUserIds() {
+        return borrowedUserIds;
+    }
 
+    public void setBorrowedUserIds(Set<Long> borrowedUserIds) {
+        this.borrowedUserIds = borrowedUserIds;
+    }
 
     public String getDescription() {
         return description;
@@ -85,13 +95,6 @@ public class Books {
         this.description = description;
     }
 
-    public Users getUser() {
-            return user;
-    }
-
-    public void setUser(Users user) {
-        this.user = user;
-    }
 
     public String getIsbn() {
         return isbn;
