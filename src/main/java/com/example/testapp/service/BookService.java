@@ -53,11 +53,6 @@ public class BookService {
             book.setGenre(genresRepository.findById(bookDTO.getGenreId())
                     .orElseThrow(() -> new EntityNotFoundException("Genre not found with id " + bookDTO.getGenreId())));
         }
-
-        if (bookDTO.getUserId() != null) {
-            book.setUser(usersRepository.findById(bookDTO.getUserId())
-                    .orElseThrow(() -> new EntityNotFoundException("User not found with id " + bookDTO.getUserId())));
-        }
     }
 
     //Метод для удаления книги

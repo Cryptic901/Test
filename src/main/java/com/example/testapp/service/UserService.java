@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /* Сервис для обработки пользовательских данных */
 
@@ -105,7 +107,7 @@ public class UserService {
             user.setBorrowedBooks(new ArrayList<>());
         }
 
-        if(user.getBorrowedBooks().size() > 5) {
+        if (user.getBorrowedBooks().size() > 5) {
             throw new RuntimeException("Too many borrowed books");
         }
         //Получение списка из аттрибутов пользователя и добавление книги в список
@@ -113,7 +115,9 @@ public class UserService {
         booksList.add(book.getId());
 
         //Изменение статуса книги
-        book.setUser(user);
+        Set<Long> borrowedUserBooks = book.getBorrowedUserIds();
+        borrowedUserBooks.add(userId);
+        book.setBorrowedUserIds(borrowedUserBooks);
         book.setAmount(book.getAmount() - 1);
         book.setCountOfBorrowingBook(book.getCountOfBorrowingBook() + 1);
         genre.setCountOfBorrowingBookWithGenre(genre.getCountOfBorrowingBookWithGenre() + 1);
@@ -136,16 +140,18 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found or not borrow a book with id: " + userId));
 
         List<Long> booksList = user.getBorrowedBooks();
-        if (!user.getBorrowedBooks().contains(bookId)) {
+        Set<Long> borrowedUserBooks = book.getBorrowedUserIds();
+
+        if (!booksList.contains(bookId)) {
             throw new RuntimeException("Book is not borrowed!");
         }
         // Удаляем книгу из списка пользователя, если он её вернул
-        if (booksList != null) {
-            booksList.remove(book.getId());
-        }
+        booksList.remove(book.getId());
 
         //Изменение статуса книги
-        book.setUser(null);
+        if (Collections.frequency(booksList, bookId) == 1) {
+            borrowedUserBooks.remove(userId);
+        }
         book.setAmount(book.getAmount() + 1);
         //Сохранение в репозитории
         usersRepository.save(user);

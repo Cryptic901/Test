@@ -2,7 +2,9 @@ package com.example.testapp.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import org.hibernate.mapping.Collection;
 
+import java.util.Collections;
 import java.util.Set;
 
 /* Сущность книга */
@@ -34,7 +36,6 @@ public class Books {
     private int amount;
 
     @ElementCollection(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
     private Set<Long> borrowedUserIds;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -78,8 +79,10 @@ public class Books {
         this.genre = genre;
     }
 
-    //TODO
     public Set<Long> getBorrowedUserIds() {
+        if(borrowedUserIds == null) {
+            borrowedUserIds = Collections.emptySet();
+        }
         return borrowedUserIds;
     }
 
@@ -140,7 +143,7 @@ public class Books {
     }
 
     public Books(Long id, String title, Authors author, String isbn, String publisher, String publishedDate,
-                 int amount, Users user, Genres genre, String description, Long countOfBorrowingBook) {
+                 int amount,Set<Long> borrowedUserIds, Genres genre, String description, Long countOfBorrowingBook) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -148,7 +151,7 @@ public class Books {
         this.publisher = publisher;
         this.publishedDate = publishedDate;
         this.amount = amount;
-        this.user = user;
+        this.borrowedUserIds = borrowedUserIds;
         this.genre = genre;
         this.description = description;
         this.countOfBorrowingBook = countOfBorrowingBook;
@@ -176,7 +179,7 @@ public class Books {
                 ", publisher='" + publisher + '\'' +
                 ", publishedDate='" + publishedDate + '\'' +
                 ", amount=" + amount +
-                ", user=" + user +
+                ", borrowedUserIds=" + borrowedUserIds +
                 ", genre=" + genre +
                 ", countOfBorrowingBook=" + countOfBorrowingBook +
                 ", description='" + description + '\'' +

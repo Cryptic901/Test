@@ -4,7 +4,9 @@ import com.example.testapp.model.Books;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.Set;
 
 /* Объект для удобной передачи данных о книгах */
 public class BookDTO implements Serializable {
@@ -16,6 +18,7 @@ public class BookDTO implements Serializable {
     private String publisher;
     private String publishedDate;
     private int amount;
+    private Set<Long> borrowedUserIds;
 
     private String genre; //Название жанра
     @JsonProperty(value = "genre_id", access = JsonProperty.Access.WRITE_ONLY)
@@ -40,10 +43,9 @@ public class BookDTO implements Serializable {
         dto.setAmount(book.getAmount());
         dto.setAuthor(book.getAuthor() != null ? book.getAuthor().getName() : "Автор не указан");
         dto.setGenre(book.getGenre() != null ? book.getGenre().getName() : "Жанр не указан");
-        dto.setUser(book.getUser() != null ? book.getUser().getUsername() : "Книга свободна");
+        dto.setBorrowedUserIds(book.getBorrowedUserIds() != null ? book.getBorrowedUserIds() : Collections.emptySet());
 
         dto.setGenreId(book.getGenre() != null ? book.getGenre().getId() : null);
-        dto.setUserId(book.getUser() != null ? book.getUser().getId() : null);
         dto.setAuthorId(book.getAuthor() != null ? book.getAuthor().getId() : null);
 
         return dto;
@@ -73,6 +75,14 @@ public class BookDTO implements Serializable {
         this.title = title;
     }
 
+
+    public Set<Long> getBorrowedUserIds() {
+        return borrowedUserIds;
+    }
+
+    public void setBorrowedUserIds(Set<Long> borrowedUserIds) {
+        this.borrowedUserIds = borrowedUserIds;
+    }
 
     public String getDescription() {
         return description;
@@ -162,34 +172,35 @@ public class BookDTO implements Serializable {
         this.amount = amount;
     }
 
-    @Override
-    public String toString() {
-        return "BookDTO{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", isbn='" + isbn + '\'' +
-                ", publisher='" + publisher + '\'' +
-                ", publishedDate='" + publishedDate + '\'' +
-                ", amount=" + amount +
-                ", genre='" + genre + '\'' +
-                ", genreId=" + genreId +
-                ", author='" + author + '\'' +
-                ", authorId=" + authorId +
-                ", user='" + user + '\'' +
-                ", userId=" + userId +
-                '}';
+    public BookDTO(Long id, String title, String description, String isbn, String publisher, String publishedDate,
+                   int amount, Set<Long> borrowedUserIds, String genre, Long genreId, String author, Long authorId, String user, Long userId) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.isbn = isbn;
+        this.publisher = publisher;
+        this.publishedDate = publishedDate;
+        this.amount = amount;
+        this.borrowedUserIds = borrowedUserIds;
+        this.genre = genre;
+        this.genreId = genreId;
+        this.author = author;
+        this.authorId = authorId;
+        this.user = user;
+        this.userId = userId;
     }
+
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BookDTO dto = (BookDTO) o;
-        return amount == dto.amount && Objects.equals(id, dto.id) && Objects.equals(title, dto.title) && Objects.equals(description, dto.description) && Objects.equals(isbn, dto.isbn) && Objects.equals(publisher, dto.publisher) && Objects.equals(publishedDate, dto.publishedDate) && Objects.equals(genre, dto.genre) && Objects.equals(genreId, dto.genreId) && Objects.equals(author, dto.author) && Objects.equals(authorId, dto.authorId) && Objects.equals(user, dto.user) && Objects.equals(userId, dto.userId);
+        BookDTO bookDTO = (BookDTO) o;
+        return amount == bookDTO.amount && Objects.equals(id, bookDTO.id) && Objects.equals(title, bookDTO.title) && Objects.equals(description, bookDTO.description) && Objects.equals(isbn, bookDTO.isbn) && Objects.equals(publisher, bookDTO.publisher) && Objects.equals(publishedDate, bookDTO.publishedDate) && Objects.equals(borrowedUserIds, bookDTO.borrowedUserIds) && Objects.equals(genre, bookDTO.genre) && Objects.equals(genreId, bookDTO.genreId) && Objects.equals(author, bookDTO.author) && Objects.equals(authorId, bookDTO.authorId) && Objects.equals(user, bookDTO.user) && Objects.equals(userId, bookDTO.userId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, isbn, publisher, publishedDate, amount, genre, genreId, author, authorId, user, userId);
+        return Objects.hash(id, title, description, isbn, publisher, publishedDate, amount, borrowedUserIds, genre, genreId, author, authorId, user, userId);
     }
 }
