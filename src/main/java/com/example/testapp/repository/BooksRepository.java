@@ -1,6 +1,5 @@
 package com.example.testapp.repository;
 
-import com.example.testapp.DTO.BookDTO;
 import com.example.testapp.model.Books;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -23,7 +22,6 @@ public interface BooksRepository extends JpaRepository<Books, Long> {
     @Query("UPDATE Books b SET b.genre = NULL WHERE b.genre.id = :genreId")
     void clearGenreByGenreId(@Param("genreId") long id);
 
-    @Modifying
     @Query("SELECT b FROM Books b ORDER BY b.countOfBorrowingBook DESC")
-    List<BookDTO> sortByBookPopularityDescending();
+    List<Books> sortByBookPopularityDescending();
 }

@@ -108,7 +108,7 @@ class BookControllerTest {
     void getAllBooksTest() throws Exception {
 
         //Arrange
-        List<BookDTO> bookDTOList = new ArrayList<>();
+        List<BookDTO> bookDTOList = new ArrayList<>(List.of(new BookDTO(), new BookDTO()));
 
         //Act
         when(bookService.getAllBooks()).thenReturn(bookDTOList);

@@ -9,7 +9,6 @@ import com.example.testapp.model.Genres;
 import com.example.testapp.repository.AuthorsRepository;
 import com.example.testapp.repository.BooksRepository;
 import com.example.testapp.repository.GenresRepository;
-import com.example.testapp.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,18 +20,15 @@ import java.util.List;
 /* Сервис для обработки данных о книгах */
 
 @Service
-@Transactional
 public class BookService {
 
     private final BooksRepository booksRepository;
     private final AuthorsRepository authorsRepository;
-    private final UsersRepository usersRepository;
     private final GenresRepository genresRepository;
 
     @Autowired
-    public BookService(BooksRepository booksRepository, UsersRepository usersRepository, GenresRepository genresRepository, AuthorsRepository authorsRepository) {
+    public BookService(BooksRepository booksRepository, GenresRepository genresRepository, AuthorsRepository authorsRepository) {
         this.booksRepository = booksRepository;
-        this.usersRepository = usersRepository;
         this.genresRepository = genresRepository;
         this.authorsRepository = authorsRepository;
     }
@@ -56,6 +52,7 @@ public class BookService {
     }
 
     //Метод для удаления книги
+    @Transactional
     public void deleteBookById(long id) {
         if (!booksRepository.existsById(id)) {
             throw new EntityNotFoundException("Book not found with id " + id);
@@ -82,7 +79,7 @@ public class BookService {
                 .orElseThrow(() -> new EntityNotFoundException("Genre not found with id " + bookDTO.getGenreId()));
 
         List<Long> authorBookList = author.getBookList();
-        if(authorBookList == null) {
+        if (authorBookList == null) {
             authorBookList = new ArrayList<>();
         }
 
@@ -90,6 +87,9 @@ public class BookService {
         author.setBookList(authorBookList);
 
         genre.setBookCount(genre.getBookCount() + 1);
+        List<Long> booksWithThatGenre = genre.getBooks();
+        booksWithThatGenre.add(savedBook.getId());
+        genre.setBooks(booksWithThatGenre);
 
         authorsRepository.save(author);
         genresRepository.save(genre);
@@ -132,6 +132,7 @@ public class BookService {
     }
 
     public List<BookDTO> getMostPopularBooks() {
-        return booksRepository.sortByBookPopularityDescending();
+        List<Books> books = booksRepository.sortByBookPopularityDescending();
+        return books.stream().map(BookDTO::fromEntity).toList();
     }
 }

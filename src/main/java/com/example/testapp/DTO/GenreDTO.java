@@ -2,6 +2,7 @@ package com.example.testapp.DTO;
 
 import com.example.testapp.model.Genres;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /* Объект для удобной передачи данных о жанрах */
@@ -17,15 +18,18 @@ public class GenreDTO {
 
     private Integer bookCount;
 
+    private Long countOfBorrowingBookWithGenre;
+
 
     public static GenreDTO fromEntity(Genres genre) {
-        if(genre == null) return null;
+        if (genre == null) return null;
         GenreDTO dto = new GenreDTO();
         dto.setId(genre.getId());
         dto.setName(genre.getName());
         dto.setDescription(genre.getDescription());
         dto.setBookCount(genre.getBookCount());
-        dto.setBooks(genre.getBooks());
+        dto.setBooks(genre.getBooks() != null ? genre.getBooks() : new ArrayList<>());
+        dto.setCountOfBorrowingBookWithGenre(genre.getCountOfBorrowingBookWithGenre());
 
         return dto;
     }
@@ -47,11 +51,22 @@ public class GenreDTO {
     }
 
     public List<Long> getBooks() {
+        if (books == null) {
+            books = new ArrayList<>();
+        }
         return books;
     }
 
     public void setBooks(List<Long> books) {
         this.books = books;
+    }
+
+    public Long getCountOfBorrowingBookWithGenre() {
+        return countOfBorrowingBookWithGenre;
+    }
+
+    public void setCountOfBorrowingBookWithGenre(Long countOfBorrowingBookWithGenre) {
+        this.countOfBorrowingBookWithGenre = countOfBorrowingBookWithGenre;
     }
 
     public String getDescription() {
@@ -70,17 +85,20 @@ public class GenreDTO {
         this.bookCount = bookCount;
     }
 
-    public GenreDTO() {}
+    public GenreDTO() {
+    }
+
     public GenreDTO(String name) {
         this.name = name;
     }
 
-    public GenreDTO(Long id, String name, List<Long> books, String description, Integer bookCount) {
+    public GenreDTO(Long id, String name, List<Long> books, String description, Integer bookCount, Long countOfBorrowingBookWithGenre) {
         this.id = id;
         this.name = name;
         this.books = books;
         this.description = description;
         this.bookCount = bookCount;
+        this.countOfBorrowingBookWithGenre = countOfBorrowingBookWithGenre;
     }
 
     @Override
@@ -91,6 +109,7 @@ public class GenreDTO {
                 ", books=" + books +
                 ", description='" + description + '\'' +
                 ", bookCount=" + bookCount +
+                ", countOfBorrowingBookWithGenre=" + countOfBorrowingBookWithGenre +
                 '}';
     }
 }

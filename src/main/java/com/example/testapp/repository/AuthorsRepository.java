@@ -13,4 +13,5 @@ public interface AuthorsRepository extends JpaRepository<Authors, Long> {
 
     Optional<Authors> findById(long id);
 
+    Authors findAuthorsByName(String name);
 }

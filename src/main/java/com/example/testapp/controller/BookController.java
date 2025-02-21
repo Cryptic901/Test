@@ -43,7 +43,7 @@ public class BookController {
     //Отправка запроса и получение ответа на обновление параметра книги
     @PatchMapping("/update/{id}")
     @Operation(summary = "Обновить книгу по ID", description = "Обновляет параметры книги ID которой введено")
-    public ResponseEntity<BookDTO> updateBookById(@PathVariable long id,@RequestBody BookDTO bookDTO) {
+    public ResponseEntity<BookDTO> updateBookById(@PathVariable long id, @RequestBody BookDTO bookDTO) {
         return ResponseEntity.ok(bookService.updateBookById(id, bookDTO));
     }
 
@@ -51,29 +51,52 @@ public class BookController {
     @GetMapping("/get/id/{id}")
     @Operation(summary = "Получить книгу по ID", description = "Возвращает книгу у которой ID совпадает с введенным")
     public ResponseEntity<BookDTO> getBookById(@PathVariable long id) {
-        return ResponseEntity.ok(bookService.getBookById(id));
+        BookDTO book = bookService.getBookById(id);
+        if (book == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(book);
     }
 
     //Отправка запроса и получение ответа на получение всех книг
     @GetMapping("/getAll")
     @Operation(summary = "Вернуть все книги", description = "Возвращает список всех книг")
     public ResponseEntity<List<BookDTO>> getAllBooks() {
-        return ResponseEntity.ok(bookService.getAllBooks());
+        List<BookDTO> books = bookService.getAllBooks();
+        if (books.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(books);
     }
 
     @GetMapping("/getAll/short")
     @Operation(summary = "Вернуть краткие параметры книги", description = "Возвращает ID и title книги")
-    public ResponseEntity<List<BookShortDTO>> getAllBooksShort() { return ResponseEntity.ok(bookService.getAllBooksShort());}
+    public ResponseEntity<List<BookShortDTO>> getAllBooksShort() {
+        List<BookShortDTO> books = bookService.getAllBooksShort();
+        if (books.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(books);
+    }
 
     //Отправка запроса и получение ответа на поиск по isbn
     @GetMapping("/get/isbn/{isbn}")
     @Operation(summary = "Получить книгу по ISBN", description = "Возвращает книгу по введенному международному стандартному книжному номеру")
     public ResponseEntity<BookDTO> getBookByIsbn(@PathVariable String isbn) {
-        return ResponseEntity.ok(bookService.getBookByIsbn(isbn));
+        BookDTO book = bookService.getBookByIsbn(isbn);
+        if (book == null) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(book);
     }
+
     @GetMapping("/sort/popularityDesc")
     @Operation(summary = "Сортировка по убыванию популярности", description = "Сортирует книги по количеству раз сколько их брали")
     public ResponseEntity<List<BookDTO>> getPopularityDesc() {
-        return ResponseEntity.ok(bookService.getMostPopularBooks());
+        List<BookDTO> books = bookService.getMostPopularBooks();
+        if (books.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(books);
     }
 }

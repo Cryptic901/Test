@@ -21,7 +21,6 @@ import java.util.Set;
 /* Сервис для обработки пользовательских данных */
 
 @Service
-@Transactional
 public class UserService {
 
     private final BooksRepository booksRepository;
@@ -79,6 +78,7 @@ public class UserService {
         return UserDTO.fromEntity(usersRepository.save(user));
     }
 
+    @Transactional
     public void deleteUserById(long userId) {
         if (!usersRepository.existsById(userId)) {
             throw new EntityNotFoundException("User not found with id: " + userId);
@@ -93,7 +93,7 @@ public class UserService {
         usersRepository.deleteById(userId);
     }
 
-
+    @Transactional
     public String borrowBookById(long bookId, long userId) {
         Books book = booksRepository.findById(bookId)
                 .orElseThrow(() -> new RuntimeException("Book not found with id: " + bookId));
@@ -145,13 +145,12 @@ public class UserService {
         if (!booksList.contains(bookId)) {
             throw new RuntimeException("Book is not borrowed!");
         }
-        // Удаляем книгу из списка пользователя, если он её вернул
-        booksList.remove(book.getId());
-
         //Изменение статуса книги
         if (Collections.frequency(booksList, bookId) == 1) {
             borrowedUserBooks.remove(userId);
         }
+        // Удаляем книгу из списка пользователя, если он её вернул
+        booksList.remove(book.getId());
         book.setAmount(book.getAmount() + 1);
         //Сохранение в репозитории
         usersRepository.save(user);

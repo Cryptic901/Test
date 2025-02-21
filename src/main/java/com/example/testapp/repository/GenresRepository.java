@@ -1,9 +1,7 @@
 package com.example.testapp.repository;
 
-import com.example.testapp.DTO.GenreDTO;
 import com.example.testapp.model.Genres;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -19,7 +17,6 @@ public interface GenresRepository extends JpaRepository<Genres, Long> {
 
     Optional<Genres> getGenreByName(String name);
 
-    @Modifying
     @Query("SELECT g FROM Genres g ORDER BY g.countOfBorrowingBookWithGenre DESC")
-    List<GenreDTO> sortByGenrePopularityDescending();
+    List<Genres> sortByGenrePopularityDescending();
 }

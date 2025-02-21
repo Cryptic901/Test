@@ -1,8 +1,6 @@
 package com.example.testapp.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import org.hibernate.mapping.Collection;
 
 import java.util.Collections;
 import java.util.Set;

@@ -2,6 +2,7 @@ package com.example.testapp.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /* Сущность жанр */
@@ -47,6 +48,9 @@ public class Genres {
     }
 
     public List<Long> getBooks() {
+        if (books == null) {
+            books = new ArrayList<>();
+        }
         return books;
     }
 

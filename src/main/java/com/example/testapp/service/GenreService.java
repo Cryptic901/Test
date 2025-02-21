@@ -7,6 +7,7 @@ import com.example.testapp.repository.BooksRepository;
 import com.example.testapp.repository.GenresRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -58,6 +59,7 @@ public class GenreService {
         return GenreDTO.fromEntity(genresRepository.save(genres));
     }
 
+    @Transactional
     public void deleteGenreById(long id) {
         if (!genresRepository.existsById(id)) {
             throw new EntityNotFoundException("Genre not found with id: " + id);
@@ -74,6 +76,7 @@ public class GenreService {
     }
 
     public List<GenreDTO> getMostPopularGenres() {
-        return genresRepository.sortByGenrePopularityDescending();
+        List<Genres> genres = genresRepository.sortByGenrePopularityDescending();
+        return genres.stream().map(GenreDTO::fromEntity).toList();
     }
 }
