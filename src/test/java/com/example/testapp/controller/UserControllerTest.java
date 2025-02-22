@@ -1,6 +1,8 @@
 package com.example.testapp.controller;
 
+import com.example.testapp.DTO.BookDTO;
 import com.example.testapp.DTO.UserDTO;
+import com.example.testapp.service.BookService;
 import com.example.testapp.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -11,11 +13,9 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -30,6 +30,9 @@ class UserControllerTest {
 
     @MockitoBean
     private UserService userService;
+
+    @MockitoBean
+    private BookService bookService;
 
     @InjectMocks
     private UserController userController;
@@ -58,7 +61,10 @@ class UserControllerTest {
     void getAllUsersTest() throws Exception {
 
         //Arrange
-        List<UserDTO> userDTOList = new ArrayList<>();
+        List<UserDTO> userDTOList = List.of(
+                new UserDTO(),
+                new UserDTO()
+        );
 
         //Act
         when(userService.getAllUsers()).thenReturn(userDTOList);
@@ -117,7 +123,8 @@ class UserControllerTest {
         UserDTO userDTO = new UserDTO();
 
         //Act
-        when(userService.updateUserById(eq(1L), any(UserDTO.class))).thenReturn(userDTO);
+        when(userService.updateUserById(id, userDTO)).thenReturn(userDTO);
+        when(userService.getUserById(id)).thenReturn(userDTO);
 
         //Assert
         mockMvc.perform(patch("/api/v1/users/update/{id}", id)
@@ -133,14 +140,17 @@ class UserControllerTest {
 
         //Arrange
         long id = 1L;
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(id);
 
         //Act
-        doNothing().when(userService).deleteUserById(eq(1L));
+        when(userService.getUserById(id)).thenReturn(userDTO);
+        doNothing().when(userService).deleteUserById(userDTO.getId());
 
         //Assert
         mockMvc.perform(delete("/api/v1/users/delete/{id}", id)
                         .with(csrf()))
-                .andExpect(status().isOk());
+                .andExpect(status().isGone());
     }
 
     @Test
@@ -154,6 +164,8 @@ class UserControllerTest {
 
         //Act
         when(userService.borrowBookById(bookId, userId)).thenReturn(successMessage);
+        when(userService.getUserById(userId)).thenReturn(new UserDTO());
+        when(bookService.getBookById(bookId)).thenReturn(new BookDTO());
 
         //Assert
         mockMvc.perform(post("/api/v1/users/{bookId}/borrow", bookId)
@@ -175,6 +187,8 @@ class UserControllerTest {
 
         //Act
         when(userService.returnBookById(bookId, userId)).thenReturn(successMessage);
+        when(userService.getUserById(userId)).thenReturn(new UserDTO());
+        when(bookService.getBookById(bookId)).thenReturn(new BookDTO());
 
         //Assert
         mockMvc.perform(post("/api/v1/users/{bookId}/return", bookId)

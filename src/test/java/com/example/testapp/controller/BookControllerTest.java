@@ -1,6 +1,7 @@
 package com.example.testapp.controller;
 
 import com.example.testapp.DTO.BookDTO;
+import com.example.testapp.model.Books;
 import com.example.testapp.service.BookService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -47,7 +48,7 @@ class BookControllerTest {
         //Assert
         mockMvc.perform(delete("/api/v1/books/delete/{id}", id)
                         .with(csrf()))
-                        .andExpect(status().isOk());
+                .andExpect(status().isGone());
     }
 
     @Test
@@ -65,7 +66,7 @@ class BookControllerTest {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -131,6 +132,20 @@ class BookControllerTest {
 
         //Assert
         mockMvc.perform(get("/api/v1/books/get/isbn/{isbn}", isbn))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    void getBookByTitleTest() throws Exception {
+        Books books = new Books();
+        books.setTitle("title");
+
+        when(bookService.getBookByTitle(books.getTitle())).thenReturn(BookDTO.fromEntity(books));
+
+        mockMvc.perform(get("/api/v1/books/get/title/{title}", books.getTitle())
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 }

@@ -102,6 +102,11 @@ public class BookService {
                 .orElseThrow(() -> new EntityNotFoundException("Book not found with id: " + id)));
     }
 
+    public BookDTO getBookByTitle(String title) {
+        return BookDTO.fromEntity(booksRepository.findBooksByTitle(title)
+                .orElseThrow(() -> new EntityNotFoundException("Book not found with title: " + title)));
+    }
+
     public BookDTO getBookByIsbn(String isbn) {
         return BookDTO.fromEntity(booksRepository.findByIsbn(isbn)
                 .orElseThrow(() -> new EntityNotFoundException("Book not found with isbn: " + isbn)));

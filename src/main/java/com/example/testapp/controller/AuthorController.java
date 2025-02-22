@@ -27,15 +27,16 @@ public class AuthorController {
     }
 
     @PostMapping("/create")
-    @Operation(summary = "Создать автора", description = "Создаёт автора")
+    @Operation(summary = "Создать автора", description = "Создаёт автора, при неверном введении отправляет статус 400")
     public ResponseEntity<AuthorDTO> addAuthor(@RequestBody AuthorDTO authorDTO) {
         if (authorDTO == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return ResponseEntity.ok(authorService.addAuthor(authorDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(authorService.addAuthor(authorDTO));
     }
 
     @GetMapping("/get/name/{name}")
+    @Operation(summary = "Получить автора по имени", description = "Возвращает автора с именем совпадающим с введенным, если автор не найден статус 204")
     public ResponseEntity<AuthorDTO> getAuthorByName(@PathVariable String name) {
         if (authorService.getAuthorByName(name) == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -44,7 +45,7 @@ public class AuthorController {
     }
 
     @GetMapping("/get/id/{id}")
-    @Operation(summary = "Получить автора по ID", description = "Возвращает автора у которого ID совпадает с введенным")
+    @Operation(summary = "Получить автора по ID", description = "Возвращает автора у которого ID совпадает с введенным, если автор не найден статус 204")
     public ResponseEntity<AuthorDTO> getAuthorById(@PathVariable long id) {
         if (authorService.getAuthorById(id) == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -53,7 +54,7 @@ public class AuthorController {
     }
 
     @GetMapping("/getAll")
-    @Operation(summary = "Вернуть всех авторов", description = "Возвращает список всех авторов")
+    @Operation(summary = "Вернуть всех авторов", description = "Возвращает список всех авторов, если авторы не найдены статус 204")
     public ResponseEntity<List<AuthorDTO>> getAllAuthors() {
         if (authorService.getAllAuthors() == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -62,16 +63,19 @@ public class AuthorController {
     }
 
     @PatchMapping("/update/{id}")
-    @Operation(summary = "Обновить автора по ID", description = "Обновляет параметры автора ID которого введено")
+    @Operation(summary = "Обновить автора по ID", description = "Обновляет параметры автора ID которого введено, если автор не найден статус 204, при неверном введении статус 400")
     public ResponseEntity<AuthorDTO> updateAuthorById(@PathVariable long id,@RequestBody AuthorDTO authorDTO) {
         if (authorDTO == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if (authorService.getAuthorById(id) == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(authorService.updateAuthorById(id, authorDTO));
     }
 
     @DeleteMapping("/delete/{id}")
-    @Operation(summary = "Удалить автора по ID", description = "Удаляет автора по ID")
+    @Operation(summary = "Удалить автора по ID", description = "Удаляет автора по ID возвращая статус 410, если автор не найден статус 204")
     public ResponseEntity<AuthorDTO> deleteAuthorById(@PathVariable long id) {
         if (authorService.getAuthorById(id) == null) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -81,7 +85,7 @@ public class AuthorController {
     }
 
     @GetMapping("/getAllBooks/{authorId}")
-    @Operation(summary = "Получить список всех книг автора", description = "Возвращает список всех книг которые написал автор, ID которого было введено")
+    @Operation(summary = "Получить список всех книг автора", description = "Возвращает список всех книг которые написал автор, ID которого было введено, если автор не найден статус 204")
     public ResponseEntity<List<BookShortDTO>> getAllAuthorsBooks(@PathVariable long authorId) {
         if (authorService.getAuthorById(authorId) == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

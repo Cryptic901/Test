@@ -7,6 +7,7 @@ import com.example.testapp.model.Genres;
 import com.example.testapp.repository.AuthorsRepository;
 import com.example.testapp.repository.BooksRepository;
 import com.example.testapp.repository.GenresRepository;
+import com.example.testapp.repository.UsersRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -33,8 +34,14 @@ class BookServiceTest {
     @Mock
     private GenresRepository genresRepository;
 
+    @Mock
+    private UsersRepository usersRepository;
+
     @InjectMocks
     private BookService bookService;
+
+    @InjectMocks
+    private UserService userService;
 
 
     @Test
@@ -204,5 +211,31 @@ class BookServiceTest {
         assertEquals("Book not found with isbn: " + isbn, exception.getMessage());
 
         verify(booksRepository, times(1)).findByIsbn(isbn);
+    }
+
+    @Test
+    void getMostPopularBooks_Success() {
+        Books book1 = new Books();
+        Books book2 = new Books(2L);
+        book2.setCountOfBorrowingBook(10L);
+        book1.setCountOfBorrowingBook(5L);
+
+        when(booksRepository.sortByBookPopularityDescending()).thenReturn(List.of(book2, book1));
+
+        List<Books> books = booksRepository.sortByBookPopularityDescending();
+        assertEquals(books, List.of(book2, book1));
+        verify(booksRepository, times(1)).sortByBookPopularityDescending();
+    }
+
+    @Test
+    void getBookByTitle_Success() {
+        Books book1 = new Books();
+        book1.setTitle("Book 1");
+
+        when(booksRepository.findBooksByTitle(book1.getTitle())).thenReturn(Optional.of(book1));
+
+        BookDTO res = bookService.getBookByTitle(book1.getTitle());
+        assertEquals(BookDTO.fromEntity(book1), res);
+        verify(booksRepository, times(1)).findBooksByTitle(book1.getTitle());
     }
 }

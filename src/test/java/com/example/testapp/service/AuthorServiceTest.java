@@ -208,4 +208,15 @@ class AuthorServiceTest {
         assertEquals("Author not found with id: " + id, exception.getMessage());
         verify(authorsRepository, times(1)).findById(id);
     }
+    @Test
+    void getAuthorByName_Success() {
+        Authors authors = new Authors();
+        authors.setName("Jane Doe");
+
+        when(authorsRepository.findAuthorsByName(authors.getName())).thenReturn(authors);
+        AuthorDTO authorDTO = authorService.getAuthorByName(authors.getName());
+
+        assertEquals(authors.getName(), authorDTO.getName());
+        verify(authorsRepository, times(1)).findAuthorsByName(authors.getName());
+    }
 }

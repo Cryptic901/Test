@@ -32,6 +32,7 @@ public class GenreService {
         genres.setDescription(genreDTO.getDescription());
         genres.setBooks(genreDTO.getBooks());
         genres.setBookCount(genreDTO.getBookCount());
+        genres.setCountOfBorrowingBookWithGenre(genreDTO.getCountOfBorrowingBookWithGenre());
     }
 
     public GenreDTO addGenre(GenreDTO genreDTO) {

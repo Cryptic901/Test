@@ -2,6 +2,7 @@ package com.example.testapp.controller;
 
 import com.example.testapp.DTO.AuthorDTO;
 import com.example.testapp.DTO.BookShortDTO;
+import com.example.testapp.model.Authors;
 import com.example.testapp.service.AuthorService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -16,12 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = AuthorController.class)
 class AuthorControllerTest {
@@ -50,7 +51,7 @@ class AuthorControllerTest {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -82,8 +83,10 @@ class AuthorControllerTest {
     void updateAuthor() throws Exception {
         long id = 1L;
         AuthorDTO authorDTO = new AuthorDTO();
+        authorDTO.setId(id);
 
-        when(authorService.updateAuthorById(eq(1L), any(AuthorDTO.class))).thenReturn(authorDTO);
+        when(authorService.updateAuthorById(id, authorDTO)).thenReturn(authorDTO);
+        when(authorService.getAuthorById(id)).thenReturn(authorDTO);
 
         mockMvc.perform(patch("/api/v1/authors/update/{id}", id)
                         .with(csrf())
@@ -100,7 +103,7 @@ class AuthorControllerTest {
 
         mockMvc.perform(delete("/api/v1/authors/delete/{id}", id)
                         .with(csrf()))
-                .andExpect(status().isOk());
+                .andExpect(status().isGone());
     }
 
     @Test
@@ -116,6 +119,7 @@ class AuthorControllerTest {
         );
 
         when(authorService.getAllAuthorsBooks(authorId)).thenReturn(bookDtoList);
+        when(authorService.getAuthorById(authorId)).thenReturn(new AuthorDTO());
 
         String expectedJson = "[" +
                 "{\"id\":1,\"title\":\"Book Title 1\"}," +
@@ -129,5 +133,19 @@ class AuthorControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedJson));
+    }
+
+    @Test
+    @WithMockUser
+    void getAuthorByName() throws Exception {
+        Authors authors = new Authors();
+        authors.setName("Author Name");
+
+        when(authorService.getAuthorByName(authors.getName())).thenReturn(AuthorDTO.fromEntity(authors));
+
+        mockMvc.perform(get("/api/v1/authors/get/name/{name}", authors.getName())
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 }

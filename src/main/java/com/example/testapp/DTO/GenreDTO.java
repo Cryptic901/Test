@@ -34,6 +34,19 @@ public class GenreDTO {
         return dto;
     }
 
+    public static Genres toEntity(GenreDTO genreDTO) {
+        if (genreDTO == null) return null;
+        Genres genres = new Genres();
+        genres.setId(genreDTO.getId());
+        genres.setName(genreDTO.getName());
+        genres.setDescription(genreDTO.getDescription());
+        genres.setBookCount(genreDTO.getBookCount());
+        genres.setBooks(genreDTO.getBooks());
+        genres.setCountOfBorrowingBookWithGenre(genreDTO.getCountOfBorrowingBookWithGenre());
+
+        return genres;
+    }
+
     public Long getId() {
         return id;
     }

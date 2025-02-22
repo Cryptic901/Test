@@ -24,4 +24,6 @@ public interface BooksRepository extends JpaRepository<Books, Long> {
 
     @Query("SELECT b FROM Books b ORDER BY b.countOfBorrowingBook DESC")
     List<Books> sortByBookPopularityDescending();
+
+    Optional<Books> findBooksByTitle(String title);
 }
