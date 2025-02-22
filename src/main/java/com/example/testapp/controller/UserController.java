@@ -34,7 +34,7 @@ public class UserController {
         if (userDTO == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return ResponseEntity.ok(userService.createUser(userDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userDTO));
     }
 
     @GetMapping("/getAll")

@@ -58,7 +58,7 @@ public class GenreController {
     @Operation(summary = "Обновление жанра по ID", description = "Обновляет жанр по введенным полям, если не находит по id статус 204, при неверном введении статус 400")
     public ResponseEntity<GenreDTO> updateGenre(@PathVariable long id, @RequestBody GenreDTO genreDTO) {
         GenreDTO dto = genreService.updateGenreById(id, genreDTO);
-        if (dto == null) {
+        if (genreDTO == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         if (genreService.getGenreById(id) == null) {

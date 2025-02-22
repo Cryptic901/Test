@@ -4,6 +4,7 @@ import com.example.testapp.DTO.AuthorDTO;
 import com.example.testapp.DTO.BookShortDTO;
 import com.example.testapp.model.Authors;
 import com.example.testapp.service.AuthorService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,18 +70,27 @@ class AuthorControllerTest {
 
     @Test
     @WithMockUser
-    void getAll() throws Exception {
-        List<AuthorDTO> authorDTOList = new ArrayList<>();
+    void getAllAuthors() throws Exception {
+        List<AuthorDTO> authorDTOList = List.of(
+                new AuthorDTO(1L),
+                new AuthorDTO(1L)
+        );
+        ObjectMapper objectMapper = new ObjectMapper();
+        String exceptedJson = objectMapper.writeValueAsString(authorDTOList);
+
         when(authorService.getAllAuthors()).thenReturn(authorDTOList);
 
         mockMvc.perform(get("/api/v1/authors/getAll")
-                        .with(csrf()))
-                .andExpect(status().isOk());
+                        .with(csrf())
+                        .content("{}")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(exceptedJson));
     }
 
     @Test
     @WithMockUser
-    void updateAuthor() throws Exception {
+    void updateAuthorById() throws Exception {
         long id = 1L;
         AuthorDTO authorDTO = new AuthorDTO();
         authorDTO.setId(id);
@@ -121,11 +131,8 @@ class AuthorControllerTest {
         when(authorService.getAllAuthorsBooks(authorId)).thenReturn(bookDtoList);
         when(authorService.getAuthorById(authorId)).thenReturn(new AuthorDTO());
 
-        String expectedJson = "[" +
-                "{\"id\":1,\"title\":\"Book Title 1\"}," +
-                "{\"id\":2,\"title\":\"Book Title 2\"}," +
-                "{\"id\":3,\"title\":\"Book Title 3\"}" +
-                "]";
+        ObjectMapper objectMapper = new ObjectMapper();
+        String expectedJson = objectMapper.writeValueAsString(bookDtoList);
 
         mockMvc.perform(get("/api/v1/authors/getAllBooks/{authorId}", authorId)
                         .with(csrf())
@@ -144,8 +151,8 @@ class AuthorControllerTest {
         when(authorService.getAuthorByName(authors.getName())).thenReturn(AuthorDTO.fromEntity(authors));
 
         mockMvc.perform(get("/api/v1/authors/get/name/{name}", authors.getName())
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 }

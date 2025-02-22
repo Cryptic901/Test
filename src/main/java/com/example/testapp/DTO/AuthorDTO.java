@@ -50,6 +50,9 @@ public class AuthorDTO {
     }
 
     public AuthorDTO() {}
+    public AuthorDTO(long id) {
+        this.id = id;
+    }
 
     public AuthorDTO(Long id, String name, List<Long> bookList) {
         this.id = id;

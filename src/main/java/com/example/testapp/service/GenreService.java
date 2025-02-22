@@ -65,7 +65,6 @@ public class GenreService {
         if (!genresRepository.existsById(id)) {
             throw new EntityNotFoundException("Genre not found with id: " + id);
         }
-
         booksRepository.clearGenreByGenreId(id);
         genresRepository.deleteById(id);
     }

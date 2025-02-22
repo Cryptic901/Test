@@ -20,6 +20,10 @@ public class GenreDTO {
 
     private Long countOfBorrowingBookWithGenre;
 
+    public GenreDTO(long id) {
+        this.id = id;
+    }
+
 
     public static GenreDTO fromEntity(Genres genre) {
         if (genre == null) return null;

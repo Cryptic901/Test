@@ -34,14 +34,8 @@ class BookServiceTest {
     @Mock
     private GenresRepository genresRepository;
 
-    @Mock
-    private UsersRepository usersRepository;
-
     @InjectMocks
     private BookService bookService;
-
-    @InjectMocks
-    private UserService userService;
 
 
     @Test
@@ -215,15 +209,15 @@ class BookServiceTest {
 
     @Test
     void getMostPopularBooks_Success() {
-        Books book1 = new Books();
+        Books book1 = new Books(1L);
         Books book2 = new Books(2L);
         book2.setCountOfBorrowingBook(10L);
         book1.setCountOfBorrowingBook(5L);
 
         when(booksRepository.sortByBookPopularityDescending()).thenReturn(List.of(book2, book1));
 
-        List<Books> books = booksRepository.sortByBookPopularityDescending();
-        assertEquals(books, List.of(book2, book1));
+        List<BookDTO> books = bookService.getMostPopularBooks();
+        assertEquals(List.of(books.get(0).getId(), books.get(1).getId()), List.of(book2.getId(), book1.getId()));
         verify(booksRepository, times(1)).sortByBookPopularityDescending();
     }
 
