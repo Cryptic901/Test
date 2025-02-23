@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 
 /* Сервис для обработки данных о жанрах */
@@ -27,11 +28,10 @@ public class GenreService {
     }
 
     public void setGenreParams(GenreDTO genreDTO, Genres genres) {
-        genres.setId(genreDTO.getId());
         genres.setName(genreDTO.getName());
         genres.setDescription(genreDTO.getDescription());
         genres.setBooks(genreDTO.getBooks());
-        genres.setBookCount(genreDTO.getBookCount());
+        genres.setcountOfBooksInThatGenre(genreDTO.getcountOfBooksInThatGenre());
         genres.setCountOfBorrowingBookWithGenre(genreDTO.getCountOfBorrowingBookWithGenre());
     }
 
@@ -78,5 +78,20 @@ public class GenreService {
     public List<GenreDTO> getMostPopularGenres() {
         List<Genres> genres = genresRepository.sortByGenrePopularityDescending();
         return genres.stream().map(GenreDTO::fromEntity).toList();
+    }
+
+    public GenreDTO updateGenreFields(long id, Map<String, Object> updates) {
+        Genres genres = genresRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Genre not found with id: " + id));
+
+        if (updates.containsKey("name")) {
+            genres.setName((String) updates.get("name"));
+        }
+        if (updates.containsKey("description")) {
+            genres.setDescription((String) updates.get("description"));
+        }
+
+        genresRepository.save(genres);
+        return GenreDTO.fromEntity(genres);
     }
 }

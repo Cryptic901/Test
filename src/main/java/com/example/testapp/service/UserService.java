@@ -13,10 +13,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /* Сервис для обработки пользовательских данных */
 
@@ -157,5 +154,22 @@ public class UserService {
         booksRepository.save(book);
 
         return "Book returned successfully!";
+    }
+
+    public UserDTO updateUserFields(long id, Map<String, Object> updates) {
+        Users user = usersRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+
+        if(updates.containsKey("username")) {
+            user.setUsername((String) updates.get("username"));
+        }
+        if(updates.containsKey("password")) {
+            user.setPassword((String) updates.get("password"));
+        }
+        if(updates.containsKey("email")) {
+            user.setEmail((String) updates.get("email"));
+        }
+        usersRepository.save(user);
+        return UserDTO.fromEntity(user);
     }
 }

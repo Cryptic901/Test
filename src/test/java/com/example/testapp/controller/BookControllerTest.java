@@ -81,7 +81,7 @@ class BookControllerTest {
         when(bookService.updateBookById(eq(1L), any(BookDTO.class))).thenReturn(bookDTO);
 
         //Assert
-        mockMvc.perform(patch("/api/v1/books/update/{id}", id)
+        mockMvc.perform(put("/api/v1/books/update/{id}", id)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))

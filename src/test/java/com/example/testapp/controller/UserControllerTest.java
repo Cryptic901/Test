@@ -127,7 +127,7 @@ class UserControllerTest {
         when(userService.getUserById(id)).thenReturn(userDTO);
 
         //Assert
-        mockMvc.perform(patch("/api/v1/users/update/{id}", id)
+        mockMvc.perform(put("/api/v1/users/update/{id}", id)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))

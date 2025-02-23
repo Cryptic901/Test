@@ -64,8 +64,8 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(userId));
     }
 
-    @PatchMapping("/update/{userId}")
-    @Operation(summary = "Обновить пользователя по ID", description = "Обновляет параметры пользователя ID которого введено, если пользователь не найден статус 204, при неверном введении статус 400")
+    @PutMapping("/update/{userId}")
+    @Operation(summary = "Обновить пользователя по ID", description = "Обновляет пользователя ID которого введено, если пользователь не найден статус 204, при неверном введении статус 400")
     public ResponseEntity<UserDTO> updateUserById(@PathVariable long userId,@RequestBody UserDTO userDTO) {
         if (userService.getUserById(userId) == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

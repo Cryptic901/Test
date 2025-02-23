@@ -62,8 +62,8 @@ public class AuthorController {
         return ResponseEntity.ok(authorService.getAllAuthors());
     }
 
-    @PatchMapping("/update/{id}")
-    @Operation(summary = "Обновить автора по ID", description = "Обновляет параметры автора ID которого введено, если автор не найден статус 204, при неверном введении статус 400")
+    @PutMapping("/update/{id}")
+    @Operation(summary = "Обновить автора по ID", description = "Обновляет автора ID которого введено, если автор не найден статус 204, при неверном введении статус 400")
     public ResponseEntity<AuthorDTO> updateAuthorById(@PathVariable long id,@RequestBody AuthorDTO authorDTO) {
         if (authorDTO == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

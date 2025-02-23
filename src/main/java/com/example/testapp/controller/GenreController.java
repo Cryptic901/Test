@@ -54,13 +54,13 @@ public class GenreController {
         return ResponseEntity.ok(genreDTO);
     }
 
-    @PatchMapping("/update/{id}")
-    @Operation(summary = "Обновление жанра по ID", description = "Обновляет жанр по введенным полям, если не находит по id статус 204, при неверном введении статус 400")
+    @PutMapping("/update/{id}")
+    @Operation(summary = "Обновление жанра по ID", description = "Обновляет жанр, если не находит по id статус 204, при неверном введении статус 400")
     public ResponseEntity<GenreDTO> updateGenre(@PathVariable long id, @RequestBody GenreDTO genreDTO) {
-        GenreDTO dto = genreService.updateGenreById(id, genreDTO);
         if (genreDTO == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+        GenreDTO dto = genreService.updateGenreById(id, genreDTO);
         if (genreService.getGenreById(id) == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }

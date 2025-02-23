@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /* Сервис для обработки данных об авторах */
 
@@ -28,7 +29,6 @@ public class AuthorService {
     }
 
     public void setAuthorsParams(Authors author, AuthorDTO authorDTO) {
-        author.setId(authorDTO.getId());
         author.setName(authorDTO.getName());
         author.setBookList(authorDTO.getBookList());
     }
@@ -92,5 +92,21 @@ public class AuthorService {
                 .stream()
                 .map(BookShortDTO::fromEntity)
                 .toList();
+    }
+
+    public AuthorDTO updateAuthorFields(long id, Map<String, Object> updates) {
+        Authors author = authorsRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Author not found with id: " + id));
+
+        if (updates.containsKey("name")) {
+            author.setName((String) updates.get("title"));
+        }
+
+        if (updates.containsKey("bookList")) {
+            author.setBookList(List.of((Long) updates.get("bookList")));
+        }
+
+        authorsRepository.save(author);
+        return AuthorDTO.fromEntity(author);
     }
 }

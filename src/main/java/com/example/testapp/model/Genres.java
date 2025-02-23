@@ -23,7 +23,7 @@ public class Genres {
 
     private String description;
 
-    private Integer bookCount;
+    private Integer countOfBooksInThatGenre;
 
     private Long countOfBorrowingBookWithGenre;
 
@@ -58,15 +58,15 @@ public class Genres {
         this.books = books;
     }
 
-    public Integer getBookCount() {
-        if (bookCount == null) {
-            bookCount = 0;
+    public Integer getcountOfBooksInThatGenre() {
+        if (countOfBooksInThatGenre == null) {
+            countOfBooksInThatGenre = 0;
         }
-        return bookCount;
+        return countOfBooksInThatGenre;
     }
 
-    public void setBookCount(Integer bookCount) {
-        this.bookCount = bookCount;
+    public void setcountOfBooksInThatGenre(Integer countOfBooksInThatGenre) {
+        this.countOfBooksInThatGenre = countOfBooksInThatGenre;
     }
 
     public String getDescription() {
@@ -95,17 +95,17 @@ public class Genres {
                 ", name='" + name + '\'' +
                 ", books=" + books +
                 ", description='" + description + '\'' +
-                ", bookCount=" + bookCount +
+                ", countOfBooksInThatGenre=" + countOfBooksInThatGenre +
                 ", countOfBorrowingBookWithGenre=" + countOfBorrowingBookWithGenre +
                 '}';
     }
 
-    public Genres(Long id, String name, List<Long> books, String description, Integer bookCount, Long countOfBorrowingBookWithGenre) {
+    public Genres(Long id, String name, List<Long> books, String description, Integer countOfBooksInThatGenre, Long countOfBorrowingBookWithGenre) {
         this.id = id;
         this.name = name;
         this.books = books;
         this.description = description;
-        this.bookCount = bookCount;
+        this.countOfBooksInThatGenre = countOfBooksInThatGenre;
         this.countOfBorrowingBookWithGenre = countOfBorrowingBookWithGenre;
     }
 

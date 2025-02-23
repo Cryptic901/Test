@@ -98,7 +98,7 @@ class AuthorControllerTest {
         when(authorService.updateAuthorById(id, authorDTO)).thenReturn(authorDTO);
         when(authorService.getAuthorById(id)).thenReturn(authorDTO);
 
-        mockMvc.perform(patch("/api/v1/authors/update/{id}", id)
+        mockMvc.perform(put("/api/v1/authors/update/{id}", id)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))

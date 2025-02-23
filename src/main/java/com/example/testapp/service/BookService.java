@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 /* Сервис для обработки данных о книгах */
@@ -86,7 +87,7 @@ public class BookService {
         authorBookList.add(savedBook.getId());
         author.setBookList(authorBookList);
 
-        genre.setBookCount(genre.getBookCount() + 1);
+        genre.setcountOfBooksInThatGenre(genre.getcountOfBooksInThatGenre() + 1);
         List<Long> booksWithThatGenre = genre.getBooks();
         booksWithThatGenre.add(savedBook.getId());
         genre.setBooks(booksWithThatGenre);
@@ -139,5 +140,37 @@ public class BookService {
     public List<BookDTO> getMostPopularBooks() {
         List<Books> books = booksRepository.sortByBookPopularityDescending();
         return books.stream().map(BookDTO::fromEntity).toList();
+    }
+
+    public BookDTO updateBookFields(long id, Map<String, Object> updates) {
+        Books books = booksRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Book not found with id: " + id));
+
+        if(updates.containsKey("title")) {
+            books.setTitle((String) updates.get("title"));
+        }
+        if (updates.containsKey("description")) {
+            books.setDescription((String) updates.get("description"));
+        }
+        if (updates.containsKey("publisher")) {
+            books.setPublisher((String) updates.get("publisher"));
+        }
+        if (updates.containsKey("publishedDate")) {
+            books.setPublishedDate((String) updates.get("publishedDate"));
+        }
+        if (updates.containsKey("isbn")) {
+            books.setIsbn((String) updates.get("isbn"));
+        }
+        if (updates.containsKey("amount")) {
+            books.setAmount((Integer) updates.get("amount"));
+        }
+        if (updates.containsKey("author_id")) {
+            books.setAuthor((Authors) updates.get("author_id"));
+        }
+        if (updates.containsKey("genre_id")) {
+            books.setGenre((Genres) updates.get("genre_id"));
+        }
+        booksRepository.save(books);
+        return BookDTO.fromEntity(books);
     }
 }

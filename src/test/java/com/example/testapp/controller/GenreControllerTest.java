@@ -92,7 +92,7 @@ public class GenreControllerTest {
         when(genreService.updateGenreById(genreId, genreDTO)).thenReturn(genreDTO);
         when(genreService.getGenreById(genreId)).thenReturn(genreDTO);
 
-        mockMvc.perform(patch("/api/v1/genres/update/{id}", genreId)
+        mockMvc.perform(put("/api/v1/genres/update/{id}", genreId)
                         .with(csrf())
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON))

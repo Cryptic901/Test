@@ -49,8 +49,8 @@ public class BookController {
     }
 
     //Отправка запроса и получение ответа на обновление параметра книги
-    @PatchMapping("/update/{id}")
-    @Operation(summary = "Обновить книгу по ID", description = "Обновляет параметры книги ID которой введено, если книга не найдена статус 204, при неверном введении статус 400")
+    @PutMapping("/update/{id}")
+    @Operation(summary = "Обновить книгу по ID", description = "Обновляет книгу, ID которой введено, если книга не найдена статус 204, при неверном введении статус 400")
     public ResponseEntity<BookDTO> updateBookById(@PathVariable long id, @RequestBody BookDTO bookDTO) {
         if (bookDTO == null) {
             ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
