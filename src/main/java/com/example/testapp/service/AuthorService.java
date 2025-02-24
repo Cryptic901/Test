@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -99,13 +100,14 @@ public class AuthorService {
                 .orElseThrow(() -> new EntityNotFoundException("Author not found with id: " + id));
 
         if (updates.containsKey("name")) {
-            author.setName((String) updates.get("title"));
+            author.setName((String) updates.get("name"));
         }
 
-        if (updates.containsKey("bookList")) {
-            author.setBookList(List.of((Long) updates.get("bookList")));
+        if (updates.containsKey("bookList") && updates.get("bookList") instanceof List<?> objList) {
+            List<Long> list = objList.stream()
+                    .map(obj -> Long.valueOf(obj.toString())).toList();
+            author.setBookList(new ArrayList<>(list));
         }
-
         authorsRepository.save(author);
         return AuthorDTO.fromEntity(author);
     }

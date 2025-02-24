@@ -13,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /* Сервис для обработки данных о книгах */
@@ -146,7 +144,7 @@ public class BookService {
         Books books = booksRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Book not found with id: " + id));
 
-        if(updates.containsKey("title")) {
+        if (updates.containsKey("title")) {
             books.setTitle((String) updates.get("title"));
         }
         if (updates.containsKey("description")) {
@@ -164,12 +162,34 @@ public class BookService {
         if (updates.containsKey("amount")) {
             books.setAmount((Integer) updates.get("amount"));
         }
-        if (updates.containsKey("author_id")) {
-            books.setAuthor((Authors) updates.get("author_id"));
+        if (updates.containsKey("borrowedUserIds") && updates.get("borrowedUserIds") instanceof List<?> userids) {
+            List<Long> borrowedUserIds = userids.stream()
+                    .map(obj -> Long.valueOf(obj.toString())).toList();
+            books.setBorrowedUserIds(new HashSet<>(borrowedUserIds));
+
         }
-        if (updates.containsKey("genre_id")) {
-            books.setGenre((Genres) updates.get("genre_id"));
-        }
+
+        //TODO
+//        if (updates.containsKey("author_id")) {
+//            Long authorId = Long.parseLong(updates.get("author_id").toString());
+//            Authors authors = authorsRepository.findById(authorId)
+//                    .orElseThrow(() -> new EntityNotFoundException("Author not found with id " + authorId));
+//            books.getAuthor().setName(authors.getName());
+//        }
+//        if (updates.containsKey("genre_id")) {
+//            Long genreId = Long.parseLong(updates.get("genre_id").toString());
+//            Genres genres = genresRepository.findById(genreId)
+//                    .orElseThrow(() -> new EntityNotFoundException("Genre not found with id " + genreId));
+//            books.getGenre().setName(genres.getName());
+//        }
+//
+//        if (updates.containsKey("authorName")) {
+//            books.getAuthor().setName((String) updates.get("authorName"));
+//        }
+//
+//        if (updates.containsKey("genreName")) {
+//            books.getGenre().setName((String) updates.get("genreName"));
+//        }
         booksRepository.save(books);
         return BookDTO.fromEntity(books);
     }

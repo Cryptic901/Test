@@ -14,22 +14,24 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = AuthorController.class)
 class AuthorControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @MockitoBean
     private AuthorService authorService;
@@ -98,12 +100,37 @@ class AuthorControllerTest {
         when(authorService.updateAuthorById(id, authorDTO)).thenReturn(authorDTO);
         when(authorService.getAuthorById(id)).thenReturn(authorDTO);
 
-        mockMvc.perform(put("/api/v1/authors/update/{id}", id)
+        mockMvc.perform(put("/api/v1/authors/update/allFields/{id}", id)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @WithMockUser
+    void updateAuthor() throws Exception {
+        long id = 1L;
+        AuthorDTO authorDTO = new AuthorDTO();
+        authorDTO.setName("name");
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", "newName");
+
+        when(authorService.updateAuthorFields(eq(id), anyMap())).thenAnswer(invocation -> {
+            authorDTO.setName("newName");
+            return authorDTO;
+        });
+        when(authorService.getAuthorById(id)).thenReturn(authorDTO);
+
+        mockMvc.perform(patch("/api/v1/authors/update/{id}", id)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(map)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("newName"));
+        verify(authorService, times(1)).updateAuthorFields(eq(id), anyMap());
+    }
+
 
     @Test
     @WithMockUser

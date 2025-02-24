@@ -1,7 +1,6 @@
 package com.example.testapp.controller;
 
 import com.example.testapp.DTO.GenreDTO;
-import com.example.testapp.model.Genres;
 import com.example.testapp.service.GenreService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -13,12 +12,12 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.matches;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -28,6 +27,9 @@ public class GenreControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @MockitoBean
     private GenreService genreService;
@@ -92,11 +94,35 @@ public class GenreControllerTest {
         when(genreService.updateGenreById(genreId, genreDTO)).thenReturn(genreDTO);
         when(genreService.getGenreById(genreId)).thenReturn(genreDTO);
 
-        mockMvc.perform(put("/api/v1/genres/update/{id}", genreId)
+        mockMvc.perform(put("/api/v1/genres/update/allFields/{id}", genreId)
                         .with(csrf())
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    void updateGenre() throws Exception {
+        long genreId = 1L;
+        GenreDTO genreDTO = new GenreDTO(genreId);
+        genreDTO.setName("Old Genre");
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", "New Genre");
+
+        when(genreService.updateGenreFields(eq(genreId), anyMap())).thenAnswer(invocation -> {
+            genreDTO.setName("New Genre");
+            return genreDTO;
+        });
+        when(genreService.getGenreById(genreId)).thenReturn(genreDTO);
+
+        mockMvc.perform(patch("/api/v1/genres/update/{id}", genreId)
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(map))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("New Genre"));
+        verify(genreService,times(1)).updateGenreFields(eq(genreId), anyMap());
     }
 
     @Test

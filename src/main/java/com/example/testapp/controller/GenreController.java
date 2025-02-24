@@ -10,12 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /* Контроллер жанров с которым будет взаимодействовать пользователь */
 
 @RestController
 @RequestMapping("api/v1/genres")
-@Tag(name = "Жанры", description = "Методы для работы с жанрами")
+@Tag(name = "Жанры",
+        description = "Методы для работы с жанрами")
 public class GenreController {
 
     private final GenreService genreService;
@@ -26,7 +28,8 @@ public class GenreController {
     }
 
     @PostMapping("/create")
-    @Operation(summary = "Добавление жанра", description = "Добавляет жанр, при неверном введении отправляет статус 400")
+    @Operation(summary = "Добавление жанра",
+            description = "Добавляет жанр, при неверном введении отправляет статус 400")
     public ResponseEntity<GenreDTO> addGenre(@RequestBody GenreDTO genreDTO) {
         if (genreDTO == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -35,7 +38,8 @@ public class GenreController {
     }
 
     @GetMapping("/getAll")
-    @Operation(summary = "Получение всех жанров", description = "Возвращает список всех жанров, если список пустой статус 204")
+    @Operation(summary = "Получение всех жанров",
+            description = "Возвращает список всех жанров, если список пустой статус 204")
     public ResponseEntity<List<GenreDTO>> getAllGenres() {
         List<GenreDTO> genreDTOList = genreService.getAllGenres();
         if (genreDTOList.isEmpty()) {
@@ -45,7 +49,8 @@ public class GenreController {
     }
 
     @GetMapping("/get/id/{id}")
-    @Operation(summary = "Получение жанра по ID", description = "Возвращает жанр с введенным названием, если жанр не найден статус 204")
+    @Operation(summary = "Получение жанра по ID",
+            description = "Возвращает жанр с введенным названием, если жанр не найден статус 204")
     public ResponseEntity<GenreDTO> getGenreById(@PathVariable long id) {
         GenreDTO genreDTO = genreService.getGenreById(id);
         if (genreDTO == null) {
@@ -54,9 +59,10 @@ public class GenreController {
         return ResponseEntity.ok(genreDTO);
     }
 
-    @PutMapping("/update/{id}")
-    @Operation(summary = "Обновление жанра по ID", description = "Обновляет жанр, если не находит по id статус 204, при неверном введении статус 400")
-    public ResponseEntity<GenreDTO> updateGenre(@PathVariable long id, @RequestBody GenreDTO genreDTO) {
+    @PutMapping("/update/allFields/{id}")
+    @Operation(summary = "Обновление жанра по ID",
+            description = "Обновляет жанр, если не находит по id статус 204, при неверном введении статус 400")
+    public ResponseEntity<GenreDTO> updateGenreById(@PathVariable long id, @RequestBody GenreDTO genreDTO) {
         if (genreDTO == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -67,8 +73,24 @@ public class GenreController {
         return ResponseEntity.ok(dto);
     }
 
+    @PatchMapping("update/{id}")
+    @Operation(summary = "Обновление введенных полей жанра по ID",
+            description = "Обновляет поля которые были введены для пользователя с введенным ID," +
+                    " если не находит по id статус 204, при неверном вводе статус 400" )
+    public ResponseEntity<GenreDTO> updateGenre(@PathVariable long id, @RequestBody Map<String, Object> updates) {
+        if (genreService.getGenreById(id) == null) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        if (updates == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        GenreDTO genreDTO = genreService.updateGenreFields(id, updates);
+        return ResponseEntity.ok(genreDTO);
+    }
+
     @DeleteMapping("/delete/{id}")
-    @Operation(summary = "Удаление жанра по ID", description = "Удаляет жанр по введенному ID отправляя статус 410, если не находит по id статус 204")
+    @Operation(summary = "Удаление жанра по ID",
+            description = "Удаляет жанр по введенному ID отправляя статус 410, если не находит по id статус 204")
     public ResponseEntity<GenreDTO> deleteGenre(@PathVariable long id) {
         GenreDTO genreDTO = genreService.getGenreById(id);
         if (genreDTO == null) {
@@ -79,7 +101,8 @@ public class GenreController {
     }
 
     @GetMapping("/get/name/{name}")
-    @Operation(summary = "Поиск жанра по названию", description = "Находит жанр по введенному названию, если не находит то статус 204")
+    @Operation(summary = "Поиск жанра по названию",
+            description = "Находит жанр по введенному названию, если не находит то статус 204")
     public ResponseEntity<GenreDTO> getGenreByName(@PathVariable String name) {
         GenreDTO genreDTO = genreService.getGenreByName(name);
         if (genreDTO == null) {
@@ -89,7 +112,9 @@ public class GenreController {
     }
 
     @GetMapping("/sort/popularityDesc")
-    @Operation(summary = "Сортирует жанры по популярности", description = "Сортирует жанры по убыванию количества занятых книг за всё время, если жанров нет статус 204")
+    @Operation(summary = "Сортирует жанры по популярности",
+            description = "Сортирует жанры по убыванию количества занятых книг за всё время," +
+                    " если жанров нет статус 204")
     public ResponseEntity<List<GenreDTO>> getPopularityDesc() {
         List<GenreDTO> genreDTOList = genreService.getMostPopularGenres();
         if (genreDTOList.isEmpty()) {

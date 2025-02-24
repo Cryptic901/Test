@@ -4,6 +4,7 @@ import com.example.testapp.DTO.BookDTO;
 import com.example.testapp.DTO.UserDTO;
 import com.example.testapp.service.BookService;
 import com.example.testapp.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +14,12 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -27,6 +29,9 @@ class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @MockitoBean
     private UserService userService;
@@ -127,11 +132,39 @@ class UserControllerTest {
         when(userService.getUserById(id)).thenReturn(userDTO);
 
         //Assert
-        mockMvc.perform(put("/api/v1/users/update/{id}", id)
+        mockMvc.perform(put("/api/v1/users/update/allFields/{id}", id)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    void updateUserTest() throws Exception {
+
+        //Arrange
+        long id = 1L;
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUsername("Cryptik");
+        Map<String, Object> map = new HashMap<>();
+        map.put("username", "Cryptic");
+
+        //Act
+        when(userService.updateUserFields(eq(id), anyMap())).thenAnswer(invocation -> {
+            userDTO.setUsername("Cryptic");
+            return userDTO;
+        });
+        when(userService.getUserById(id)).thenReturn(userDTO);
+
+        //Assert
+        mockMvc.perform(patch("/api/v1/users/update/{id}", id)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(map)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("Cryptic"));
+        verify(userService, times(1)).updateUserFields(eq(id), anyMap());
     }
 
     @Test
