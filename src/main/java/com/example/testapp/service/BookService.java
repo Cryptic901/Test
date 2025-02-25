@@ -85,7 +85,6 @@ public class BookService {
         authorBookList.add(savedBook.getId());
         author.setBookList(authorBookList);
 
-        genre.setcountOfBooksInThatGenre(genre.getcountOfBooksInThatGenre() + 1);
         List<Long> booksWithThatGenre = genre.getBooks();
         booksWithThatGenre.add(savedBook.getId());
         genre.setBooks(booksWithThatGenre);
@@ -169,27 +168,35 @@ public class BookService {
 
         }
 
-        //TODO
-//        if (updates.containsKey("author_id")) {
-//            Long authorId = Long.parseLong(updates.get("author_id").toString());
-//            Authors authors = authorsRepository.findById(authorId)
-//                    .orElseThrow(() -> new EntityNotFoundException("Author not found with id " + authorId));
-//            books.getAuthor().setName(authors.getName());
-//        }
-//        if (updates.containsKey("genre_id")) {
-//            Long genreId = Long.parseLong(updates.get("genre_id").toString());
-//            Genres genres = genresRepository.findById(genreId)
-//                    .orElseThrow(() -> new EntityNotFoundException("Genre not found with id " + genreId));
-//            books.getGenre().setName(genres.getName());
-//        }
-//
-//        if (updates.containsKey("authorName")) {
-//            books.getAuthor().setName((String) updates.get("authorName"));
-//        }
-//
-//        if (updates.containsKey("genreName")) {
-//            books.getGenre().setName((String) updates.get("genreName"));
-//        }
+        if (updates.containsKey("author_id")) {
+            Long authorId = Long.parseLong(updates.get("author_id").toString());
+            Authors authors = authorsRepository.findById(authorId)
+                    .orElseThrow(() -> new EntityNotFoundException("Author not found with id " + authorId));
+            books.setAuthor(authors);
+        }
+        if (updates.containsKey("genre_id")) {
+            Long genreId = Long.parseLong(updates.get("genre_id").toString());
+            Genres genres = genresRepository.findById(genreId)
+                    .orElseThrow(() -> new EntityNotFoundException("Genre not found with id " + genreId));
+            books.setGenre(genres);
+            genresRepository.save(genres);
+        }
+
+        if (updates.containsKey("authorName")) {
+            String name = updates.get("authorName").toString();
+            Authors authors = authorsRepository.findAuthorsByName(name)
+                            .orElseThrow(() -> new EntityNotFoundException("Author not found with name " + name));
+            books.setAuthor(authors);
+        }
+
+        if (updates.containsKey("genreName")) {
+            String name = (String) updates.get("genreName");
+            Genres genres = genresRepository.findByName(name)
+                            .orElseThrow(() -> new EntityNotFoundException("Genre not found with name " + name));
+            books.setGenre(genres);
+            genres.setCountOfBooksInThatGenre(genres.getCountOfBooksInThatGenre() + 1);
+            genresRepository.save(genres);
+        }
         booksRepository.save(books);
         return BookDTO.fromEntity(books);
     }

@@ -46,7 +46,8 @@ public class AuthorService {
     }
 
     public AuthorDTO getAuthorByName(String name) {
-        return AuthorDTO.fromEntity(authorsRepository.findAuthorsByName(name));
+        return AuthorDTO.fromEntity(authorsRepository.findAuthorsByName(name)
+                .orElseThrow(() -> new EntityNotFoundException("Author not found with name: " + name)));
     }
 
     public List<AuthorDTO> getAllAuthors() {

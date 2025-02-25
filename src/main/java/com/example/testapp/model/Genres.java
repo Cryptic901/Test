@@ -31,6 +31,10 @@ public class Genres {
         this.id = genreId;
     }
 
+    public Genres(String name) {
+        this.name = name;
+    }
+
     public Long getId() {
         return id;
     }
@@ -58,14 +62,15 @@ public class Genres {
         this.books = books;
     }
 
-    public Integer getcountOfBooksInThatGenre() {
-        if (countOfBooksInThatGenre == null) {
+    public Integer getCountOfBooksInThatGenre() {
+        if (countOfBooksInThatGenre == null && books == null) {
             countOfBooksInThatGenre = 0;
+            books = new ArrayList<>();
         }
-        return countOfBooksInThatGenre;
+        return books.size();
     }
 
-    public void setcountOfBooksInThatGenre(Integer countOfBooksInThatGenre) {
+    public void setCountOfBooksInThatGenre(Integer countOfBooksInThatGenre) {
         this.countOfBooksInThatGenre = countOfBooksInThatGenre;
     }
 

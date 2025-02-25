@@ -31,7 +31,7 @@ public class GenreDTO {
         dto.setId(genre.getId());
         dto.setName(genre.getName());
         dto.setDescription(genre.getDescription());
-        dto.setcountOfBooksInThatGenre(genre.getcountOfBooksInThatGenre());
+        dto.setCountOfBooksInThatGenre(genre.getCountOfBooksInThatGenre());
         dto.setBooks(genre.getBooks() != null ? genre.getBooks() : new ArrayList<>());
         dto.setCountOfBorrowingBookWithGenre(genre.getCountOfBorrowingBookWithGenre());
 
@@ -44,7 +44,7 @@ public class GenreDTO {
         genres.setId(genreDTO.getId());
         genres.setName(genreDTO.getName());
         genres.setDescription(genreDTO.getDescription());
-        genres.setcountOfBooksInThatGenre(genreDTO.getcountOfBooksInThatGenre());
+        genres.setCountOfBooksInThatGenre(genreDTO.getCountOfBooksInThatGenre());
         genres.setBooks(genreDTO.getBooks());
         genres.setCountOfBorrowingBookWithGenre(genreDTO.getCountOfBorrowingBookWithGenre());
 
@@ -94,11 +94,11 @@ public class GenreDTO {
         this.description = description;
     }
 
-    public Integer getcountOfBooksInThatGenre() {
+    public Integer getCountOfBooksInThatGenre() {
         return countOfBooksInThatGenre;
     }
 
-    public void setcountOfBooksInThatGenre(Integer countOfBooksInThatGenre) {
+    public void setCountOfBooksInThatGenre(Integer countOfBooksInThatGenre) {
         this.countOfBooksInThatGenre = countOfBooksInThatGenre;
     }
 

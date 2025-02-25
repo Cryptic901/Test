@@ -213,7 +213,7 @@ class AuthorServiceTest {
         Authors authors = new Authors();
         authors.setName("Jane Doe");
 
-        when(authorsRepository.findAuthorsByName(authors.getName())).thenReturn(authors);
+        when(authorsRepository.findAuthorsByName(authors.getName())).thenReturn(Optional.of(authors));
         AuthorDTO authorDTO = authorService.getAuthorByName(authors.getName());
 
         assertEquals(authors.getName(), authorDTO.getName());

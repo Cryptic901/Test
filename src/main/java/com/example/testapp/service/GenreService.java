@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ public class GenreService {
         genres.setName(genreDTO.getName());
         genres.setDescription(genreDTO.getDescription());
         genres.setBooks(genreDTO.getBooks());
-        genres.setcountOfBooksInThatGenre(genreDTO.getcountOfBooksInThatGenre());
+        genres.setCountOfBooksInThatGenre(genreDTO.getCountOfBooksInThatGenre());
         genres.setCountOfBorrowingBookWithGenre(genreDTO.getCountOfBorrowingBookWithGenre());
     }
 
@@ -91,6 +92,18 @@ public class GenreService {
             genres.setDescription((String) updates.get("description"));
         }
 
+        if (updates.containsKey("books") && updates.get("books") instanceof List<?> objects) {
+                List<Long> bookIds = objects.stream()
+                        .map(obj -> Long.valueOf(obj.toString())).toList();
+                genres.setBooks(new ArrayList<>(bookIds));
+        }
+        if (updates.containsKey("countOfBooksInThatGenre")) {
+            genres.setCountOfBooksInThatGenre((Integer) updates.get("countOfBooksInThatGenre"));
+        }
+
+        if (updates.containsKey("countOfBorrowingBooksWithGenre")) {
+            genres.setCountOfBorrowingBookWithGenre((Long) updates.get("countOfBorrowingBooksWithGenre"));
+        }
         genresRepository.save(genres);
         return GenreDTO.fromEntity(genres);
     }

@@ -19,4 +19,6 @@ public interface GenresRepository extends JpaRepository<Genres, Long> {
 
     @Query("SELECT g FROM Genres g ORDER BY g.countOfBorrowingBookWithGenre DESC")
     List<Genres> sortByGenrePopularityDescending();
+
+    Optional<Genres> findByName(String name);
 }

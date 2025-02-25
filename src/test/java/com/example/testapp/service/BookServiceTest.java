@@ -70,7 +70,7 @@ class BookServiceTest {
         Authors authors = authorCaptor.getValue();
         Genres genres = genreCaptor.getValue();
         assertTrue(author.getBookList().contains(bookId));
-        assertEquals(1, genres.getcountOfBooksInThatGenre());
+        assertEquals(1, genres.getCountOfBooksInThatGenre());
         verify(booksRepository, times(1)).save(any(Books.class));
     }
 

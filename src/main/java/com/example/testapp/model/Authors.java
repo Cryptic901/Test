@@ -23,6 +23,10 @@ public class Authors {
         this.id = authorId;
     }
 
+    public Authors(String name) {
+        this.name = name;
+    }
+
     public Long getId() {
         return id;
     }
