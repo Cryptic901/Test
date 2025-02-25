@@ -2,7 +2,7 @@ package com.example.testapp.controller;
 
 import com.example.testapp.DTO.BookDTO;
 import com.example.testapp.DTO.BookShortDTO;
-import com.example.testapp.service.BookService;
+import com.example.testapp.service.impl.BookServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +21,10 @@ import java.util.Map;
         description = "Методы для работы с книгами")
 public class BookController {
 
-    private final BookService bookService;
+    private final BookServiceImpl bookService;
 
     @Autowired
-    public BookController(BookService bookService) {
+    public BookController(BookServiceImpl bookService) {
         this.bookService = bookService;
     }
 

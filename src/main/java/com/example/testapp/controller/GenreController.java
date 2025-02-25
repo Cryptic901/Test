@@ -1,7 +1,7 @@
 package com.example.testapp.controller;
 
 import com.example.testapp.DTO.GenreDTO;
-import com.example.testapp.service.GenreService;
+import com.example.testapp.service.impl.GenreServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +20,10 @@ import java.util.Map;
         description = "Методы для работы с жанрами")
 public class GenreController {
 
-    private final GenreService genreService;
+    private final GenreServiceImpl genreService;
 
     @Autowired
-    public GenreController(GenreService genreService) {
+    public GenreController(GenreServiceImpl genreService) {
         this.genreService = genreService;
     }
 

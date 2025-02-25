@@ -1,7 +1,7 @@
 package com.example.testapp.controller;
 
 import com.example.testapp.DTO.GenreDTO;
-import com.example.testapp.service.GenreService;
+import com.example.testapp.service.impl.GenreServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -32,7 +32,7 @@ public class GenreControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private GenreService genreService;
+    private GenreServiceImpl genreService;
 
     @InjectMocks
     private GenreController genreController;

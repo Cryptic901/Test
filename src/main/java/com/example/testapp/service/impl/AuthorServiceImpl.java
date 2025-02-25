@@ -1,4 +1,4 @@
-package com.example.testapp.service;
+package com.example.testapp.service.impl;
 
 import com.example.testapp.DTO.AuthorDTO;
 import com.example.testapp.DTO.BookShortDTO;
@@ -7,6 +7,7 @@ import com.example.testapp.model.Authors;
 import com.example.testapp.model.Books;
 import com.example.testapp.repository.AuthorsRepository;
 import com.example.testapp.repository.BooksRepository;
+import com.example.testapp.service.AuthorService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,13 +19,13 @@ import java.util.Map;
 /* Сервис для обработки данных об авторах */
 
 @Service
-public class AuthorService {
+public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorsRepository authorsRepository;
     private final BooksRepository booksRepository;
 
     @Autowired
-    public AuthorService(AuthorsRepository authorsRepository, BooksRepository booksRepository) {
+    public AuthorServiceImpl(AuthorsRepository authorsRepository, BooksRepository booksRepository) {
         this.authorsRepository = authorsRepository;
         this.booksRepository = booksRepository;
     }

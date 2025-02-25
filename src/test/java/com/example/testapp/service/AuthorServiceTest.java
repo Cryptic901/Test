@@ -7,6 +7,7 @@ import com.example.testapp.model.Authors;
 import com.example.testapp.model.Books;
 import com.example.testapp.repository.AuthorsRepository;
 import com.example.testapp.repository.BooksRepository;
+import com.example.testapp.service.impl.AuthorServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,7 +31,7 @@ class AuthorServiceTest {
     private BooksRepository booksRepository;
 
     @InjectMocks
-    private AuthorService authorService;
+    private AuthorServiceImpl authorService;
 
     @Test
     void addAuthor_Success() {

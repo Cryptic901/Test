@@ -2,7 +2,7 @@ package com.example.testapp.controller;
 
 import com.example.testapp.DTO.AuthorDTO;
 import com.example.testapp.DTO.BookShortDTO;
-import com.example.testapp.service.AuthorService;
+import com.example.testapp.service.impl.AuthorServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +21,10 @@ import java.util.Map;
         description = "Методы для работы с авторами")
 public class AuthorController {
 
-    private final AuthorService authorService;
+    private final AuthorServiceImpl authorService;
 
     @Autowired
-    public AuthorController(AuthorService authorService) {
+    public AuthorController(AuthorServiceImpl authorService) {
         this.authorService = authorService;
     }
 

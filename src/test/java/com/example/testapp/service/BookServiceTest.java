@@ -7,7 +7,7 @@ import com.example.testapp.model.Genres;
 import com.example.testapp.repository.AuthorsRepository;
 import com.example.testapp.repository.BooksRepository;
 import com.example.testapp.repository.GenresRepository;
-import com.example.testapp.repository.UsersRepository;
+import com.example.testapp.service.impl.BookServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -35,7 +35,7 @@ class BookServiceTest {
     private GenresRepository genresRepository;
 
     @InjectMocks
-    private BookService bookService;
+    private BookServiceImpl bookService;
 
 
     @Test

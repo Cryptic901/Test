@@ -8,6 +8,7 @@ import com.example.testapp.model.Users;
 import com.example.testapp.repository.BooksRepository;
 import com.example.testapp.repository.GenresRepository;
 import com.example.testapp.repository.UsersRepository;
+import com.example.testapp.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,7 +36,7 @@ public class UserServiceTest {
 
     @Spy
     @InjectMocks
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @Test
     void createUser_Success() {

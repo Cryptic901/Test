@@ -2,8 +2,8 @@ package com.example.testapp.controller;
 
 import com.example.testapp.DTO.BookDTO;
 import com.example.testapp.DTO.UserDTO;
-import com.example.testapp.service.BookService;
-import com.example.testapp.service.UserService;
+import com.example.testapp.service.impl.BookServiceImpl;
+import com.example.testapp.service.impl.UserServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -34,10 +34,10 @@ class UserControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @MockitoBean
-    private BookService bookService;
+    private BookServiceImpl bookService;
 
     @InjectMocks
     private UserController userController;

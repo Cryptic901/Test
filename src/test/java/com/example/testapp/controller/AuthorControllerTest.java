@@ -3,7 +3,7 @@ package com.example.testapp.controller;
 import com.example.testapp.DTO.AuthorDTO;
 import com.example.testapp.DTO.BookShortDTO;
 import com.example.testapp.model.Authors;
-import com.example.testapp.service.AuthorService;
+import com.example.testapp.service.impl.AuthorServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -34,7 +34,7 @@ class AuthorControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private AuthorService authorService;
+    private AuthorServiceImpl authorService;
 
     @InjectMocks
     private AuthorController authorController;

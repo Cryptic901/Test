@@ -3,13 +3,13 @@ package com.example.testapp.service;
 import com.example.testapp.DTO.GenreDTO;
 import com.example.testapp.model.Genres;
 import com.example.testapp.repository.GenresRepository;
+import com.example.testapp.service.impl.GenreServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +23,7 @@ public class GenreServiceTest {
     private GenresRepository genresRepository;
 
     @InjectMocks
-    private GenreService genreService;
+    private GenreServiceImpl genreService;
 
 
     @Test

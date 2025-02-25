@@ -1,8 +1,8 @@
 package com.example.testapp.controller;
 
 import com.example.testapp.DTO.UserDTO;
-import com.example.testapp.service.BookService;
-import com.example.testapp.service.UserService;
+import com.example.testapp.service.impl.BookServiceImpl;
+import com.example.testapp.service.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +21,11 @@ import java.util.Map;
         description = "Методы работы с пользователями")
 public class UserController {
 
-    private final UserService userService;
-    private final BookService bookService;
+    private final UserServiceImpl userService;
+    private final BookServiceImpl bookService;
 
     @Autowired
-    public UserController(UserService userService, BookService bookService) {
+    public UserController(UserServiceImpl userService, BookServiceImpl bookService) {
         this.userService = userService;
         this.bookService = bookService;
     }
