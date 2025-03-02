@@ -12,7 +12,6 @@ import com.example.testapp.repository.UsersRepository;
 import com.example.testapp.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -60,12 +59,10 @@ public class UserServiceImpl implements UserService {
         return userDTOs;
     }
 
-    @Cacheable("username")
     public UserDTO getUserByUsername(String username) {
         return UserDTO.fromEntity(usersRepository.findUsersByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username)));
     }
-    @Cacheable()
     public UserDTO getUserById(long id) {
         return UserDTO.fromEntity(usersRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id)));

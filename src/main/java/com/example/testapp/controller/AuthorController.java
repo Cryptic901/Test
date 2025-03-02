@@ -98,7 +98,7 @@ public class AuthorController {
             description = "Удаляет автора по ID возвращая статус 410, если автор не найден статус 204")
     public ResponseEntity<AuthorDTO> deleteAuthorById(@PathVariable long id) {
         if (authorService.getAuthorById(id) == null) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         authorService.deleteAuthorById(id);
         return ResponseEntity.status(HttpStatus.GONE).build();
