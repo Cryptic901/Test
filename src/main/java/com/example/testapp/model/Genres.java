@@ -8,7 +8,7 @@ import java.util.List;
 /* Сущность жанр */
 
 @Entity
-public class Genres {
+public class Genres  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

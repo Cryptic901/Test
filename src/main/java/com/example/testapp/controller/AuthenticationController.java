@@ -1,0 +1,67 @@
+package com.example.testapp.controller;
+
+import com.example.testapp.DTO.LoginUserDTO;
+import com.example.testapp.DTO.RegisterUserDTO;
+import com.example.testapp.DTO.VerifyUserDTO;
+import com.example.testapp.model.Users;
+import com.example.testapp.responses.LoginResponse;
+import com.example.testapp.service.impl.AuthenticationServiceImpl;
+import com.example.testapp.service.impl.JwtServiceImpl;
+import org.apache.tomcat.websocket.AuthenticationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/auth")
+public class AuthenticationController {
+
+    private final AuthenticationServiceImpl authenticationService;
+    private final JwtServiceImpl jwtService;
+
+    public AuthenticationController(AuthenticationServiceImpl authenticationService, JwtServiceImpl jwtService) {
+        this.authenticationService = authenticationService;
+        this.jwtService = jwtService;
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<Users> register(@RequestBody RegisterUserDTO registerUserDTO) {
+        Users registeredUser = authenticationService.signUp(registerUserDTO);
+        if (registeredUser == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+        return ResponseEntity.ok(registeredUser);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDTO loginUserDTO) throws AuthenticationException {
+        Users authenticatedUser = authenticationService.authenticate(loginUserDTO);
+        if (authenticatedUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+        String jwtToken = jwtService.generateToken(authenticatedUser);
+        LoginResponse loginResponse = new LoginResponse(jwtToken, jwtService.getExpirationTime());
+        return ResponseEntity.ok(loginResponse);
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<?> verifyUser(@RequestBody VerifyUserDTO verifyUserDTO) {
+        try {
+            authenticationService.verifyUser(verifyUserDTO);
+            return ResponseEntity.ok("Account verified successfully");
+        } catch (AuthenticationException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/resend")
+    public ResponseEntity<?> resendVerificationCode(@RequestParam String email) {
+        try {
+            authenticationService.resendVerificationCode(email);
+            return ResponseEntity.ok("Verification code resent");
+        } catch (AuthenticationException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+}

@@ -8,10 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Stream;
 
 
 /* Сущность пользователь */
@@ -60,6 +58,40 @@ public class Users implements UserDetails {
     public Users() {
     }
 
+    public Users(String username, String email, String encode) {
+        this.username = username;
+        this.email = email;
+        this.password = encode;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+    public LocalDateTime getVerificationCodeExpiresAt() {
+        return verificationCodeExpiresAt;
+    }
+
+    public void setVerificationCodeExpiresAt(LocalDateTime verificationCodeExpiresAt) {
+        this.verificationCodeExpiresAt = verificationCodeExpiresAt;
+    }
+
     public Long getId() {
         return id;
     }
@@ -105,12 +137,12 @@ public class Users implements UserDetails {
     }
 
     public void setBorrowedBooks(List<Long> borrowedBooks) {
-        if(this.borrowedBooks == null) {
+        if (this.borrowedBooks == null) {
             this.borrowedBooks = new ArrayList<>();
         }
         this.borrowedBooks.clear();
 
-        if(borrowedBooks != null) {
+        if (borrowedBooks != null) {
             this.borrowedBooks.addAll(borrowedBooks);
         }
     }
@@ -123,6 +155,9 @@ public class Users implements UserDetails {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", role=" + role +
+                ", enabled=" + enabled +
+                ", verificationCode='" + verificationCode + '\'' +
+                ", verificationCodeExpiresAt=" + verificationCodeExpiresAt +
                 ", borrowedBooks=" + borrowedBooks +
                 '}';
     }

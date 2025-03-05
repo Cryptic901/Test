@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
 
@@ -18,7 +19,7 @@ public class BookDTO implements Serializable {
     private String description;
     private String isbn;
     private String publisher;
-    private String publishedDate;
+    private Date publishedDate;
     private int amount;
     private Set<Long> borrowedUserIds;
     private Long countOfBorrowingBook;
@@ -189,11 +190,11 @@ public class BookDTO implements Serializable {
         this.publisher = publisher;
     }
 
-    public String getPublishedDate() {
+    public Date getPublishedDate() {
         return publishedDate;
     }
 
-    public void setPublishedDate(String publishedDate) {
+    public void setPublishedDate(Date publishedDate) {
         this.publishedDate = publishedDate;
     }
 
@@ -205,7 +206,7 @@ public class BookDTO implements Serializable {
         this.amount = amount;
     }
 
-    public BookDTO(Long id, String title, String description, String isbn, String publisher, String publishedDate,
+    public BookDTO(Long id, String title, String description, String isbn, String publisher, Date publishedDate,
                    int amount, Set<Long> borrowedUserIds, String genreName, Long genreId, String authorName, Long authorId) {
         this.id = id;
         this.title = title;

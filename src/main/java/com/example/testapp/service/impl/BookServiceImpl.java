@@ -154,7 +154,7 @@ public class BookServiceImpl implements BookService {
             books.setPublisher((String) updates.get("publisher"));
         }
         if (updates.containsKey("publishedDate")) {
-            books.setPublishedDate((String) updates.get("publishedDate"));
+            books.setPublishedDate((Date) updates.get("publishedDate"));
         }
         if (updates.containsKey("isbn")) {
             books.setIsbn((String) updates.get("isbn"));

@@ -1,12 +1,10 @@
 package com.example.testapp.service;
 
-import com.example.testapp.enums.UserRole;
 import io.jsonwebtoken.Claims;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
-import java.util.Map;
 
 public interface JwtService {
 

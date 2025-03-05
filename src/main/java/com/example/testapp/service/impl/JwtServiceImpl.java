@@ -24,8 +24,7 @@ public class JwtServiceImpl implements JwtService {
     private long jwtExpiration;
 
     public SecretKey generateKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        return Keys.hmacShaKeyFor(keyBytes);
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
