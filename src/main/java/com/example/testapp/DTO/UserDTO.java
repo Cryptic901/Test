@@ -1,6 +1,6 @@
 package com.example.testapp.DTO;
 
-import com.example.testapp.model.Users;
+import com.example.testapp.model.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
@@ -22,9 +22,9 @@ public class UserDTO implements Serializable {
     @JsonProperty("role")
     private String role;
 
-    private List<Long> borrowedBooks;
+    private List<Long> borrowedBook;
 
-    public static UserDTO fromEntity(Users user) {
+    public static UserDTO fromEntity(User user) {
         if (user == null) return null;
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
@@ -32,21 +32,21 @@ public class UserDTO implements Serializable {
         dto.setEmail(user.getEmail());
         dto.setPassword(user.getPassword());
         dto.setUserRole(user.getUserRole() != null ? user.getUserRole().name() : "UNDEFINED");
-        dto.setBorrowedBooks(user.getBorrowedBooks() != null
-                ? new ArrayList<>(user.getBorrowedBooks()) : new ArrayList<>());
+        dto.setBorrowedBook(user.getBorrowedBook() != null
+                ? new ArrayList<>(user.getBorrowedBook()) : new ArrayList<>());
         return dto;
     }
 
     public UserDTO() {
     }
 
-    public UserDTO(Users user) {
+    public UserDTO(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.password = user.getPassword();
         this.role = user.getUserRole() != null ? user.getUserRole().toString() : "UNDEFINED";
-        this.borrowedBooks = new ArrayList<>();
+        this.borrowedBook = new ArrayList<>();
     }
 
     public Long getId() {
@@ -90,18 +90,18 @@ public class UserDTO implements Serializable {
         this.role = role;
     }
 
-    public List<Long> getBorrowedBooks() {
-        return borrowedBooks;
+    public List<Long> getBorrowedBook() {
+        return borrowedBook;
     }
 
-    public void setBorrowedBooks(List<Long> borrowedBooks) {
-        if (this.borrowedBooks == null) {
-            this.borrowedBooks = new ArrayList<>();
+    public void setBorrowedBook(List<Long> borrowedBook) {
+        if (this.borrowedBook == null) {
+            this.borrowedBook = new ArrayList<>();
         }
-        this.borrowedBooks.clear();
+        this.borrowedBook.clear();
 
-        if (borrowedBooks != null) {
-            this.borrowedBooks.addAll(borrowedBooks);
+        if (borrowedBook != null) {
+            this.borrowedBook.addAll(borrowedBook);
         }
     }
 
@@ -113,7 +113,7 @@ public class UserDTO implements Serializable {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", role='" + role + '\'' +
-                ", borrowedBooks=" + borrowedBooks +
+                ", borrowedBook=" + borrowedBook +
                 '}';
     }
 }

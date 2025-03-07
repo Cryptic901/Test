@@ -3,10 +3,10 @@ package com.example.testapp.service;
 import com.example.testapp.DTO.AuthorDTO;
 import com.example.testapp.DTO.BookShortDTO;
 import com.example.testapp.exceptions.EntityNotFoundException;
-import com.example.testapp.model.Authors;
-import com.example.testapp.model.Books;
-import com.example.testapp.repository.AuthorsRepository;
-import com.example.testapp.repository.BooksRepository;
+import com.example.testapp.model.Author;
+import com.example.testapp.model.Book;
+import com.example.testapp.repository.AuthorRepository;
+import com.example.testapp.repository.BookRepository;
 import com.example.testapp.service.impl.AuthorServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,10 +25,10 @@ import static org.mockito.Mockito.*;
 class AuthorServiceTest {
 
     @Mock
-    private AuthorsRepository authorsRepository;
+    private AuthorRepository authorsRepository;
 
     @Mock
-    private BooksRepository booksRepository;
+    private BookRepository booksRepository;
 
     @InjectMocks
     private AuthorServiceImpl authorService;
@@ -36,25 +36,25 @@ class AuthorServiceTest {
     @Test
     void addAuthor_Success() {
 
-        Authors authors = new Authors();
+        Author authors = new Author();
         authors.setId(1L);
         authors.setName("John Doe");
         authors.setBookList(List.of(1L, 2L, 3L));
 
-        when(authorsRepository.save(any(Authors.class))).thenReturn(authors);
+        when(authorsRepository.save(any(Author.class))).thenReturn(authors);
 
         AuthorDTO authorDTO = authorService.addAuthor(AuthorDTO.fromEntity(authors));
 
         assertNotNull(authorDTO);
         assertEquals("John Doe", authorDTO.getName());
-        verify(authorsRepository, times(1)).save(any(Authors.class));
+        verify(authorsRepository, times(1)).save(any(Author.class));
     }
 
     @Test
     void getAuthorById_Success() {
         long id = 1L;
 
-        Authors authors = new Authors();
+        Author authors = new Author();
         authors.setId(id);
 
         when(authorsRepository.findById(id)).thenReturn(Optional.of(authors));
@@ -77,17 +77,17 @@ class AuthorServiceTest {
     }
 
     @Test
-    void getAllAuthors_Success() {
-        Authors authors = new Authors();
+    void getAllAuthor_Success() {
+        Author authors = new Author();
         authors.setId(1L);
         authors.setName("John Doe");
 
-        Authors authors2 = new Authors();
+        Author authors2 = new Author();
         authors2.setId(2L);
         authors2.setName("Jane Doe");
 
         when(authorsRepository.findAll()).thenReturn(List.of(authors, authors2));
-        List<AuthorDTO> authorDTOS = authorService.getAllAuthors();
+        List<AuthorDTO> authorDTOS = authorService.getAllAuthor();
         assertNotNull(authorDTOS);
         assertEquals(2, authorDTOS.size());
         verify(authorsRepository, times(1)).findAll();
@@ -96,23 +96,23 @@ class AuthorServiceTest {
     @Test
     void updateAuthorById_Success() {
         long id = 1L;
-        Authors authors = new Authors();
+        Author authors = new Author();
         authors.setId(id);
         authors.setName("John Doe");
         authors.setBookList(List.of(1L, 2L, 3L));
 
-        Authors updatedAuthor = new Authors();
+        Author updatedAuthor = new Author();
         updatedAuthor.setId(id);
         updatedAuthor.setName("Jane Doe");
         updatedAuthor.setBookList(List.of(1L, 2L, 3L));
 
         when(authorsRepository.findById(id)).thenReturn(Optional.of(authors));
-        when(authorsRepository.save(any(Authors.class))).thenReturn(updatedAuthor);
+        when(authorsRepository.save(any(Author.class))).thenReturn(updatedAuthor);
 
         AuthorDTO authorDTO = authorService.updateAuthorById(id, AuthorDTO.fromEntity(updatedAuthor));
         assertNotNull(authorDTO);
         assertEquals("Jane Doe", authorDTO.getName());
-        verify(authorsRepository, times(1)).save(any(Authors.class));
+        verify(authorsRepository, times(1)).save(any(Author.class));
         verify(authorsRepository, times(1)).findById(id);
     }
 
@@ -120,12 +120,12 @@ class AuthorServiceTest {
     void updateAuthorById_NotFound() {
         long id = 1L;
 
-        Authors authors = new Authors();
+        Author authors = new Author();
         authors.setId(id);
         authors.setName("John Doe");
         authors.setBookList(List.of(1L, 2L, 3L));
 
-        Authors updatedAuthor = new Authors();
+        Author updatedAuthor = new Author();
         updatedAuthor.setId(id);
         updatedAuthor.setName("Jane Doe");
         updatedAuthor.setBookList(List.of(1L, 2L, 3L));
@@ -144,10 +144,10 @@ class AuthorServiceTest {
 
         long bookId = 1L;
         long authorId = 1L;
-        Authors authors = new Authors();
+        Author authors = new Author();
         authors.setId(authorId);
         authors.setBookList(List.of(1L));
-        Books book = new Books();
+        Book book = new Book();
         book.setId(bookId);
 
         doNothing().when(authorsRepository).deleteById(bookId);
@@ -174,13 +174,13 @@ class AuthorServiceTest {
     }
 
     @Test
-    void getAllAuthorsBooks_Success() {
+    void getAllAuthorBook_Success() {
         long authorId = 1L;
 
-        List<Books> booksList = List.of(
-                new Books(1L, "Book Title 1"),
-                new Books(2L, "Book Title 2"),
-                new Books(3L, "Book Title 3")
+        List<Book> booksList = List.of(
+                new Book(1L, "Book Title 1"),
+                new Book(2L, "Book Title 2"),
+                new Book(3L, "Book Title 3")
         );
 
         List<BookShortDTO> expectedDtoList = List.of(
@@ -192,7 +192,7 @@ class AuthorServiceTest {
         when(authorsRepository.existsById(authorId)).thenReturn(true);
         when(booksRepository.findByAuthorId(authorId)).thenReturn(booksList);
 
-        List<BookShortDTO> result = authorService.getAllAuthorsBooks(authorId);
+        List<BookShortDTO> result = authorService.getAllAuthorBook(authorId);
         assertNotNull(result);
         assertEquals(expectedDtoList, result);
 
@@ -201,7 +201,7 @@ class AuthorServiceTest {
     }
 
     @Test
-    void getAllAuthorsBooks_NotFound() {
+    void getAllAuthorBook_NotFound() {
         long id = 1L;
 
         Exception exception = assertThrows(EntityNotFoundException.class, () -> authorService.getAuthorById(id));
@@ -211,13 +211,13 @@ class AuthorServiceTest {
     }
     @Test
     void getAuthorByName_Success() {
-        Authors authors = new Authors();
+        Author authors = new Author();
         authors.setName("Jane Doe");
 
-        when(authorsRepository.findAuthorsByName(authors.getName())).thenReturn(Optional.of(authors));
+        when(authorsRepository.findAuthorByName(authors.getName())).thenReturn(Optional.of(authors));
         AuthorDTO authorDTO = authorService.getAuthorByName(authors.getName());
 
         assertEquals(authors.getName(), authorDTO.getName());
-        verify(authorsRepository, times(1)).findAuthorsByName(authors.getName());
+        verify(authorsRepository, times(1)).findAuthorByName(authors.getName());
     }
 }

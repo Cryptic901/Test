@@ -2,7 +2,7 @@ package com.example.testapp.DTO;
 
 /* Объект для удобной передачи данных об авторах */
 
-import com.example.testapp.model.Authors;
+import com.example.testapp.model.Author;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ public class AuthorDTO {
 
     private List<Long> bookList;
 
-    public static AuthorDTO fromEntity(Authors authors) {
+    public static AuthorDTO fromEntity(Author authors) {
         if(authors == null) return null;
         AuthorDTO dto = new AuthorDTO();
         dto.setId(authors.getId());

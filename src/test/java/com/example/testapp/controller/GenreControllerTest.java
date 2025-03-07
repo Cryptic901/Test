@@ -53,7 +53,7 @@ public class GenreControllerTest {
 
     @Test
     @WithMockUser
-    void getAllGenres_Success() throws Exception {
+    void getAllGenre_Success() throws Exception {
         List<GenreDTO> genreDTOList = List.of(
                 new GenreDTO("Novel"),
                 new GenreDTO("Poem")
@@ -61,7 +61,7 @@ public class GenreControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String expectedJson = objectMapper.writeValueAsString(genreDTOList);
 
-        when(genreService.getAllGenres()).thenReturn(genreDTOList);
+        when(genreService.getAllGenre()).thenReturn(genreDTOList);
 
         mockMvc.perform(get("/api/v1/genres/getAll")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -156,14 +156,14 @@ public class GenreControllerTest {
 
     @Test
     @WithMockUser
-    void sortGenresByPopularityDescending() throws Exception {
+    void sortGenreByPopularityDescending() throws Exception {
         GenreDTO genreDTO = new GenreDTO();
         GenreDTO genreDTO1 = new GenreDTO();
         genreDTO1.setCountOfBorrowingBookWithGenre(10L);
         genreDTO.setCountOfBorrowingBookWithGenre(2L);
         List<GenreDTO> genreDTOList = List.of(genreDTO1, genreDTO);
 
-        when(genreService.getMostPopularGenres()).thenReturn(genreDTOList);
+        when(genreService.getMostPopularGenre()).thenReturn(genreDTOList);
 
         mockMvc.perform(get("/api/v1/genres/sort/popularityDesc")
                         .with(csrf())

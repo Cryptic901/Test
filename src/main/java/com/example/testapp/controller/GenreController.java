@@ -40,8 +40,8 @@ public class GenreController {
     @GetMapping("/getAll")
     @Operation(summary = "Получение всех жанров",
             description = "Возвращает список всех жанров, если список пустой статус 204")
-    public ResponseEntity<List<GenreDTO>> getAllGenres() {
-        List<GenreDTO> genreDTOList = genreService.getAllGenres();
+    public ResponseEntity<List<GenreDTO>> getAllGenre() {
+        List<GenreDTO> genreDTOList = genreService.getAllGenre();
         if (genreDTOList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
@@ -116,7 +116,7 @@ public class GenreController {
             description = "Сортирует жанры по убыванию количества занятых книг за всё время," +
                     " если жанров нет статус 204")
     public ResponseEntity<List<GenreDTO>> getPopularityDesc() {
-        List<GenreDTO> genreDTOList = genreService.getMostPopularGenres();
+        List<GenreDTO> genreDTOList = genreService.getMostPopularGenre();
         if (genreDTOList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }

@@ -1,12 +1,12 @@
 package com.example.testapp.service;
 
 import com.example.testapp.DTO.BookDTO;
-import com.example.testapp.model.Authors;
-import com.example.testapp.model.Books;
-import com.example.testapp.model.Genres;
-import com.example.testapp.repository.AuthorsRepository;
-import com.example.testapp.repository.BooksRepository;
-import com.example.testapp.repository.GenresRepository;
+import com.example.testapp.model.Author;
+import com.example.testapp.model.Book;
+import com.example.testapp.model.Genre;
+import com.example.testapp.repository.AuthorRepository;
+import com.example.testapp.repository.BookRepository;
+import com.example.testapp.repository.GenreRepository;
 import com.example.testapp.service.impl.BookServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,13 +26,13 @@ import static org.mockito.Mockito.*;
 class BookServiceTest {
 
     @Mock
-    private BooksRepository booksRepository;
+    private BookRepository booksRepository;
 
     @Mock
-    private AuthorsRepository authorsRepository;
+    private AuthorRepository authorsRepository;
 
     @Mock
-    private GenresRepository genresRepository;
+    private GenreRepository genresRepository;
 
     @InjectMocks
     private BookServiceImpl bookService;
@@ -44,9 +44,9 @@ class BookServiceTest {
         long bookId = 1L;
         long authorId = 1L;
         long genreId = 1L;
-        Authors author = new Authors(authorId);
-        Genres genre = new Genres(genreId);
-        Books book = new Books(bookId);
+        Author author = new Author(authorId);
+        Genre genre = new Genre(genreId);
+        Book book = new Book(bookId);
         book.setAuthor(author);
         book.setGenre(genre);
         BookDTO bookDTO = new BookDTO();
@@ -54,7 +54,7 @@ class BookServiceTest {
         bookDTO.setAuthorId(authorId);
         bookDTO.setGenreId(genreId);
 
-        when(booksRepository.save(any(Books.class))).thenReturn(book);
+        when(booksRepository.save(any(Book.class))).thenReturn(book);
         when(genresRepository.findById(bookDTO.getGenreId())).thenReturn(Optional.of(genre));
         when(authorsRepository.findById(bookDTO.getAuthorId())).thenReturn(Optional.of(author));
 
@@ -63,25 +63,25 @@ class BookServiceTest {
 
         assertEquals(bookId, dto.getId());
 
-        ArgumentCaptor<Authors> authorCaptor = ArgumentCaptor.forClass(Authors.class);
-        ArgumentCaptor<Genres> genreCaptor = ArgumentCaptor.forClass(Genres.class);
+        ArgumentCaptor<Author> authorCaptor = ArgumentCaptor.forClass(Author.class);
+        ArgumentCaptor<Genre> genreCaptor = ArgumentCaptor.forClass(Genre.class);
         verify(authorsRepository, times(1)).save(authorCaptor.capture());
         verify(genresRepository, times(1)).save(genreCaptor.capture());
-        Authors authors = authorCaptor.getValue();
-        Genres genres = genreCaptor.getValue();
+        Author authors = authorCaptor.getValue();
+        Genre genres = genreCaptor.getValue();
         assertTrue(author.getBookList().contains(bookId));
-        assertEquals(1, genres.getCountOfBooksInThatGenre());
-        verify(booksRepository, times(1)).save(any(Books.class));
+        assertEquals(1, genres.getCountOfBookInThatGenre());
+        verify(booksRepository, times(1)).save(any(Book.class));
     }
 
     @Test
     void deleteBookByIdTest_Success() {
         long bookId = 1L;
         long authorId = 1L;
-        Authors authors = new Authors(authorId);
+        Author authors = new Author(authorId);
         authors.setId(authorId);
         authors.setBookList(new ArrayList<>(List.of(bookId)));
-        Books books = new Books();
+        Book books = new Book();
         books.setId(bookId);
         books.setAuthor(authors);
 
@@ -111,7 +111,7 @@ class BookServiceTest {
 
         long id = 1L;
 
-        Books book = new Books();
+        Book book = new Book();
         book.setId(id);
 
         when(booksRepository.findById(id)).thenReturn(Optional.of(book));
@@ -138,11 +138,11 @@ class BookServiceTest {
     void updateBookById_Success() {
         long id = 1L;
 
-        Books existingBook = new Books();
+        Book existingBook = new Book();
         existingBook.setId(id);
         existingBook.setTitle("Old Title");
 
-        Books updatedBook = new Books();
+        Book updatedBook = new Book();
         updatedBook.setTitle("New Title");
 
         when(booksRepository.findById(id)).thenReturn(Optional.of(existingBook));
@@ -156,20 +156,20 @@ class BookServiceTest {
     }
 
     @Test
-    void getAllBooks_Success() {
+    void getAllBook_Success() {
 
-        Books book1 = new Books();
+        Book book1 = new Book();
         book1.setId(1L);
         book1.setTitle("Book 1");
-        Books book2 = new Books();
+        Book book2 = new Book();
         book2.setId(2L);
         book2.setTitle("Book 2");
 
-        List<Books> mockList = List.of(book1, book2);
+        List<Book> mockList = List.of(book1, book2);
 
         when(booksRepository.findAll()).thenReturn(mockList);
 
-        List<BookDTO> result = bookService.getAllBooks();
+        List<BookDTO> result = bookService.getAllBook();
 
         assertNotNull(result);
         assertEquals(mockList.size(), result.size());
@@ -184,7 +184,7 @@ class BookServiceTest {
 
         String isbn = "123";
 
-        Books book = new Books();
+        Book book = new Book();
         book.setIsbn(isbn);
 
         when(booksRepository.findByIsbn(isbn)).thenReturn(Optional.of(book));
@@ -208,28 +208,28 @@ class BookServiceTest {
     }
 
     @Test
-    void getMostPopularBooks_Success() {
-        Books book1 = new Books(1L);
-        Books book2 = new Books(2L);
+    void getMostPopularBook_Success() {
+        Book book1 = new Book(1L);
+        Book book2 = new Book(2L);
         book2.setCountOfBorrowingBook(10L);
         book1.setCountOfBorrowingBook(5L);
 
         when(booksRepository.sortByBookPopularityDescending()).thenReturn(List.of(book2, book1));
 
-        List<BookDTO> books = bookService.getMostPopularBooks();
+        List<BookDTO> books = bookService.getMostPopularBook();
         assertEquals(List.of(books.get(0).getId(), books.get(1).getId()), List.of(book2.getId(), book1.getId()));
         verify(booksRepository, times(1)).sortByBookPopularityDescending();
     }
 
     @Test
     void getBookByTitle_Success() {
-        Books book1 = new Books();
+        Book book1 = new Book();
         book1.setTitle("Book 1");
 
-        when(booksRepository.findBooksByTitle(book1.getTitle())).thenReturn(Optional.of(book1));
+        when(booksRepository.findBookByTitle(book1.getTitle())).thenReturn(Optional.of(book1));
 
         BookDTO res = bookService.getBookByTitle(book1.getTitle());
         assertEquals(BookDTO.fromEntity(book1), res);
-        verify(booksRepository, times(1)).findBooksByTitle(book1.getTitle());
+        verify(booksRepository, times(1)).findBookByTitle(book1.getTitle());
     }
 }

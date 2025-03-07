@@ -1,8 +1,8 @@
 package com.example.testapp.service;
 
 import com.example.testapp.DTO.GenreDTO;
-import com.example.testapp.model.Genres;
-import com.example.testapp.repository.GenresRepository;
+import com.example.testapp.model.Genre;
+import com.example.testapp.repository.GenreRepository;
 import com.example.testapp.service.impl.GenreServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 public class GenreServiceTest {
 
     @Mock
-    private GenresRepository genresRepository;
+    private GenreRepository genresRepository;
 
     @InjectMocks
     private GenreServiceImpl genreService;
@@ -28,27 +28,27 @@ public class GenreServiceTest {
 
     @Test
     void addGenre() {
-        Genres genres = new Genres();
+        Genre genres = new Genre();
         genres.setId(1L);
 
-        when(genresRepository.save(any(Genres.class))).thenReturn(genres);
+        when(genresRepository.save(any(Genre.class))).thenReturn(genres);
         GenreDTO genre = genreService.addGenre(GenreDTO.fromEntity(genres));
 
         assertEquals(genres.getId(), genre.getId());
-        verify(genresRepository, times(1)).save(any(Genres.class));
+        verify(genresRepository, times(1)).save(any(Genre.class));
     }
 
     @Test
-    void getAllGenres() {
-        Genres genres = new Genres();
+    void getAllGenre() {
+        Genre genres = new Genre();
         genres.setId(1L);
-        Genres genres2 = new Genres();
+        Genre genres2 = new Genre();
         genres2.setId(2L);
-        List<Genres> genresList = List.of(genres, genres2);
+        List<Genre> genresList = List.of(genres, genres2);
 
         when(genresRepository.findAll()).thenReturn(genresList);
 
-        List<GenreDTO> genresDTOList = genreService.getAllGenres();
+        List<GenreDTO> genresDTOList = genreService.getAllGenre();
 
         assertEquals(genresList.get(0).getId(), genresDTOList.get(0).getId());
         assertEquals(genresList.get(1).getId(), genresDTOList.get(1).getId());
@@ -57,7 +57,7 @@ public class GenreServiceTest {
 
     @Test
     void getGenreById() {
-        Genres genres = new Genres();
+        Genre genres = new Genre();
         genres.setId(1L);
 
         when(genresRepository.findById(eq(1L))).thenReturn(Optional.of(genres));
@@ -71,10 +71,10 @@ public class GenreServiceTest {
     @Test
     void updateGenreById() {
         long genreId = 1L;
-        Genres genres = new Genres();
+        Genre genres = new Genre();
         genres.setId(genreId);
         genres.setName("Poem");
-        Genres genres1 = new Genres();
+        Genre genres1 = new Genre();
         genres1.setName("Novel");
 
         when(genresRepository.findById(genreId)).thenReturn(Optional.of(genres));
@@ -89,7 +89,7 @@ public class GenreServiceTest {
     @Test
     void getGenreByName_Success() {
         String name = "Novel";
-        Genres genres = new Genres();
+        Genre genres = new Genre();
         genres.setName(name);
 
         when(genresRepository.getGenreByName(name)).thenReturn(Optional.of(genres));
@@ -100,15 +100,15 @@ public class GenreServiceTest {
     }
 
     @Test
-    void getMostPopularGenres_Success() {
-        Genres genres = new Genres(1L);
+    void getMostPopularGenre_Success() {
+        Genre genres = new Genre(1L);
         genres.setCountOfBorrowingBookWithGenre(2L);
-        Genres genres1 = new Genres(2L);
+        Genre genres1 = new Genre(2L);
         genres1.setCountOfBorrowingBookWithGenre(10L);
 
         when(genresRepository.sortByGenrePopularityDescending()).thenReturn(List.of(genres1, genres));
 
-        List<GenreDTO> genreDTOs = genreService.getMostPopularGenres();
+        List<GenreDTO> genreDTOs = genreService.getMostPopularGenre();
 
         assertEquals(List.of(genreDTOs.get(0).getId(), genreDTOs.get(1).getId()), List.of(genres1.getId(), genres.getId()));
         verify(genresRepository, times(1)).sortByGenrePopularityDescending();

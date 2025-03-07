@@ -7,7 +7,7 @@ import java.util.List;
 /* Сущность автор */
 
 @Entity
-public class Authors {
+public class Author {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,11 +19,11 @@ public class Authors {
     @ElementCollection
     private List<Long> bookList;
 
-    public Authors(long authorId) {
+    public Author(long authorId) {
         this.id = authorId;
     }
 
-    public Authors(String name) {
+    public Author(String name) {
         this.name = name;
     }
 
@@ -51,16 +51,16 @@ public class Authors {
         this.bookList = bookList;
     }
 
-    public Authors(Long id, String name, List<Long> bookList) {
+    public Author(Long id, String name, List<Long> bookList) {
         this.id = id;
         this.name = name;
         this.bookList = bookList;
     }
-    public Authors() {}
+    public Author() {}
 
     @Override
     public String toString() {
-        return "Authors{" +
+        return "Author{" +
                 "id=" + id +
                 ", name='" + name + '\'' + '}';
     }

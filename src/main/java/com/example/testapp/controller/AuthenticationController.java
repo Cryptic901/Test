@@ -3,7 +3,7 @@ package com.example.testapp.controller;
 import com.example.testapp.DTO.LoginUserDTO;
 import com.example.testapp.DTO.RegisterUserDTO;
 import com.example.testapp.DTO.VerifyUserDTO;
-import com.example.testapp.model.Users;
+import com.example.testapp.model.User;
 import com.example.testapp.responses.LoginResponse;
 import com.example.testapp.service.impl.AuthenticationServiceImpl;
 import com.example.testapp.service.impl.JwtServiceImpl;
@@ -25,8 +25,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<Users> register(@RequestBody RegisterUserDTO registerUserDTO) {
-        Users registeredUser = authenticationService.signUp(registerUserDTO);
+    public ResponseEntity<User> register(@RequestBody RegisterUserDTO registerUserDTO) {
+        User registeredUser = authenticationService.signUp(registerUserDTO);
         if (registeredUser == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
@@ -35,7 +35,7 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDTO loginUserDTO) throws AuthenticationException {
-        Users authenticatedUser = authenticationService.authenticate(loginUserDTO);
+        User authenticatedUser = authenticationService.authenticate(loginUserDTO);
         if (authenticatedUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }

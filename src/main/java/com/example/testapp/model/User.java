@@ -15,11 +15,11 @@ import java.util.List;
 /* Сущность пользователь */
 @Entity
 @Table(name = "users")
-public class Users implements UserDetails {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true, name = "user_id")
+    @Column(unique = true)
     private Long id;
 
     @Column(nullable = false)
@@ -43,25 +43,26 @@ public class Users implements UserDetails {
     private LocalDateTime verificationCodeExpiresAt;
 
     @ElementCollection
-    private List<Long> borrowedBooks = new ArrayList<>();
+    private List<Long> borrowedBook = new ArrayList<>();
 
-    public Users(Long id, String username, String email, String password, UserRole role, List<Long> borrowedBooks) {
+    public User(Long id, String username, String email, String password, UserRole role, List<Long> borrowedBook) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
         this.role = role;
-        this.borrowedBooks = borrowedBooks;
+        this.borrowedBook = borrowedBook;
 
     }
 
-    public Users() {
+    public User() {
     }
 
-    public Users(String username, String email, String encode) {
+    public User(String username, String email, String encode, UserRole role) {
         this.username = username;
         this.email = email;
         this.password = encode;
+        this.role = role;
     }
 
     public UserRole getRole() {
@@ -132,24 +133,24 @@ public class Users implements UserDetails {
         this.role = role;
     }
 
-    public List<Long> getBorrowedBooks() {
-        return borrowedBooks;
+    public List<Long> getBorrowedBook() {
+        return borrowedBook;
     }
 
-    public void setBorrowedBooks(List<Long> borrowedBooks) {
-        if (this.borrowedBooks == null) {
-            this.borrowedBooks = new ArrayList<>();
+    public void setBorrowedBook(List<Long> borrowedBook) {
+        if (this.borrowedBook == null) {
+            this.borrowedBook = new ArrayList<>();
         }
-        this.borrowedBooks.clear();
+        this.borrowedBook.clear();
 
-        if (borrowedBooks != null) {
-            this.borrowedBooks.addAll(borrowedBooks);
+        if (borrowedBook != null) {
+            this.borrowedBook.addAll(borrowedBook);
         }
     }
 
     @Override
     public String toString() {
-        return "Users{" +
+        return "User{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
@@ -158,7 +159,7 @@ public class Users implements UserDetails {
                 ", enabled=" + enabled +
                 ", verificationCode='" + verificationCode + '\'' +
                 ", verificationCodeExpiresAt=" + verificationCodeExpiresAt +
-                ", borrowedBooks=" + borrowedBooks +
+                ", borrowedBook=" + borrowedBook +
                 '}';
     }
 

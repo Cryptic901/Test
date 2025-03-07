@@ -98,8 +98,8 @@ public class BookController {
     @GetMapping("/getAll")
     @Operation(summary = "Вернуть все книги",
             description = "Возвращает список всех книг, если книга не найдена статус 204")
-    public ResponseEntity<List<BookDTO>> getAllBooks() {
-        List<BookDTO> books = bookService.getAllBooks();
+    public ResponseEntity<List<BookDTO>> getAllBook() {
+        List<BookDTO> books = bookService.getAllBook();
         if (books.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -109,8 +109,8 @@ public class BookController {
     @GetMapping("/getAll/short")
     @Operation(summary = "Вернуть краткие параметры книги",
             description = "Возвращает ID и title книги, если книга не найдена статус 204")
-    public ResponseEntity<List<BookShortDTO>> getAllBooksShort() {
-        List<BookShortDTO> books = bookService.getAllBooksShort();
+    public ResponseEntity<List<BookShortDTO>> getAllBookShort() {
+        List<BookShortDTO> books = bookService.getAllBookShort();
         if (books.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -144,7 +144,7 @@ public class BookController {
     @Operation(summary = "Сортировка по убыванию популярности",
             description = "Сортирует книги по количеству раз сколько их брали, если книг нет статус 204")
     public ResponseEntity<List<BookDTO>> getPopularityDesc() {
-        List<BookDTO> books = bookService.getMostPopularBooks();
+        List<BookDTO> books = bookService.getMostPopularBook();
         if (books.isEmpty()) {
             return ResponseEntity.noContent().build();
         }

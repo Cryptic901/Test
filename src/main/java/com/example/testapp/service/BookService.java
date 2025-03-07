@@ -2,14 +2,14 @@ package com.example.testapp.service;
 
 import com.example.testapp.DTO.BookDTO;
 import com.example.testapp.DTO.BookShortDTO;
-import com.example.testapp.model.Books;
+import com.example.testapp.model.Book;
 
 import java.util.List;
 import java.util.Map;
 
 public interface BookService {
 
-    void setBookParams(Books book, BookDTO bookDTO);
+    void setBookParams(Book book, BookDTO bookDTO);
 
     void deleteBookById(long id);
 
@@ -23,11 +23,11 @@ public interface BookService {
 
     BookDTO updateBookById(long id, BookDTO bookDTO);
 
-    List<BookDTO> getAllBooks();
+    List<BookDTO> getAllBook();
 
-    List<BookShortDTO> getAllBooksShort();
+    List<BookShortDTO> getAllBookShort();
 
-    List<BookDTO> getMostPopularBooks();
+    List<BookDTO> getMostPopularBook();
 
     BookDTO updateBookFields(long id, Map<String, Object> updates);
 }

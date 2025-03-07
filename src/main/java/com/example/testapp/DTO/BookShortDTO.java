@@ -1,6 +1,6 @@
 package com.example.testapp.DTO;
 
-import com.example.testapp.model.Books;
+import com.example.testapp.model.Book;
 
 import java.util.Objects;
 
@@ -19,7 +19,7 @@ public class BookShortDTO {
 
     public BookShortDTO() {}
 
-    public static BookShortDTO fromEntity(Books book) {
+    public static BookShortDTO fromEntity(Book book) {
         if (book == null) return null;
         BookShortDTO dto = new BookShortDTO();
         dto.setId(book.getId());

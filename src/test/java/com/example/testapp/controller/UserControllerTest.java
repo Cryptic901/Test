@@ -63,7 +63,7 @@ class UserControllerTest {
 
     @Test
     @WithMockUser
-    void getAllUsersTest() throws Exception {
+    void getAllUserTest() throws Exception {
 
         //Arrange
         List<UserDTO> userDTOList = List.of(
@@ -72,7 +72,7 @@ class UserControllerTest {
         );
 
         //Act
-        when(userService.getAllUsers()).thenReturn(userDTOList);
+        when(userService.getAllUser()).thenReturn(userDTOList);
 
         //Assert
         mockMvc.perform(get("/api/v1/users/getAll")

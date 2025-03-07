@@ -1,6 +1,6 @@
 package com.example.testapp.DTO;
 
-import com.example.testapp.model.Genres;
+import com.example.testapp.model.Genre;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ public class GenreDTO {
 
     private String description;
 
-    private Integer countOfBooksInThatGenre;
+    private Integer countOfBookInThatGenre;
 
     private Long countOfBorrowingBookWithGenre;
 
@@ -25,27 +25,27 @@ public class GenreDTO {
     }
 
 
-    public static GenreDTO fromEntity(Genres genre) {
+    public static GenreDTO fromEntity(Genre genre) {
         if (genre == null) return null;
         GenreDTO dto = new GenreDTO();
         dto.setId(genre.getId());
         dto.setName(genre.getName());
         dto.setDescription(genre.getDescription());
-        dto.setCountOfBooksInThatGenre(genre.getCountOfBooksInThatGenre());
-        dto.setBooks(genre.getBooks() != null ? genre.getBooks() : new ArrayList<>());
+        dto.setCountOfBookInThatGenre(genre.getCountOfBookInThatGenre());
+        dto.setBook(genre.getBook() != null ? genre.getBook() : new ArrayList<>());
         dto.setCountOfBorrowingBookWithGenre(genre.getCountOfBorrowingBookWithGenre());
 
         return dto;
     }
 
-    public static Genres toEntity(GenreDTO genreDTO) {
+    public static Genre toEntity(GenreDTO genreDTO) {
         if (genreDTO == null) return null;
-        Genres genres = new Genres();
+        Genre genres = new Genre();
         genres.setId(genreDTO.getId());
         genres.setName(genreDTO.getName());
         genres.setDescription(genreDTO.getDescription());
-        genres.setCountOfBooksInThatGenre(genreDTO.getCountOfBooksInThatGenre());
-        genres.setBooks(genreDTO.getBooks());
+        genres.setCountOfBookInThatGenre(genreDTO.getCountOfBookInThatGenre());
+        genres.setBook(genreDTO.getBook());
         genres.setCountOfBorrowingBookWithGenre(genreDTO.getCountOfBorrowingBookWithGenre());
 
         return genres;
@@ -67,14 +67,14 @@ public class GenreDTO {
         this.name = name;
     }
 
-    public List<Long> getBooks() {
+    public List<Long> getBook() {
         if (books == null) {
             books = new ArrayList<>();
         }
         return books;
     }
 
-    public void setBooks(List<Long> books) {
+    public void setBook(List<Long> books) {
         this.books = books;
     }
 
@@ -94,12 +94,12 @@ public class GenreDTO {
         this.description = description;
     }
 
-    public Integer getCountOfBooksInThatGenre() {
-        return countOfBooksInThatGenre;
+    public Integer getCountOfBookInThatGenre() {
+        return countOfBookInThatGenre;
     }
 
-    public void setCountOfBooksInThatGenre(Integer countOfBooksInThatGenre) {
-        this.countOfBooksInThatGenre = countOfBooksInThatGenre;
+    public void setCountOfBookInThatGenre(Integer countOfBookInThatGenre) {
+        this.countOfBookInThatGenre = countOfBookInThatGenre;
     }
 
     public GenreDTO() {
@@ -109,12 +109,12 @@ public class GenreDTO {
         this.name = name;
     }
 
-    public GenreDTO(Long id, String name, List<Long> books, String description, Integer countOfBooksInThatGenre, Long countOfBorrowingBookWithGenre) {
+    public GenreDTO(Long id, String name, List<Long> books, String description, Integer countOfBookInThatGenre, Long countOfBorrowingBookWithGenre) {
         this.id = id;
         this.name = name;
         this.books = books;
         this.description = description;
-        this.countOfBooksInThatGenre = countOfBooksInThatGenre;
+        this.countOfBookInThatGenre = countOfBookInThatGenre;
         this.countOfBorrowingBookWithGenre = countOfBorrowingBookWithGenre;
     }
 
@@ -125,7 +125,7 @@ public class GenreDTO {
                 ", name='" + name + '\'' +
                 ", books=" + books +
                 ", description='" + description + '\'' +
-                ", countOfBooksInThatGenre=" + countOfBooksInThatGenre +
+                ", countOfBookInThatGenre=" + countOfBookInThatGenre +
                 ", countOfBorrowingBookWithGenre=" + countOfBorrowingBookWithGenre +
                 '}';
     }

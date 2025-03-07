@@ -1,6 +1,6 @@
 package com.example.testapp.configuration;
 
-import com.example.testapp.repository.UsersRepository;
+import com.example.testapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,7 +8,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,22 +15,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Configuration
 public class ApplicationConfiguration {
 
-    private final UsersRepository usersRepository;
+    private final UserRepository usersRepository;
 
     @Autowired
-    public ApplicationConfiguration(UsersRepository usersRepository) {
+    public ApplicationConfiguration(UserRepository usersRepository) {
         this.usersRepository = usersRepository;
 
-    }
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring()
-                .requestMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/images/**");
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> usersRepository.findUsersByUsername(username)
+        return username -> usersRepository.findUserByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 

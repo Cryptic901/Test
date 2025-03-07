@@ -1,9 +1,9 @@
 package com.example.testapp.service;
 
 import com.example.testapp.DTO.RegisterUserDTO;
-import com.example.testapp.model.Users;
+import com.example.testapp.model.User;
 
 public interface AuthenticationService {
-    Users signUp(RegisterUserDTO input);
-    void sendVerificationEmail(Users user);
+    User signUp(RegisterUserDTO input);
+    void sendVerificationEmail(User user);
 }

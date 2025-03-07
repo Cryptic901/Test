@@ -43,11 +43,11 @@ public class UserController {
     @GetMapping("/getAll")
     @Operation(summary = "Вернуть всех пользователей",
             description = "Возвращает список всех пользователей, если список пустой статус 204")
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        if (userService.getAllUsers().isEmpty()) {
+    public ResponseEntity<List<UserDTO>> getAllUser() {
+        if (userService.getAllUser().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return ResponseEntity.ok(userService.getAllUsers());
+        return ResponseEntity.ok(userService.getAllUser());
     }
 
     @GetMapping("/get/username/{username}")

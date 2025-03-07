@@ -61,11 +61,11 @@ public class AuthorController {
     @GetMapping("/getAll")
     @Operation(summary = "Вернуть всех авторов",
             description = "Возвращает список всех авторов, если авторы не найдены статус 204")
-    public ResponseEntity<List<AuthorDTO>> getAllAuthors() {
-        if (authorService.getAllAuthors() == null) {
+    public ResponseEntity<List<AuthorDTO>> getAllAuthor() {
+        if (authorService.getAllAuthor() == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(authorService.getAllAuthors());
+        return ResponseEntity.ok(authorService.getAllAuthor());
     }
 
     @PutMapping("/update/allFields/{id}")
@@ -104,14 +104,14 @@ public class AuthorController {
         return ResponseEntity.status(HttpStatus.GONE).build();
     }
 
-    @GetMapping("/getAllBooks/{authorId}")
+    @GetMapping("/getAllBook/{authorId}")
     @Operation(summary = "Получить список всех книг автора",
             description = "Возвращает список всех книг которые написал автор, ID которого было введено," +
                     " если автор не найден статус 204")
-    public ResponseEntity<List<BookShortDTO>> getAllAuthorsBooks(@PathVariable long authorId) {
+    public ResponseEntity<List<BookShortDTO>> getAllAuthorBook(@PathVariable long authorId) {
         if (authorService.getAuthorById(authorId) == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(authorService.getAllAuthorsBooks(authorId));
+        return ResponseEntity.ok(authorService.getAllAuthorBook(authorId));
     }
 }

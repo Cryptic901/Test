@@ -2,14 +2,14 @@ package com.example.testapp.service;
 
 import com.example.testapp.DTO.AuthorDTO;
 import com.example.testapp.DTO.BookShortDTO;
-import com.example.testapp.model.Authors;
+import com.example.testapp.model.Author;
 
 import java.util.List;
 import java.util.Map;
 
 public interface AuthorService {
 
-    void setAuthorsParams(Authors author, AuthorDTO authorDTO);
+    void setAuthorParams(Author author, AuthorDTO authorDTO);
 
     AuthorDTO addAuthor(AuthorDTO authorDTO);
 
@@ -17,13 +17,13 @@ public interface AuthorService {
 
     AuthorDTO getAuthorByName(String name);
 
-    List<AuthorDTO> getAllAuthors();
+    List<AuthorDTO> getAllAuthor();
 
     AuthorDTO updateAuthorById(long id, AuthorDTO authorDTO);
 
     void deleteAuthorById(long authorId);
 
-    List<BookShortDTO> getAllAuthorsBooks(long authorId);
+    List<BookShortDTO> getAllAuthorBook(long authorId);
 
     AuthorDTO updateAuthorFields(long id, Map<String, Object> updates);
 }

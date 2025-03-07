@@ -1,18 +1,18 @@
 package com.example.testapp.service;
 
 import com.example.testapp.DTO.GenreDTO;
-import com.example.testapp.model.Genres;
+import com.example.testapp.model.Genre;
 
 import java.util.List;
 import java.util.Map;
 
 public interface GenreService {
 
-    void setGenreParams(GenreDTO genreDTO, Genres genres);
+    void setGenreParams(GenreDTO genreDTO, Genre genres);
 
     GenreDTO addGenre(GenreDTO genreDTO);
 
-    List<GenreDTO> getAllGenres();
+    List<GenreDTO> getAllGenre();
 
     GenreDTO getGenreById(long id);
 
@@ -22,7 +22,7 @@ public interface GenreService {
 
     GenreDTO getGenreByName(String name);
 
-    List<GenreDTO> getMostPopularGenres();
+    List<GenreDTO> getMostPopularGenre();
 
     GenreDTO updateGenreFields(long id, Map<String, Object> updates);
 }

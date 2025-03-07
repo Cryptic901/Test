@@ -3,12 +3,12 @@ package com.example.testapp.service.impl;
 import com.example.testapp.DTO.UserDTO;
 import com.example.testapp.enums.UserRole;
 import com.example.testapp.exceptions.EntityNotFoundException;
-import com.example.testapp.model.Books;
-import com.example.testapp.model.Genres;
-import com.example.testapp.model.Users;
-import com.example.testapp.repository.BooksRepository;
-import com.example.testapp.repository.GenresRepository;
-import com.example.testapp.repository.UsersRepository;
+import com.example.testapp.model.Book;
+import com.example.testapp.model.Genre;
+import com.example.testapp.model.User;
+import com.example.testapp.repository.BookRepository;
+import com.example.testapp.repository.GenreRepository;
+import com.example.testapp.repository.UserRepository;
 import com.example.testapp.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,23 +21,23 @@ import java.util.*;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final BooksRepository booksRepository;
-    private final UsersRepository usersRepository;
-    private final GenresRepository genresRepository;
+    private final BookRepository booksRepository;
+    private final UserRepository usersRepository;
+    private final GenreRepository genresRepository;
 
     @Autowired
-    public UserServiceImpl(BooksRepository booksRepository, UsersRepository usersRepository, GenresRepository genresRepository) {
+    public UserServiceImpl(BookRepository booksRepository, UserRepository usersRepository, GenreRepository genresRepository) {
         this.booksRepository = booksRepository;
         this.usersRepository = usersRepository;
         this.genresRepository = genresRepository;
     }
 
-    public void setUserParams(Users user, UserDTO userDTO) {
+    public void setUserParams(User user, UserDTO userDTO) {
         user.setUsername(userDTO.getUsername());
         user.setEmail(userDTO.getEmail());
         user.setPassword(userDTO.getPassword());
         user.setUserRole(UserRole.valueOf(userDTO.getUserRole()));
-        user.setBorrowedBooks(userDTO.getBorrowedBooks());
+        user.setBorrowedBook(userDTO.getBorrowedBook());
     }
 
 
@@ -45,22 +45,22 @@ public class UserServiceImpl implements UserService {
         if (userDTO.getUsername() == null || userDTO.getEmail() == null || userDTO.getPassword() == null) {
             throw new IllegalArgumentException("Parameters are null");
         }
-        Users user = new Users();
+        User user = new User();
         setUserParams(user, userDTO);
         return UserDTO.fromEntity(usersRepository.save(user));
     }
 
-    public List<UserDTO> getAllUsers() {
-        List<Users> users = usersRepository.findAll();
+    public List<UserDTO> getAllUser() {
+        List<User> users = usersRepository.findAll();
         List<UserDTO> userDTOs = new ArrayList<>();
-        for (Users user : users) {
+        for (User user : users) {
             userDTOs.add(UserDTO.fromEntity(user));
         }
         return userDTOs;
     }
 
     public UserDTO getUserByUsername(String username) {
-        return UserDTO.fromEntity(usersRepository.findUsersByUsername(username)
+        return UserDTO.fromEntity(usersRepository.findUserByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username)));
     }
     public UserDTO getUserById(long id) {
@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserDTO updateUserById(long id, UserDTO userDTO) {
-        Users user = usersRepository.findById(id)
+        User user = usersRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
         setUserParams(user, userDTO);
         return UserDTO.fromEntity(usersRepository.save(user));
@@ -81,9 +81,9 @@ public class UserServiceImpl implements UserService {
             throw new EntityNotFoundException("User not found with id: " + userId);
         }
         UserDTO user = getUserById(userId);
-        List<Long> borrowedBooks = user.getBorrowedBooks();
-        if (borrowedBooks != null && !borrowedBooks.isEmpty()) {
-            for (Long bookId : borrowedBooks) {
+        List<Long> borrowedBook = user.getBorrowedBook();
+        if (borrowedBook != null && !borrowedBook.isEmpty()) {
+            for (Long bookId : borrowedBook) {
                 returnBookById(bookId, userId);
             }
         }
@@ -92,29 +92,29 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public String borrowBookById(long bookId, long userId) {
-        Books book = booksRepository.findById(bookId)
+        Book book = booksRepository.findById(bookId)
                 .orElseThrow(() -> new RuntimeException("Book not found with id: " + bookId));
 
-        Users user = usersRepository.findById(userId)
+        User user = usersRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found or has reached the maximum of borrowed books with id: " + userId));
 
-        Genres genre = genresRepository.findById(book.getGenre().getId())
+        Genre genre = genresRepository.findById(book.getGenre().getId())
                 .orElseThrow(() -> new RuntimeException("Genre not found with id: " + book.getGenre().getId()));
-        if (user.getBorrowedBooks() == null) {
-            user.setBorrowedBooks(new ArrayList<>());
+        if (user.getBorrowedBook() == null) {
+            user.setBorrowedBook(new ArrayList<>());
         }
 
-        if (user.getBorrowedBooks().size() > 5) {
+        if (user.getBorrowedBook().size() > 5) {
             throw new RuntimeException("Too many borrowed books");
         }
         //Получение списка из аттрибутов пользователя и добавление книги в список
-        List<Long> booksList = user.getBorrowedBooks();
+        List<Long> booksList = user.getBorrowedBook();
         booksList.add(book.getId());
 
         //Изменение статуса книги
-        Set<Long> borrowedUserBooks = book.getBorrowedUserIds();
-        borrowedUserBooks.add(userId);
-        book.setBorrowedUserIds(borrowedUserBooks);
+        Set<Long> borrowedUserBook = book.getBorrowedUserIds();
+        borrowedUserBook.add(userId);
+        book.setBorrowedUserIds(borrowedUserBook);
         book.setAmount(book.getAmount() - 1);
         book.setCountOfBorrowingBook(book.getCountOfBorrowingBook() + 1);
         genre.setCountOfBorrowingBookWithGenre(genre.getCountOfBorrowingBookWithGenre() + 1);
@@ -131,20 +131,20 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public String returnBookById(long bookId, long userId) {
 
-        Books book = booksRepository.findById(bookId)
+        Book book = booksRepository.findById(bookId)
                 .orElseThrow(() -> new EntityNotFoundException("Book not found with id: " + bookId));
-        Users user = usersRepository.findById(userId)
+        User user = usersRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found or not borrow a book with id: " + userId));
 
-        List<Long> booksList = user.getBorrowedBooks();
-        Set<Long> borrowedUserBooks = book.getBorrowedUserIds();
+        List<Long> booksList = user.getBorrowedBook();
+        Set<Long> borrowedUserBook = book.getBorrowedUserIds();
 
         if (!booksList.contains(bookId)) {
             throw new RuntimeException("Book is not borrowed!");
         }
         //Изменение статуса книги
         if (Collections.frequency(booksList, bookId) == 1) {
-            borrowedUserBooks.remove(userId);
+            borrowedUserBook.remove(userId);
         }
         // Удаляем книгу из списка пользователя, если он её вернул
         booksList.remove(book.getId());
@@ -157,7 +157,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserDTO updateUserFields(long id, Map<String, Object> updates) {
-        Users user = usersRepository.findById(id)
+        User user = usersRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
 
         if (updates.containsKey("username")) {

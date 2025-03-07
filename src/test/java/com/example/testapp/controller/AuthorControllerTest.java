@@ -2,7 +2,7 @@ package com.example.testapp.controller;
 
 import com.example.testapp.DTO.AuthorDTO;
 import com.example.testapp.DTO.BookShortDTO;
-import com.example.testapp.model.Authors;
+import com.example.testapp.model.Author;
 import com.example.testapp.service.impl.AuthorServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -72,7 +72,7 @@ class AuthorControllerTest {
 
     @Test
     @WithMockUser
-    void getAllAuthors() throws Exception {
+    void getAllAuthor() throws Exception {
         List<AuthorDTO> authorDTOList = List.of(
                 new AuthorDTO(1L),
                 new AuthorDTO(1L)
@@ -80,7 +80,7 @@ class AuthorControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String exceptedJson = objectMapper.writeValueAsString(authorDTOList);
 
-        when(authorService.getAllAuthors()).thenReturn(authorDTOList);
+        when(authorService.getAllAuthor()).thenReturn(authorDTOList);
 
         mockMvc.perform(get("/api/v1/authors/getAll")
                         .with(csrf())
@@ -145,7 +145,7 @@ class AuthorControllerTest {
 
     @Test
     @WithMockUser
-    void getAllAuthorsBooks() throws Exception {
+    void getAllAuthorBook() throws Exception {
 
         long authorId = 1L;
 
@@ -155,13 +155,13 @@ class AuthorControllerTest {
                 new BookShortDTO(3L, "Book Title 3")
         );
 
-        when(authorService.getAllAuthorsBooks(authorId)).thenReturn(bookDtoList);
+        when(authorService.getAllAuthorBook(authorId)).thenReturn(bookDtoList);
         when(authorService.getAuthorById(authorId)).thenReturn(new AuthorDTO());
 
         ObjectMapper objectMapper = new ObjectMapper();
         String expectedJson = objectMapper.writeValueAsString(bookDtoList);
 
-        mockMvc.perform(get("/api/v1/authors/getAllBooks/{authorId}", authorId)
+        mockMvc.perform(get("/api/v1/authors/getAllBook/{authorId}", authorId)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -172,7 +172,7 @@ class AuthorControllerTest {
     @Test
     @WithMockUser
     void getAuthorByName() throws Exception {
-        Authors authors = new Authors();
+        Author authors = new Author();
         authors.setName("Author Name");
 
         when(authorService.getAuthorByName(authors.getName())).thenReturn(AuthorDTO.fromEntity(authors));

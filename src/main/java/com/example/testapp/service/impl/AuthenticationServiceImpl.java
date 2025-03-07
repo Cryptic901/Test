@@ -4,8 +4,8 @@ import com.example.testapp.DTO.LoginUserDTO;
 import com.example.testapp.DTO.RegisterUserDTO;
 import com.example.testapp.DTO.VerifyUserDTO;
 import com.example.testapp.exceptions.EntityNotFoundException;
-import com.example.testapp.model.Users;
-import com.example.testapp.repository.UsersRepository;
+import com.example.testapp.model.User;
+import com.example.testapp.repository.UserRepository;
 import com.example.testapp.service.AuthenticationService;
 import jakarta.mail.MessagingException;
 import org.apache.tomcat.websocket.AuthenticationException;
@@ -21,13 +21,13 @@ import java.util.Random;
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    private final UsersRepository usersRepository;
+    private final UserRepository usersRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailServiceImpl emailService;
     private final AuthenticationManager authenticationManager;
 
 
-    public AuthenticationServiceImpl(UsersRepository usersRepository,
+    public AuthenticationServiceImpl(UserRepository usersRepository,
                                      PasswordEncoder passwordEncoder,
                                      EmailServiceImpl emailService,
                                      AuthenticationManager authenticationManager) {
@@ -37,8 +37,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         this.authenticationManager = authenticationManager;
     }
 
-    public Users signUp(RegisterUserDTO input) {
-        Users user = new Users(input.getUsername(), input.getEmail(), passwordEncoder.encode(input.getPassword()));
+    public User signUp(RegisterUserDTO input) {
+        User user = new User(input.getUsername(), input.getEmail(), passwordEncoder.encode(input.getPassword()), input.getRole());
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
         user.setEnabled(false);
@@ -46,8 +46,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return usersRepository.save(user);
     }
 
-    public Users authenticate(LoginUserDTO input) throws AuthenticationException {
-        Users user = usersRepository.findByEmail(input.getEmail())
+    public User authenticate(LoginUserDTO input) throws AuthenticationException {
+        User user = usersRepository.findByEmail(input.getEmail())
                 .orElseThrow(() -> new EntityNotFoundException("User with email " + input.getEmail() + " not found"));
 
         if (!passwordEncoder.matches(input.getPassword(), user.getPassword())) {
@@ -66,9 +66,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     public void verifyUser(VerifyUserDTO input) throws AuthenticationException {
-        Optional<Users> optionalUser = usersRepository.findByEmail(input.getEmail());
+        Optional<User> optionalUser = usersRepository.findByEmail(input.getEmail());
         if (optionalUser.isPresent()) {
-            Users user = optionalUser.get();
+            User user = optionalUser.get();
             if (user.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())) {
                 throw new AuthenticationException("Verification code expired");
             }
@@ -86,9 +86,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     public void resendVerificationCode(String email) throws AuthenticationException {
-        Optional<Users> optionalUser = usersRepository.findByEmail(email);
+        Optional<User> optionalUser = usersRepository.findByEmail(email);
         if (optionalUser.isPresent()) {
-            Users user = optionalUser.get();
+            User user = optionalUser.get();
             if (user.isEnabled()) {
                 throw new AuthenticationException("Account is already verified");
             }
@@ -101,7 +101,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 
-    public void sendVerificationEmail(Users user) {
+    public void sendVerificationEmail(User user) {
         String subject = "Verification Code";
         String verificationCode = user.getVerificationCode();
         String htmlMessage = "<!DOCTYPE html>"

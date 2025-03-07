@@ -3,12 +3,12 @@ package com.example.testapp.service.impl;
 import com.example.testapp.DTO.BookDTO;
 import com.example.testapp.DTO.BookShortDTO;
 import com.example.testapp.exceptions.EntityNotFoundException;
-import com.example.testapp.model.Authors;
-import com.example.testapp.model.Books;
-import com.example.testapp.model.Genres;
-import com.example.testapp.repository.AuthorsRepository;
-import com.example.testapp.repository.BooksRepository;
-import com.example.testapp.repository.GenresRepository;
+import com.example.testapp.model.Author;
+import com.example.testapp.model.Book;
+import com.example.testapp.model.Genre;
+import com.example.testapp.repository.AuthorRepository;
+import com.example.testapp.repository.BookRepository;
+import com.example.testapp.repository.GenreRepository;
 import com.example.testapp.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,19 +22,19 @@ import java.util.*;
 @Service
 public class BookServiceImpl implements BookService {
 
-    private final BooksRepository booksRepository;
-    private final AuthorsRepository authorsRepository;
-    private final GenresRepository genresRepository;
+    private final BookRepository booksRepository;
+    private final AuthorRepository authorsRepository;
+    private final GenreRepository genresRepository;
 
     @Autowired
-    public BookServiceImpl(BooksRepository booksRepository, GenresRepository genresRepository, AuthorsRepository authorsRepository) {
+    public BookServiceImpl(BookRepository booksRepository, GenreRepository genresRepository, AuthorRepository authorsRepository) {
         this.booksRepository = booksRepository;
         this.genresRepository = genresRepository;
         this.authorsRepository = authorsRepository;
     }
 
     //Метод для получения значений из BookDTO и установления их в book
-    public void setBookParams(Books book, BookDTO bookDTO) {
+    public void setBookParams(Book book, BookDTO bookDTO) {
         book.setTitle(bookDTO.getTitle());
         book.setDescription(bookDTO.getDescription());
         book.setPublisher(bookDTO.getPublisher());
@@ -57,9 +57,9 @@ public class BookServiceImpl implements BookService {
         if (!booksRepository.existsById(id)) {
             throw new EntityNotFoundException("Book not found with id " + id);
         }
-        Books book = booksRepository.findById(id)
+        Book book = booksRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Book not found with id " + id));
-        Authors authors = authorsRepository.findById(book.getAuthor().getId())
+        Author authors = authorsRepository.findById(book.getAuthor().getId())
                 .orElseThrow(() -> new EntityNotFoundException("Author not found with id " + book.getAuthor().getId()));
         authors.getBookList().remove(book.getId());
         authorsRepository.save(authors);
@@ -68,14 +68,14 @@ public class BookServiceImpl implements BookService {
 
     //Метод для добавления книги
     public BookDTO addBook(BookDTO bookDTO) {
-        Books bookToAdd = new Books();
+        Book bookToAdd = new Book();
         setBookParams(bookToAdd, bookDTO);
-        Books savedBook = booksRepository.save(bookToAdd);
+        Book savedBook = booksRepository.save(bookToAdd);
 
-        Authors author = authorsRepository.findById(bookDTO.getAuthorId())
+        Author author = authorsRepository.findById(bookDTO.getAuthorId())
                 .orElseThrow(() -> new EntityNotFoundException("Author not found with id " + bookDTO.getAuthorId()));
 
-        Genres genre = genresRepository.findById(bookDTO.getGenreId())
+        Genre genre = genresRepository.findById(bookDTO.getGenreId())
                 .orElseThrow(() -> new EntityNotFoundException("Genre not found with id " + bookDTO.getGenreId()));
 
         List<Long> authorBookList = author.getBookList();
@@ -86,9 +86,9 @@ public class BookServiceImpl implements BookService {
         authorBookList.add(savedBook.getId());
         author.setBookList(authorBookList);
 
-        List<Long> booksWithThatGenre = genre.getBooks();
+        List<Long> booksWithThatGenre = genre.getBook();
         booksWithThatGenre.add(savedBook.getId());
-        genre.setBooks(booksWithThatGenre);
+        genre.setBook(booksWithThatGenre);
 
         authorsRepository.save(author);
         genresRepository.save(genre);
@@ -102,7 +102,7 @@ public class BookServiceImpl implements BookService {
     }
 
     public BookDTO getBookByTitle(String title) {
-        return BookDTO.fromEntity(booksRepository.findBooksByTitle(title)
+        return BookDTO.fromEntity(booksRepository.findBookByTitle(title)
                 .orElseThrow(() -> new EntityNotFoundException("Book not found with title: " + title)));
     }
 
@@ -113,35 +113,35 @@ public class BookServiceImpl implements BookService {
 
     //Метод для обновления книги по ID
     public BookDTO updateBookById(long id, BookDTO bookDTO) {
-        Books existingBook = booksRepository.findById(id)
+        Book existingBook = booksRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Book not found with id: " + id));
         setBookParams(existingBook, bookDTO);
         return BookDTO.fromEntity(booksRepository.save(existingBook));
     }
 
     //Метод для получения всего списка книг
-    public List<BookDTO> getAllBooks() {
-        List<Books> books = booksRepository.findAll();
+    public List<BookDTO> getAllBook() {
+        List<Book> books = booksRepository.findAll();
         return books.stream()
                 .map(BookDTO::fromEntity)
                 .toList();
     }
 
     //Метод для получения списка книг с более маленьким количеством параметров
-    public List<BookShortDTO> getAllBooksShort() {
-        List<Books> books = booksRepository.findAll();
+    public List<BookShortDTO> getAllBookShort() {
+        List<Book> books = booksRepository.findAll();
         return books.stream()
                 .map(BookShortDTO::fromEntity)
                 .toList();
     }
 
-    public List<BookDTO> getMostPopularBooks() {
-        List<Books> books = booksRepository.sortByBookPopularityDescending();
+    public List<BookDTO> getMostPopularBook() {
+        List<Book> books = booksRepository.sortByBookPopularityDescending();
         return books.stream().map(BookDTO::fromEntity).toList();
     }
 
     public BookDTO updateBookFields(long id, Map<String, Object> updates) {
-        Books books = booksRepository.findById(id)
+        Book books = booksRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Book not found with id: " + id));
 
         if (updates.containsKey("title")) {
@@ -171,13 +171,13 @@ public class BookServiceImpl implements BookService {
 
         if (updates.containsKey("author_id")) {
             Long authorId = Long.parseLong(updates.get("author_id").toString());
-            Authors authors = authorsRepository.findById(authorId)
+            Author authors = authorsRepository.findById(authorId)
                     .orElseThrow(() -> new EntityNotFoundException("Author not found with id " + authorId));
             books.setAuthor(authors);
         }
         if (updates.containsKey("genre_id")) {
             Long genreId = Long.parseLong(updates.get("genre_id").toString());
-            Genres genres = genresRepository.findById(genreId)
+            Genre genres = genresRepository.findById(genreId)
                     .orElseThrow(() -> new EntityNotFoundException("Genre not found with id " + genreId));
             books.setGenre(genres);
             genresRepository.save(genres);
@@ -185,17 +185,17 @@ public class BookServiceImpl implements BookService {
 
         if (updates.containsKey("authorName")) {
             String name = updates.get("authorName").toString();
-            Authors authors = authorsRepository.findAuthorsByName(name)
+            Author authors = authorsRepository.findAuthorByName(name)
                             .orElseThrow(() -> new EntityNotFoundException("Author not found with name " + name));
             books.setAuthor(authors);
         }
 
         if (updates.containsKey("genreName")) {
             String name = (String) updates.get("genreName");
-            Genres genres = genresRepository.findByName(name)
+            Genre genres = genresRepository.findByName(name)
                             .orElseThrow(() -> new EntityNotFoundException("Genre not found with name " + name));
             books.setGenre(genres);
-            genres.setCountOfBooksInThatGenre(genres.getCountOfBooksInThatGenre() + 1);
+            genres.setCountOfBookInThatGenre(genres.getCountOfBookInThatGenre() + 1);
             genresRepository.save(genres);
         }
         booksRepository.save(books);

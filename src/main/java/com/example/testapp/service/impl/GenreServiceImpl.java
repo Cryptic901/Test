@@ -2,9 +2,9 @@ package com.example.testapp.service.impl;
 
 import com.example.testapp.DTO.GenreDTO;
 import com.example.testapp.exceptions.EntityNotFoundException;
-import com.example.testapp.model.Genres;
-import com.example.testapp.repository.BooksRepository;
-import com.example.testapp.repository.GenresRepository;
+import com.example.testapp.model.Genre;
+import com.example.testapp.repository.BookRepository;
+import com.example.testapp.repository.GenreRepository;
 import com.example.testapp.service.GenreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,31 +20,31 @@ import java.util.Map;
 @Service
 public class GenreServiceImpl implements GenreService {
 
-    private final GenresRepository genresRepository;
-    private final BooksRepository booksRepository;
+    private final GenreRepository genresRepository;
+    private final BookRepository booksRepository;
 
     @Autowired
-    public GenreServiceImpl(GenresRepository genresRepository, BooksRepository booksRepository) {
+    public GenreServiceImpl(GenreRepository genresRepository, BookRepository booksRepository) {
         this.genresRepository = genresRepository;
         this.booksRepository = booksRepository;
     }
 
-    public void setGenreParams(GenreDTO genreDTO, Genres genres) {
+    public void setGenreParams(GenreDTO genreDTO, Genre genres) {
         genres.setName(genreDTO.getName());
         genres.setDescription(genreDTO.getDescription());
-        genres.setBooks(genreDTO.getBooks());
-        genres.setCountOfBooksInThatGenre(genreDTO.getCountOfBooksInThatGenre());
+        genres.setBook(genreDTO.getBook());
+        genres.setCountOfBookInThatGenre(genreDTO.getCountOfBookInThatGenre());
         genres.setCountOfBorrowingBookWithGenre(genreDTO.getCountOfBorrowingBookWithGenre());
     }
 
     public GenreDTO addGenre(GenreDTO genreDTO) {
-        Genres genres = new Genres();
+        Genre genres = new Genre();
         setGenreParams(genreDTO, genres);
         return GenreDTO.fromEntity(genresRepository.save(genres));
     }
 
-    public List<GenreDTO> getAllGenres() {
-        List<Genres> genres = genresRepository.findAll();
+    public List<GenreDTO> getAllGenre() {
+        List<Genre> genres = genresRepository.findAll();
         return genres.stream()
                 .map(GenreDTO::fromEntity)
                 .toList();
@@ -56,7 +56,7 @@ public class GenreServiceImpl implements GenreService {
     }
 
     public GenreDTO updateGenreById(long id, GenreDTO genreDTO) {
-        Genres genres = genresRepository.findById(id)
+        Genre genres = genresRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Genre not found with id: " + id));
         setGenreParams(genreDTO, genres);
         return GenreDTO.fromEntity(genresRepository.save(genres));
@@ -72,18 +72,18 @@ public class GenreServiceImpl implements GenreService {
     }
 
     public GenreDTO getGenreByName(String name) {
-       Genres genre = genresRepository.getGenreByName(name)
+       Genre genre = genresRepository.getGenreByName(name)
                .orElseThrow(() -> new EntityNotFoundException("Genre not found with name: " + name));
        return GenreDTO.fromEntity(genre);
     }
 
-    public List<GenreDTO> getMostPopularGenres() {
-        List<Genres> genres = genresRepository.sortByGenrePopularityDescending();
+    public List<GenreDTO> getMostPopularGenre() {
+        List<Genre> genres = genresRepository.sortByGenrePopularityDescending();
         return genres.stream().map(GenreDTO::fromEntity).toList();
     }
 
     public GenreDTO updateGenreFields(long id, Map<String, Object> updates) {
-        Genres genres = genresRepository.findById(id)
+        Genre genres = genresRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Genre not found with id: " + id));
 
         if (updates.containsKey("name")) {
@@ -96,14 +96,14 @@ public class GenreServiceImpl implements GenreService {
         if (updates.containsKey("books") && updates.get("books") instanceof List<?> objects) {
                 List<Long> bookIds = objects.stream()
                         .map(obj -> Long.valueOf(obj.toString())).toList();
-                genres.setBooks(new ArrayList<>(bookIds));
+                genres.setBook(new ArrayList<>(bookIds));
         }
-        if (updates.containsKey("countOfBooksInThatGenre")) {
-            genres.setCountOfBooksInThatGenre((Integer) updates.get("countOfBooksInThatGenre"));
+        if (updates.containsKey("countOfBookInThatGenre")) {
+            genres.setCountOfBookInThatGenre((Integer) updates.get("countOfBookInThatGenre"));
         }
 
-        if (updates.containsKey("countOfBorrowingBooksWithGenre")) {
-            genres.setCountOfBorrowingBookWithGenre((Long) updates.get("countOfBorrowingBooksWithGenre"));
+        if (updates.containsKey("countOfBorrowingBookWithGenre")) {
+            genres.setCountOfBorrowingBookWithGenre((Long) updates.get("countOfBorrowingBookWithGenre"));
         }
         genresRepository.save(genres);
         return GenreDTO.fromEntity(genres);

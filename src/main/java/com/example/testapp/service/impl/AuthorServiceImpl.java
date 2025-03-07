@@ -3,10 +3,10 @@ package com.example.testapp.service.impl;
 import com.example.testapp.DTO.AuthorDTO;
 import com.example.testapp.DTO.BookShortDTO;
 import com.example.testapp.exceptions.EntityNotFoundException;
-import com.example.testapp.model.Authors;
-import com.example.testapp.model.Books;
-import com.example.testapp.repository.AuthorsRepository;
-import com.example.testapp.repository.BooksRepository;
+import com.example.testapp.model.Author;
+import com.example.testapp.model.Book;
+import com.example.testapp.repository.AuthorRepository;
+import com.example.testapp.repository.BookRepository;
 import com.example.testapp.service.AuthorService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,23 +21,23 @@ import java.util.Map;
 @Service
 public class AuthorServiceImpl implements AuthorService {
 
-    private final AuthorsRepository authorsRepository;
-    private final BooksRepository booksRepository;
+    private final AuthorRepository authorsRepository;
+    private final BookRepository booksRepository;
 
     @Autowired
-    public AuthorServiceImpl(AuthorsRepository authorsRepository, BooksRepository booksRepository) {
+    public AuthorServiceImpl(AuthorRepository authorsRepository, BookRepository booksRepository) {
         this.authorsRepository = authorsRepository;
         this.booksRepository = booksRepository;
     }
 
-    public void setAuthorsParams(Authors author, AuthorDTO authorDTO) {
+    public void setAuthorParams(Author author, AuthorDTO authorDTO) {
         author.setName(authorDTO.getName());
         author.setBookList(authorDTO.getBookList());
     }
 
     public AuthorDTO addAuthor(AuthorDTO authorDTO) {
-        Authors author = new Authors();
-        setAuthorsParams(author, authorDTO);
+        Author author = new Author();
+        setAuthorParams(author, authorDTO);
         return AuthorDTO.fromEntity(authorsRepository.save(author));
     }
 
@@ -47,11 +47,11 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     public AuthorDTO getAuthorByName(String name) {
-        return AuthorDTO.fromEntity(authorsRepository.findAuthorsByName(name)
+        return AuthorDTO.fromEntity(authorsRepository.findAuthorByName(name)
                 .orElseThrow(() -> new EntityNotFoundException("Author not found with name: " + name)));
     }
 
-    public List<AuthorDTO> getAllAuthors() {
+    public List<AuthorDTO> getAllAuthor() {
         return authorsRepository.findAll()
                 .stream()
                 .map(AuthorDTO::fromEntity)
@@ -59,9 +59,9 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     public AuthorDTO updateAuthorById(long id, AuthorDTO authorDTO) {
-        Authors author = authorsRepository.findById(id)
+        Author author = authorsRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Author not found with id: " + id));
-        setAuthorsParams(author, authorDTO);
+        setAuthorParams(author, authorDTO);
         return AuthorDTO.fromEntity(authorsRepository.save(author));
     }
 
@@ -71,12 +71,12 @@ public class AuthorServiceImpl implements AuthorService {
             throw new EntityNotFoundException("Author not found with id: " + authorId);
         }
 
-        Authors author = authorsRepository.findById(authorId)
+        Author author = authorsRepository.findById(authorId)
                 .orElseThrow(() -> new EntityNotFoundException("Author not found with id: " + authorId));
 
         if (!author.getBookList().isEmpty()) {
             for (Long id : author.getBookList()) {
-                Books book = booksRepository.findById(id)
+                Book book = booksRepository.findById(id)
                         .orElseThrow(() -> new EntityNotFoundException("Book not found with id: " + id));
 
                 book.setAuthor(null);
@@ -87,7 +87,7 @@ public class AuthorServiceImpl implements AuthorService {
         authorsRepository.deleteById(authorId);
     }
 
-    public List<BookShortDTO> getAllAuthorsBooks(long authorId) {
+    public List<BookShortDTO> getAllAuthorBook(long authorId) {
         if (!authorsRepository.existsById(authorId)) {
             throw new EntityNotFoundException("Author not found with id: " + authorId);
         }
@@ -98,7 +98,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     public AuthorDTO updateAuthorFields(long id, Map<String, Object> updates) {
-        Authors author = authorsRepository.findById(id)
+        Author author = authorsRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Author not found with id: " + id));
 
         if (updates.containsKey("name")) {

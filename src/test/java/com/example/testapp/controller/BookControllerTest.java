@@ -1,7 +1,7 @@
 package com.example.testapp.controller;
 
 import com.example.testapp.DTO.BookDTO;
-import com.example.testapp.model.Books;
+import com.example.testapp.model.Book;
 import com.example.testapp.service.impl.BookServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -139,13 +139,13 @@ class BookControllerTest {
 
     @Test
     @WithMockUser
-    void getAllBooksTest() throws Exception {
+    void getAllBookTest() throws Exception {
 
         //Arrange
         List<BookDTO> bookDTOList = new ArrayList<>(List.of(new BookDTO(), new BookDTO()));
 
         //Act
-        when(bookService.getAllBooks()).thenReturn(bookDTOList);
+        when(bookService.getAllBook()).thenReturn(bookDTOList);
 
         //Assert
         mockMvc.perform(get("/api/v1/books/getAll"))
@@ -171,7 +171,7 @@ class BookControllerTest {
     @Test
     @WithMockUser
     void getBookByTitleTest() throws Exception {
-        Books books = new Books();
+        Book books = new Book();
         books.setTitle("title");
 
         when(bookService.getBookByTitle(books.getTitle())).thenReturn(BookDTO.fromEntity(books));

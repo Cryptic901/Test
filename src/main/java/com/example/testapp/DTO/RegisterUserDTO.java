@@ -1,10 +1,13 @@
 package com.example.testapp.DTO;
 
+import com.example.testapp.enums.UserRole;
+
 public class RegisterUserDTO {
 
     private String username;
     private String password;
     private String email;
+    private UserRole role = UserRole.valueOf("USER");
 
     public String getUsername() {
         return username;
@@ -28,5 +31,13 @@ public class RegisterUserDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 }

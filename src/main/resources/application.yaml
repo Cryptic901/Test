@@ -7,29 +7,30 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   datasource:
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
-    url: ${SPRING_DATASOURCE_URL}
+    username: postgres
+    password: MTQ4ODUyNDJnb2lkYXpvdnNraWJpZGk=
+    url: jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:5432/postgres?user=postgres.hokbofyvzdugplrhoghf&password=MTQ4ODUyNDJnb2lkYXpvdnNraWJpZGk=
+    hikari:
+      connection-timeout: 30000
+      maximum-pool-size: 10
   security:
     jwt:
-      secret-key: ${JWT_SECRET_KEY}
+      secret-key: IqYBdEd70/GLhXYO0JDdiBhTnAk/zxS+gWxtVqTv7oLDmmU+Ze2V6lrkAuVDyLsWesxmRZD9MMDhb25cQWkc/w==
       expiration-time: 3600000
     user:
       name: admin
       password: admin
   mail:
     host: smtp.gmail.com
-    port: 587
-    username: ${SUPPORT_EMAIL}
-    password: ${APP_PASSWORD}
+    port: 465
+    username: luckyartem901@gmail.com
+    password: iovy wmcf myza yzro
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
-  config:
-    import: optional:file:.env[.yaml]
 
 springdoc:
   api-docs:
@@ -37,3 +38,9 @@ springdoc:
   swagger-ui:
     path: "/swagger-ui.html"
   show-actuator: true
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG

@@ -9,7 +9,8 @@ import java.util.Set;
 /* Сущность книга */
 
 @Entity
-public class Books {
+@Table(name = "book")
+public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +21,7 @@ public class Books {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id")
-    private Authors author;
+    private Author author;
 
     @Column(unique = true, nullable = false)
     private String isbn;
@@ -39,7 +40,7 @@ public class Books {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "genre_id")
-    private Genres genre;
+    private Genre genre;
 
     private Long countOfBorrowingBook;
 
@@ -62,19 +63,19 @@ public class Books {
         this.title = title;
     }
 
-    public Authors getAuthor() {
+    public Author getAuthor() {
         return author;
     }
 
-    public void setAuthor(Authors author) {
+    public void setAuthor(Author author) {
         this.author = author;
     }
 
-    public Genres getGenre() {
+    public Genre getGenre() {
         return genre;
     }
 
-    public void setGenre(Genres genre) {
+    public void setGenre(Genre genre) {
         this.genre = genre;
     }
 
@@ -141,8 +142,8 @@ public class Books {
         this.countOfBorrowingBook = countOfBorrowingBook;
     }
 
-    public Books(Long id, String title, Authors author, String isbn, String publisher, Date publishedDate,
-                 int amount,Set<Long> borrowedUserIds, Genres genre, String description, Long countOfBorrowingBook) {
+    public Book(Long id, String title, Author author, String isbn, String publisher, Date publishedDate,
+                 int amount,Set<Long> borrowedUserIds, Genre genre, String description, Long countOfBorrowingBook) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -156,21 +157,21 @@ public class Books {
         this.countOfBorrowingBook = countOfBorrowingBook;
     }
 
-    public Books() {
+    public Book() {
     }
 
-    public Books(long id) {
+    public Book(long id) {
         this.id = id;
     }
 
-    public Books(long id, String title) {
+    public Book(long id, String title) {
         this.id = id;
         this.title = title;
     }
 
     @Override
     public String toString() {
-        return "Books{" +
+        return "Book{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", author=" + author +

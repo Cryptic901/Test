@@ -1,6 +1,6 @@
 package com.example.testapp.repository;
 
-import com.example.testapp.model.Users;
+import com.example.testapp.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,9 +9,9 @@ import java.util.Optional;
 /* Репозиторий для получения и передачи информации в базу данных о пользователях */
 
 @Repository
-public interface UsersRepository extends JpaRepository<Users, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<Users> findUsersByUsername(String username);
+    Optional<User> findUserByUsername(String username);
 
-    Optional<Users> findByEmail(String email);
+    Optional<User> findByEmail(String email);
 }

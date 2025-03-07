@@ -8,7 +8,7 @@ import java.util.List;
 /* Сущность жанр */
 
 @Entity
-public class Genres  {
+public class Genre  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,15 +23,15 @@ public class Genres  {
 
     private String description;
 
-    private Integer countOfBooksInThatGenre;
+    private Integer countOfBookInThatGenre;
 
     private Long countOfBorrowingBookWithGenre;
 
-    public Genres(long genreId) {
+    public Genre(long genreId) {
         this.id = genreId;
     }
 
-    public Genres(String name) {
+    public Genre(String name) {
         this.name = name;
     }
 
@@ -51,27 +51,27 @@ public class Genres  {
         this.name = name;
     }
 
-    public List<Long> getBooks() {
+    public List<Long> getBook() {
         if (books == null) {
             books = new ArrayList<>();
         }
         return books;
     }
 
-    public void setBooks(List<Long> books) {
+    public void setBook(List<Long> books) {
         this.books = books;
     }
 
-    public Integer getCountOfBooksInThatGenre() {
-        if (countOfBooksInThatGenre == null && books == null) {
-            countOfBooksInThatGenre = 0;
+    public Integer getCountOfBookInThatGenre() {
+        if (countOfBookInThatGenre == null && books == null) {
+            countOfBookInThatGenre = 0;
             books = new ArrayList<>();
         }
         return books.size();
     }
 
-    public void setCountOfBooksInThatGenre(Integer countOfBooksInThatGenre) {
-        this.countOfBooksInThatGenre = countOfBooksInThatGenre;
+    public void setCountOfBookInThatGenre(Integer countOfBookInThatGenre) {
+        this.countOfBookInThatGenre = countOfBookInThatGenre;
     }
 
     public String getDescription() {
@@ -95,25 +95,25 @@ public class Genres  {
 
     @Override
     public String toString() {
-        return "Genres{" +
+        return "Genre{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", books=" + books +
                 ", description='" + description + '\'' +
-                ", countOfBooksInThatGenre=" + countOfBooksInThatGenre +
+                ", countOfBookInThatGenre=" + countOfBookInThatGenre +
                 ", countOfBorrowingBookWithGenre=" + countOfBorrowingBookWithGenre +
                 '}';
     }
 
-    public Genres(Long id, String name, List<Long> books, String description, Integer countOfBooksInThatGenre, Long countOfBorrowingBookWithGenre) {
+    public Genre(Long id, String name, List<Long> books, String description, Integer countOfBookInThatGenre, Long countOfBorrowingBookWithGenre) {
         this.id = id;
         this.name = name;
         this.books = books;
         this.description = description;
-        this.countOfBooksInThatGenre = countOfBooksInThatGenre;
+        this.countOfBookInThatGenre = countOfBookInThatGenre;
         this.countOfBorrowingBookWithGenre = countOfBorrowingBookWithGenre;
     }
 
-    public Genres() {
+    public Genre() {
     }
 }

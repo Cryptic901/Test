@@ -1,8 +1,8 @@
 package com.example.testapp.DTO;
 
-import com.example.testapp.model.Authors;
-import com.example.testapp.model.Books;
-import com.example.testapp.model.Genres;
+import com.example.testapp.model.Author;
+import com.example.testapp.model.Book;
+import com.example.testapp.model.Genre;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
@@ -31,7 +31,7 @@ public class BookDTO implements Serializable {
     @JsonProperty(value = "author_id", access = JsonProperty.Access.WRITE_ONLY)
     private Long authorId;
 
-    public static BookDTO fromEntity(Books book) {
+    public static BookDTO fromEntity(Book book) {
         if (book == null) return null;
         BookDTO dto = new BookDTO();
         dto.setId(book.getId());
@@ -52,9 +52,9 @@ public class BookDTO implements Serializable {
         return dto;
     }
 
-    public static Books toEntity(BookDTO dto) {
+    public static Book toEntity(BookDTO dto) {
         if (dto == null) return null;
-        Books book = new Books();
+        Book book = new Book();
         book.setId(dto.getId());
         book.setTitle(dto.getTitle());
         book.setDescription(dto.getDescription());
@@ -64,22 +64,22 @@ public class BookDTO implements Serializable {
         book.setAmount(dto.getAmount());
         book.setCountOfBorrowingBook(dto.getCountOfBorrowingBook());
         if (dto.getAuthorId() != null) {
-            Authors authors = new Authors();
+            Author authors = new Author();
             authors.setId(dto.getAuthorId());
             book.setAuthor(authors);
         }
         if (dto.getGenreId() != null) {
-            Genres genres = new Genres();
+            Genre genres = new Genre();
             genres.setId(dto.getGenreId());
             book.setGenre(genres);
         }
         if (dto.getAuthorName() != null) {
-            Authors authors = new Authors();
+            Author authors = new Author();
             authors.setName(dto.getAuthorName());
             book.setAuthor(authors);
         }
         if (dto.getGenreName() != null) {
-            Genres genres = new Genres();
+            Genre genres = new Genre();
             genres.setName(dto.getGenreName());
             book.setGenre(genres);
         }

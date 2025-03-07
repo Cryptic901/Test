@@ -2,12 +2,12 @@ package com.example.testapp.service;
 
 import com.example.testapp.DTO.UserDTO;
 import com.example.testapp.enums.UserRole;
-import com.example.testapp.model.Books;
-import com.example.testapp.model.Genres;
-import com.example.testapp.model.Users;
-import com.example.testapp.repository.BooksRepository;
-import com.example.testapp.repository.GenresRepository;
-import com.example.testapp.repository.UsersRepository;
+import com.example.testapp.model.Book;
+import com.example.testapp.model.Genre;
+import com.example.testapp.model.User;
+import com.example.testapp.repository.BookRepository;
+import com.example.testapp.repository.GenreRepository;
+import com.example.testapp.repository.UserRepository;
 import com.example.testapp.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,13 +26,13 @@ import static org.mockito.Mockito.*;
 public class UserServiceTest {
 
     @Mock
-    private UsersRepository usersRepository;
+    private UserRepository usersRepository;
 
     @Mock
-    private BooksRepository booksRepository;
+    private BookRepository booksRepository;
 
     @Mock
-    private GenresRepository genresRepository;
+    private GenreRepository genresRepository;
 
     @Spy
     @InjectMocks
@@ -41,10 +41,10 @@ public class UserServiceTest {
     @Test
     void createUser_Success() {
         // Arrange
-        UserDTO userDTO = new UserDTO(new Users(1L, "testUser", "test@test.com", "password", UserRole.USER, new ArrayList<>()));
-        Users savedUser = new Users(1L, "testUser", "test@test.com", "password", UserRole.USER, new ArrayList<>());
+        UserDTO userDTO = new UserDTO(new User(1L, "testUser", "test@test.com", "password", UserRole.USER, new ArrayList<>()));
+        User savedUser = new User(1L, "testUser", "test@test.com", "password", UserRole.USER, new ArrayList<>());
 
-        when(usersRepository.save(any(Users.class))).thenReturn(savedUser);
+        when(usersRepository.save(any(User.class))).thenReturn(savedUser);
         // Act
         UserDTO result = userService.createUser(userDTO);
 
@@ -52,25 +52,25 @@ public class UserServiceTest {
         assertNotNull(result);
         assertEquals(userDTO.getUsername(), result.getUsername());
         assertEquals(userDTO.getEmail(), result.getEmail());
-        verify(usersRepository, times(1)).save(any(Users.class));
+        verify(usersRepository, times(1)).save(any(User.class));
     }
 
     @Test
-    void getAllUsers_Success() {
+    void getAllUser_Success() {
         // Arrange
-        Users user1 = new Users();
+        User user1 = new User();
         user1.setId(1L);
         user1.setUsername("user1");
 
-        Users user2 = new Users();
+        User user2 = new User();
         user2.setId(2L);
         user2.setUsername("user2");
 
-        List<Users> usersList = Arrays.asList(user1, user2);
+        List<User> usersList = Arrays.asList(user1, user2);
         when(usersRepository.findAll()).thenReturn(usersList);
 
         // Act
-        List<UserDTO> result = userService.getAllUsers();
+        List<UserDTO> result = userService.getAllUser();
 
         // Assert
         assertNotNull(result);
@@ -84,12 +84,12 @@ public class UserServiceTest {
     void getUserByUsername_Success() {
         // Arrange
         String username = "testUser";
-        Users user = new Users();
+        User user = new User();
         user.setId(1L);
         user.setUsername(username);
         user.setEmail("test@test.com");
 
-        when(usersRepository.findUsersByUsername(username)).thenReturn(Optional.of(user));
+        when(usersRepository.findUserByUsername(username)).thenReturn(Optional.of(user));
 
         // Act
         UserDTO result = userService.getUserByUsername(username);
@@ -98,14 +98,14 @@ public class UserServiceTest {
         assertNotNull(result);
         assertEquals(username, result.getUsername());
         assertEquals("test@test.com", result.getEmail());
-        verify(usersRepository, times(1)).findUsersByUsername(username);
+        verify(usersRepository, times(1)).findUserByUsername(username);
     }
 
     @Test
     void getUserById_Success() {
         // Arrange
         long userId = 1L;
-        Users user = new Users();
+        User user = new User();
         user.setId(userId);
         user.setUsername("testUser");
 
@@ -128,20 +128,20 @@ public class UserServiceTest {
         updateDTO.setUsername("updatedUser");
         updateDTO.setEmail("updated@test.com");
         updateDTO.setUserRole("ADMIN");
-        updateDTO.setBorrowedBooks(new ArrayList<>());
+        updateDTO.setBorrowedBook(new ArrayList<>());
 
-        Users existingUser = new Users();
+        User existingUser = new User();
         existingUser.setId(userId);
         existingUser.setUsername("oldUsername");
 
-        Users updatedUser = new Users();
+        User updatedUser = new User();
         updatedUser.setId(userId);
         updatedUser.setUsername("updatedUser");
         updatedUser.setEmail("updated@test.com");
         updatedUser.setUserRole(UserRole.ADMIN);
 
         when(usersRepository.findById(userId)).thenReturn(Optional.of(existingUser));
-        when(usersRepository.save(any(Users.class))).thenReturn(updatedUser);
+        when(usersRepository.save(any(User.class))).thenReturn(updatedUser);
 
         // Act
         UserDTO result = userService.updateUserById(userId, updateDTO);
@@ -152,7 +152,7 @@ public class UserServiceTest {
         assertEquals("updated@test.com", result.getEmail());
         assertEquals("ADMIN", result.getUserRole());
         verify(usersRepository, times(1)).findById(userId);
-        verify(usersRepository, times(1)).save(any(Users.class));
+        verify(usersRepository, times(1)).save(any(User.class));
     }
 
     @Test
@@ -163,7 +163,7 @@ public class UserServiceTest {
         // Создаем DTO которое будет возвращать getUserById
         UserDTO userDTO = new UserDTO();
         userDTO.setId(userId);
-        userDTO.setBorrowedBooks(new ArrayList<>());
+        userDTO.setBorrowedBook(new ArrayList<>());
 
         // Мокаем только необходимые методы
         doReturn(userDTO).when(userService).getUserById(userId);
@@ -181,13 +181,13 @@ public class UserServiceTest {
     void getUserByUsername_UserNotFound() {
         // Arrange
         String username = "nonexistentUser";
-        when(usersRepository.findUsersByUsername(username)).thenReturn(Optional.empty());
+        when(usersRepository.findUserByUsername(username)).thenReturn(Optional.empty());
 
         // Act
         Exception exception = assertThrows(RuntimeException.class, () -> userService.getUserByUsername(username));
         // Assert
         assertEquals("User not found with username: " + username, exception.getMessage());
-        verify(usersRepository, times(1)).findUsersByUsername(username);
+        verify(usersRepository, times(1)).findUserByUsername(username);
     }
 
     @Test
@@ -200,30 +200,30 @@ public class UserServiceTest {
         // Act & Assert
         assertThrows(RuntimeException.class, () -> userService.updateUserById(userId, updateDTO));
         verify(usersRepository, times(1)).findById(userId);
-        verify(usersRepository, never()).save(any(Users.class));
+        verify(usersRepository, never()).save(any(User.class));
     }
 
     @Test
-    void deleteUserById_WithBooks_Success() {
+    void deleteUserById_WithBook_Success() {
         // Arrange
         long userId = 1L;
         long bookId1 = 1L;
         long bookId2 = 2L;
         // Создаем пользователя
-        Users user = new Users();
+        User user = new User();
         user.setId(userId);
         // Создаем DTO с книгами
         UserDTO userDTO = new UserDTO();
         userDTO.setId(userId);
-        userDTO.setBorrowedBooks(new ArrayList<>(List.of(bookId1, bookId2)));
+        userDTO.setBorrowedBook(new ArrayList<>(List.of(bookId1, bookId2)));
         // Создаем книги и устанавливаем им пользователя
-        Books book1 = new Books();
+        Book book1 = new Book();
         book1.setId(bookId1);
         book1.setBorrowedUserIds(new HashSet<>(Set.of(userId)));  // Устанавливаем связь с пользователем
-        Books book2 = new Books();
+        Book book2 = new Book();
         book2.setId(bookId2);
         book2.setBorrowedUserIds(new HashSet<>(Set.of(userId)));  // Устанавливаем связь с пользователем
-        user.setBorrowedBooks(List.of(bookId1,bookId2));
+        user.setBorrowedBook(List.of(bookId1,bookId2));
 
         // Мокаем getUserById
         doReturn(userDTO).when(userService).getUserById(userId);
@@ -234,7 +234,7 @@ public class UserServiceTest {
         when(booksRepository.findById(bookId2)).thenReturn(Optional.of(book2));
         doNothing().when(usersRepository).deleteById(userId);
         // Мокаем сохранение книг
-        when(booksRepository.save(any(Books.class))).thenReturn(book1);
+        when(booksRepository.save(any(Book.class))).thenReturn(book1);
         // Act
         userService.deleteUserById(userId);
 
@@ -249,12 +249,12 @@ public class UserServiceTest {
         long userId = 1L;
         long bookId = 10L;
         long genreId = 2L;
-        Genres genre = new Genres();
+        Genre genre = new Genre();
         genre.setId(genreId);
-        Users user = new Users();
+        User user = new User();
         user.setId(userId);
         user.setUsername("username");
-        Books book = new Books();
+        Book book = new Book();
         book.setId(bookId);
         book.setTitle("Book 1");
         book.setGenre(genre);
@@ -262,7 +262,7 @@ public class UserServiceTest {
 
         when(booksRepository.findById(bookId)).thenReturn(Optional.of(book));
         when(usersRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(booksRepository.save(any(Books.class))).thenReturn(book);
+        when(booksRepository.save(any(Book.class))).thenReturn(book);
         when(genresRepository.findById(book.getGenre().getId())).thenReturn(Optional.of(genre));
         String result = userService.borrowBookById(bookId, userId);
 
@@ -275,19 +275,19 @@ public class UserServiceTest {
     void returnBookById_Success() {
         long userId = 1L;
         long bookId = 10L;
-        Users user = new Users();
-        Books book = new Books();
+        User user = new User();
+        Book book = new Book();
         book.setId(bookId);
         book.setTitle("Book 1");
         book.setBorrowedUserIds(new HashSet<>(Set.of(userId)));
         user.setId(userId);
         user.setUsername("username");
-        user.setBorrowedBooks(List.of(bookId));
+        user.setBorrowedBook(List.of(bookId));
 
         doReturn(Optional.of(user)).when(usersRepository).findById(userId);
         doReturn(Optional.of(book)).when(booksRepository).findById(bookId);
-        doReturn(book).when(booksRepository).save(any(Books.class));
-        doReturn(user).when(usersRepository).save(any(Users.class));
+        doReturn(book).when(booksRepository).save(any(Book.class));
+        doReturn(user).when(usersRepository).save(any(User.class));
         String result = userService.returnBookById(bookId, userId);
 
         assertEquals("Book returned successfully!", result);
@@ -303,11 +303,11 @@ public class UserServiceTest {
         long userId = 1L;
         long bookId = 10L;
 
-        Users user = new Users();
+        User user = new User();
         user.setId(userId);
         user.setUsername("username");
 
-        Books book = new Books();
+        Book book = new Book();
         book.setId(bookId);
         book.setTitle("Book 1");
         book.setBorrowedUserIds(null);
@@ -319,6 +319,6 @@ public class UserServiceTest {
                 () -> userService.returnBookById(bookId, userId));
         assertEquals("Book is not borrowed!", exception.getMessage());
 
-        verify(booksRepository, never()).save(any(Books.class));
+        verify(booksRepository, never()).save(any(Book.class));
     }
 }
