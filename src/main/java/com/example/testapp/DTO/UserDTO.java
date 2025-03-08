@@ -31,7 +31,7 @@ public class UserDTO implements Serializable {
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
         dto.setPassword(user.getPassword());
-        dto.setUserRole(user.getUserRole() != null ? user.getUserRole().name() : "UNDEFINED");
+        dto.setRole(user.getRole() != null ? user.getRole().name() : "UNDEFINED");
         dto.setBorrowedBook(user.getBorrowedBook() != null
                 ? new ArrayList<>(user.getBorrowedBook()) : new ArrayList<>());
         return dto;
@@ -45,7 +45,7 @@ public class UserDTO implements Serializable {
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.password = user.getPassword();
-        this.role = user.getUserRole() != null ? user.getUserRole().toString() : "UNDEFINED";
+        this.role = user.getRole().name();
         this.borrowedBook = new ArrayList<>();
     }
 
@@ -82,11 +82,11 @@ public class UserDTO implements Serializable {
     }
 
     @JsonProperty("role")
-    public String getUserRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setUserRole(String role) {
+    public void setRole(String role) {
         this.role = role;
     }
 

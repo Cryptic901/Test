@@ -30,16 +30,6 @@ public class UserController {
         this.bookService = bookService;
     }
 
-    @PostMapping("/create")
-    @Operation(summary = "Создать пользователя",
-            description = "Создаёт пользователя, при неверном введении отправляет статус 400")
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
-        if (userDTO == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userDTO));
-    }
-
     @GetMapping("/getAll")
     @Operation(summary = "Вернуть всех пользователей",
             description = "Возвращает список всех пользователей, если список пустой статус 204")

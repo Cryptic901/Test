@@ -1,7 +1,11 @@
 package com.example.testapp.responses;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class LoginResponse {
+    @JsonProperty("token")
     private String token;
+    @JsonProperty("expiresIn")
     private long expiresIn;
 
     public String getToken() {

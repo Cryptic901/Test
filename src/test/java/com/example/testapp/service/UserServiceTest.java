@@ -39,23 +39,6 @@ public class UserServiceTest {
     private UserServiceImpl userService;
 
     @Test
-    void createUser_Success() {
-        // Arrange
-        UserDTO userDTO = new UserDTO(new User(1L, "testUser", "test@test.com", "password", UserRole.USER, new ArrayList<>()));
-        User savedUser = new User(1L, "testUser", "test@test.com", "password", UserRole.USER, new ArrayList<>());
-
-        when(usersRepository.save(any(User.class))).thenReturn(savedUser);
-        // Act
-        UserDTO result = userService.createUser(userDTO);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(userDTO.getUsername(), result.getUsername());
-        assertEquals(userDTO.getEmail(), result.getEmail());
-        verify(usersRepository, times(1)).save(any(User.class));
-    }
-
-    @Test
     void getAllUser_Success() {
         // Arrange
         User user1 = new User();
@@ -127,7 +110,7 @@ public class UserServiceTest {
         UserDTO updateDTO = new UserDTO();
         updateDTO.setUsername("updatedUser");
         updateDTO.setEmail("updated@test.com");
-        updateDTO.setUserRole("ADMIN");
+        updateDTO.setRole("ADMIN");
         updateDTO.setBorrowedBook(new ArrayList<>());
 
         User existingUser = new User();
@@ -138,7 +121,7 @@ public class UserServiceTest {
         updatedUser.setId(userId);
         updatedUser.setUsername("updatedUser");
         updatedUser.setEmail("updated@test.com");
-        updatedUser.setUserRole(UserRole.ADMIN);
+        updatedUser.setRole(UserRole.ADMIN);
 
         when(usersRepository.findById(userId)).thenReturn(Optional.of(existingUser));
         when(usersRepository.save(any(User.class))).thenReturn(updatedUser);
@@ -150,7 +133,7 @@ public class UserServiceTest {
         assertNotNull(result);
         assertEquals("updatedUser", result.getUsername());
         assertEquals("updated@test.com", result.getEmail());
-        assertEquals("ADMIN", result.getUserRole());
+        assertEquals("ADMIN", result.getRole());
         verify(usersRepository, times(1)).findById(userId);
         verify(usersRepository, times(1)).save(any(User.class));
     }

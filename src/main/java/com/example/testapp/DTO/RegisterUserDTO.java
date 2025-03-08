@@ -1,13 +1,15 @@
 package com.example.testapp.DTO;
 
 import com.example.testapp.enums.UserRole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class RegisterUserDTO {
 
     private String username;
     private String password;
     private String email;
-    private UserRole role = UserRole.valueOf("USER");
+    @JsonIgnore
+    private UserRole role = UserRole.USER;
 
     public String getUsername() {
         return username;

@@ -32,24 +32,6 @@ public class UserServiceImpl implements UserService {
         this.genresRepository = genresRepository;
     }
 
-    public void setUserParams(User user, UserDTO userDTO) {
-        user.setUsername(userDTO.getUsername());
-        user.setEmail(userDTO.getEmail());
-        user.setPassword(userDTO.getPassword());
-        user.setUserRole(UserRole.valueOf(userDTO.getUserRole()));
-        user.setBorrowedBook(userDTO.getBorrowedBook());
-    }
-
-
-    public UserDTO createUser(UserDTO userDTO) {
-        if (userDTO.getUsername() == null || userDTO.getEmail() == null || userDTO.getPassword() == null) {
-            throw new IllegalArgumentException("Parameters are null");
-        }
-        User user = new User();
-        setUserParams(user, userDTO);
-        return UserDTO.fromEntity(usersRepository.save(user));
-    }
-
     public List<UserDTO> getAllUser() {
         List<User> users = usersRepository.findAll();
         List<UserDTO> userDTOs = new ArrayList<>();
@@ -71,7 +53,11 @@ public class UserServiceImpl implements UserService {
     public UserDTO updateUserById(long id, UserDTO userDTO) {
         User user = usersRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
-        setUserParams(user, userDTO);
+        user.setUsername(userDTO.getUsername());
+        user.setEmail(userDTO.getEmail());
+        user.setPassword(userDTO.getPassword());
+        user.setRole(UserRole.valueOf(userDTO.getRole()));
+        user.setBorrowedBook(userDTO.getBorrowedBook());
         return UserDTO.fromEntity(usersRepository.save(user));
     }
 
@@ -170,7 +156,7 @@ public class UserServiceImpl implements UserService {
             user.setEmail((String) updates.get("email"));
         }
         if (updates.containsKey("role")) {
-            user.setUserRole(UserRole.valueOf((String) updates.get("role")));
+            user.setRole(UserRole.valueOf((String) updates.get("role")));
         }
         usersRepository.save(user);
         return UserDTO.fromEntity(user);

@@ -8,10 +8,6 @@ import java.util.Map;
 
 public interface UserService {
 
-    void setUserParams(User user, UserDTO userDTO);
-
-    UserDTO createUser(UserDTO userDTO);
-
     List<UserDTO> getAllUser();
 
     UserDTO getUserByUsername(String username);

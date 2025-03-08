@@ -45,24 +45,6 @@ class UserControllerTest {
 
     @Test
     @WithMockUser
-    void createUserTest() throws Exception {
-
-        //Arrange
-        UserDTO userDTO = new UserDTO();
-
-        //Act
-        when(userService.createUser(any(UserDTO.class))).thenReturn(userDTO);
-
-        //Assert
-        mockMvc.perform(post("/api/v1/users/create")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{}"))
-                .andExpect(status().isCreated());
-    }
-
-    @Test
-    @WithMockUser
     void getAllUserTest() throws Exception {
 
         //Arrange

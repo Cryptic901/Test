@@ -126,7 +126,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 + "<p>Thank you for signing up. Please use the following verification code to activate your account:</p>"
                 + "<p class='code'>" + verificationCode + "</p>"
                 + "<p>If you did not request this, please ignore this email.</p>"
-                + "<p class='footer'>Best regards,<br>ELibrary</p>"
+                + "<p class='footer'>Best regards,<br>Library</p>"
                 + "</div>"
                 + "</body>"
                 + "</html>";

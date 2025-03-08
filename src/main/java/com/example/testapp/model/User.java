@@ -1,6 +1,7 @@
 package com.example.testapp.model;
 
 import com.example.testapp.enums.UserRole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -32,6 +33,7 @@ public class User implements UserDetails {
     private String password;
 
     @Enumerated(EnumType.STRING)
+    @JsonIgnore
     private UserRole role;
 
     private boolean enabled;
@@ -125,14 +127,6 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public UserRole getUserRole() {
-        return role;
-    }
-
-    public void setUserRole(UserRole role) {
-        this.role = role;
-    }
-
     public List<Long> getBorrowedBook() {
         return borrowedBook;
     }
@@ -163,24 +157,9 @@ public class User implements UserDetails {
                 '}';
     }
 
+    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(this.role.toString());
-        return List.of(simpleGrantedAuthority);
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override
