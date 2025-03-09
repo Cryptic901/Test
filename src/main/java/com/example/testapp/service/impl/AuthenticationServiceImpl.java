@@ -49,7 +49,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     public User authenticate(LoginUserDTO input) throws AuthenticationException {
+        // Проверяем существование пользователя и его статус перед аутентификацией
+        User user = usersRepository.findByEmail(input.getEmail())
+                .orElseThrow(() -> new EntityNotFoundException("User with email " + input.getEmail() + " not found"));
 
+        if (!user.isEnabled()) {
+            throw new AuthenticationException("Account not verified. Please verify your account");
+        }
+
+        // Теперь выполняем аутентификацию
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -57,16 +65,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                             input.getPassword()
                     )
             );
-
-            User user = usersRepository.findByEmail(input.getEmail())
-                    .orElseThrow(() -> new EntityNotFoundException("User with email " + input.getEmail() + " not found"));
-
-            if (!user.isEnabled()) {
-                throw new AuthenticationException("Account not verified. Please verify your account");
-            }
             return user;
         } catch (org.springframework.security.core.AuthenticationException e) {
-            throw new AuthenticationException("Authentication failed: " + e);
+            // Логируем ошибку для отладки
+            System.out.println("Authentication failed: " + e.getMessage());
+            throw new AuthenticationException("Invalid credentials");
         }
     }
 
