@@ -41,8 +41,6 @@ public class AuthenticationController {
         }
         String jwtToken = jwtService.generateToken(authenticatedUser);
         LoginResponse loginResponse = new LoginResponse(jwtToken, jwtService.getExpirationTime());
-        System.out.println("Generated Token: " + jwtToken);
-        System.out.println("Expires In: " + jwtService.getExpirationTime());
         return ResponseEntity.ok(loginResponse);
     }
 

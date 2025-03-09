@@ -47,6 +47,7 @@ public class JwtServiceImpl implements JwtService {
     private String buildToken(HashMap<String, Object> extraClaims,
                               UserDetails userDetails,
                               long jwtExpiration) {
+        extraClaims.put("role", userDetails.getAuthorities().iterator().next().getAuthority());
         return Jwts.builder()
                 .claims(extraClaims)
                 .subject(userDetails.getUsername())

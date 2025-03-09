@@ -1,6 +1,7 @@
 package com.example.testapp.configuration;
 
 import com.example.testapp.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +21,6 @@ public class ApplicationConfiguration {
     @Autowired
     public ApplicationConfiguration(UserRepository usersRepository) {
         this.usersRepository = usersRepository;
-
     }
 
     @Bean

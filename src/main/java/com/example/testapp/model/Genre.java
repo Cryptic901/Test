@@ -12,7 +12,7 @@ public class Genre  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "genre_id", nullable = false)
+    @Column(nullable = false, unique = true)
     private Long id;
 
     @Column(unique = true, nullable = false)

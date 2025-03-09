@@ -5,6 +5,7 @@ import com.example.testapp.DTO.BookShortDTO;
 import com.example.testapp.service.impl.AuthorServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,10 +63,9 @@ public class AuthorController {
     @Operation(summary = "Вернуть всех авторов",
             description = "Возвращает список всех авторов, если авторы не найдены статус 204")
     public ResponseEntity<List<AuthorDTO>> getAllAuthor() {
-        if (authorService.getAllAuthor() == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        return ResponseEntity.ok(authorService.getAllAuthor());
+        List<AuthorDTO> authors = authorService.getAllAuthor();
+        return authors == null ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(authorService.getAllAuthor());
     }
 
     @PutMapping("/update/allFields/{id}")

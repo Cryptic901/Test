@@ -8,6 +8,7 @@ import com.example.testapp.model.User;
 import com.example.testapp.repository.UserRepository;
 import com.example.testapp.service.AuthenticationService;
 import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
 import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,6 +20,7 @@ import java.util.Optional;
 import java.util.Random;
 
 @Service
+@Transactional
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final UserRepository usersRepository;
@@ -47,22 +49,25 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     public User authenticate(LoginUserDTO input) throws AuthenticationException {
-        User user = usersRepository.findByEmail(input.getEmail())
-                .orElseThrow(() -> new EntityNotFoundException("User with email " + input.getEmail() + " not found"));
 
-        if (!passwordEncoder.matches(input.getPassword(), user.getPassword())) {
-            throw new AuthenticationException("Wrong password");
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            input.getEmail(),
+                            input.getPassword()
+                    )
+            );
+
+            User user = usersRepository.findByEmail(input.getEmail())
+                    .orElseThrow(() -> new EntityNotFoundException("User with email " + input.getEmail() + " not found"));
+
+            if (!user.isEnabled()) {
+                throw new AuthenticationException("Account not verified. Please verify your account");
+            }
+            return user;
+        } catch (org.springframework.security.core.AuthenticationException e) {
+            throw new AuthenticationException("Authentication failed: " + e);
         }
-        if (!user.isEnabled()) {
-            throw new AuthenticationException("Account not verified. Please verify your account");
-        }
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        input.getEmail(),
-                        input.getPassword()
-                )
-        );
-        return user;
     }
 
     public void verifyUser(VerifyUserDTO input) throws AuthenticationException {

@@ -9,7 +9,7 @@ public class RegisterUserDTO {
     private String password;
     private String email;
     @JsonIgnore
-    private UserRole role = UserRole.USER;
+    private UserRole role = UserRole.ROLE_USER;
 
     public String getUsername() {
         return username;

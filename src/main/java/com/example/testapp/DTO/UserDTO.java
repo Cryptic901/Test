@@ -31,7 +31,7 @@ public class UserDTO implements Serializable {
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
         dto.setPassword(user.getPassword());
-        dto.setRole(user.getRole() != null ? user.getRole().name() : "UNDEFINED");
+        dto.setRole(user.getRole() != null ? user.getRole().name() : "ROLE_UNDEFINED");
         dto.setBorrowedBook(user.getBorrowedBook() != null
                 ? new ArrayList<>(user.getBorrowedBook()) : new ArrayList<>());
         return dto;

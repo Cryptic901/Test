@@ -110,7 +110,7 @@ public class UserServiceTest {
         UserDTO updateDTO = new UserDTO();
         updateDTO.setUsername("updatedUser");
         updateDTO.setEmail("updated@test.com");
-        updateDTO.setRole("ADMIN");
+        updateDTO.setRole("ROLE_ADMIN");
         updateDTO.setBorrowedBook(new ArrayList<>());
 
         User existingUser = new User();
@@ -121,7 +121,7 @@ public class UserServiceTest {
         updatedUser.setId(userId);
         updatedUser.setUsername("updatedUser");
         updatedUser.setEmail("updated@test.com");
-        updatedUser.setRole(UserRole.ADMIN);
+        updatedUser.setRole(UserRole.ROLE_ADMIN);
 
         when(usersRepository.findById(userId)).thenReturn(Optional.of(existingUser));
         when(usersRepository.save(any(User.class))).thenReturn(updatedUser);
@@ -133,7 +133,7 @@ public class UserServiceTest {
         assertNotNull(result);
         assertEquals("updatedUser", result.getUsername());
         assertEquals("updated@test.com", result.getEmail());
-        assertEquals("ADMIN", result.getRole());
+        assertEquals("ROLE_ADMIN", result.getRole());
         verify(usersRepository, times(1)).findById(userId);
         verify(usersRepository, times(1)).save(any(User.class));
     }

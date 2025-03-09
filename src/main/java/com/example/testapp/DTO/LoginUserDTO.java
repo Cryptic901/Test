@@ -1,8 +1,8 @@
 package com.example.testapp.DTO;
 
 public class LoginUserDTO {
-    private String password;
     private String email;
+    private String password;
 
     public String getPassword() {
         return password;

@@ -39,8 +39,10 @@ springdoc:
     path: "/swagger-ui.html"
   show-actuator: true
 
-logging:
-  level:
-    org:
-      springframework:
-        security: DEBUG
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        security: TRACE
+#        web: TRACE
+#        http: TRACE

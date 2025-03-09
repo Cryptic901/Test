@@ -45,10 +45,9 @@ public class UserController {
             description = "Возвращает пользователя у которого имя совпадает с введенным," +
                     " если пользователь не найден статус 204")
     public ResponseEntity<UserDTO> getUserByUsername(@PathVariable String username) {
-        if (userService.getUserByUsername(username) == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return ResponseEntity.ok(userService.getUserByUsername(username));
+        UserDTO userDTO = userService.getUserByUsername(username);
+        return userDTO == null ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(userDTO);
     }
 
     @GetMapping("/get/id/{userId}")
@@ -56,17 +55,16 @@ public class UserController {
             description = "Возвращает пользователя у которого ID совпадает с введенным," +
                     " если пользователь не найден статус 204")
     public ResponseEntity<UserDTO> getUserById(@PathVariable long userId) {
-        if (userService.getUserById(userId) == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return ResponseEntity.ok(userService.getUserById(userId));
+        UserDTO userDTO = userService.getUserById(userId);
+        return userDTO == null ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(userDTO);
     }
 
     @PutMapping("/update/allFields/{userId}")
     @Operation(summary = "Обновить пользователя по ID",
             description = "Обновляет пользователя ID которого введено," +
                     " если пользователь не найден статус 204, при неверном введении статус 400")
-    public ResponseEntity<UserDTO> updateUserById(@PathVariable long userId,@RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> updateUserById(@PathVariable long userId, @RequestBody UserDTO userDTO) {
         if (userService.getUserById(userId) == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
