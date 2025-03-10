@@ -6,7 +6,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -32,11 +31,11 @@ public class JwtServiceImpl implements JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetailsImpl userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
 
-    private String generateToken(HashMap<String, Object> extraClaims, UserDetails userDetails) {
+    private String generateToken(HashMap<String, Object> extraClaims, UserDetailsImpl userDetails) {
     return buildToken(extraClaims, userDetails, jwtExpiration);
     }
 
@@ -45,7 +44,7 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private String buildToken(HashMap<String, Object> extraClaims,
-                              UserDetails userDetails,
+                              UserDetailsImpl userDetails,
                               long jwtExpiration) {
         extraClaims.put("role", userDetails.getAuthorities().iterator().next().getAuthority());
         return Jwts.builder()
@@ -78,7 +77,7 @@ public class JwtServiceImpl implements JwtService {
                 claims.get("role", String.class));
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
+    public boolean isTokenValid(String token, UserDetailsImpl userDetails) {
         String extractedUsername = extractUsername(token);
         return extractedUsername.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }

@@ -1,6 +1,5 @@
 package com.example.testapp.service.impl;
 
-import com.example.testapp.exceptions.EntityNotFoundException;
 import com.example.testapp.model.User;
 import com.example.testapp.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,15 +19,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
-        return new org.springframework.security.core.userdetails.User(
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+        return new UserDetailsImpl(
                 user.getEmail(),
                 user.getPassword(),
-                user.isEnabled(),
-                user.isAccountNonExpired(),
-                user.isCredentialsNonExpired(),
-                user.isAccountNonLocked(),
-                user.getAuthorities()
-        );
+                user.getAuthorities(),
+                user.isEnabled());
     }
 }

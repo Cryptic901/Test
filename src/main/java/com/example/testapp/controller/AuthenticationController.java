@@ -35,16 +35,12 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDTO loginUserDTO) throws AuthenticationException {
-        try {
-            System.out.println("Login attempt with email: " + loginUserDTO.getEmail());
-            User authenticatedUser = authenticationService.authenticate(loginUserDTO);
-            String jwtToken = jwtService.generateToken(authenticatedUser);
-            LoginResponse loginResponse = new LoginResponse(jwtToken, jwtService.getExpirationTime());
-            return ResponseEntity.ok(loginResponse);
-        } catch (Exception e) {
-            System.out.println("Authentication error: " + e.getMessage());
+        String jwtToken = authenticationService.authenticate(loginUserDTO);
+        if (jwtToken == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
+        LoginResponse loginResponse = new LoginResponse(jwtToken, jwtService.getExpirationTime());
+        return ResponseEntity.ok(loginResponse);
     }
 
     @PostMapping("/verify")
