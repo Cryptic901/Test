@@ -27,16 +27,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final EmailServiceImpl emailService;
     private final AuthenticationManager authenticationManager;
+    private final JwtServiceImpl jwtService;
 
 
     public AuthenticationServiceImpl(UserRepository usersRepository,
                                      PasswordEncoder passwordEncoder,
                                      EmailServiceImpl emailService,
-                                     AuthenticationManager authenticationManager) {
+                                     AuthenticationManager authenticationManager,
+                                     JwtServiceImpl jwtService) {
         this.usersRepository = usersRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
     public User signUp(RegisterUserDTO input) {
@@ -48,26 +51,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return usersRepository.save(user);
     }
 
-    public User authenticate(LoginUserDTO input) throws AuthenticationException {
+    public String authenticate(LoginUserDTO input) throws AuthenticationException {
 
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            input.getEmail(),
-                            input.getPassword()
-                    )
-            );
-
-            User user = usersRepository.findByEmail(input.getEmail())
-                    .orElseThrow(() -> new EntityNotFoundException("User with email " + input.getEmail() + " not found"));
-
-            if (!user.isEnabled()) {
-                throw new AuthenticationException("Account not verified. Please verify your account");
-            }
-            return user;
-        } catch (org.springframework.security.core.AuthenticationException e) {
-            throw new AuthenticationException("Authentication failed: " + e);
-        }
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        input.getEmail(),
+                        input.getPassword()
+                )
+        );
+        UserDetailsImpl userDetails = usersRepository.findByEmail(input.getEmail())
+                .map(user -> new UserDetailsImpl(user.getEmail(), user.getPassword(), user.getAuthorities(), user.isEnabled()))
+                .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + input.getEmail()));
+        return jwtService.generateToken(userDetails);
     }
 
     public void verifyUser(VerifyUserDTO input) throws AuthenticationException {
