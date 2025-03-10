@@ -5,8 +5,8 @@ import com.example.testapp.DTO.RegisterUserDTO;
 import com.example.testapp.DTO.VerifyUserDTO;
 import com.example.testapp.model.User;
 import com.example.testapp.responses.LoginResponse;
-import com.example.testapp.service.impl.AuthenticationServiceImpl;
-import com.example.testapp.service.impl.JwtServiceImpl;
+import com.example.testapp.impl.AuthenticationServiceImpl;
+import com.example.testapp.impl.JwtServiceImpl;
 import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,11 +35,10 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDTO loginUserDTO) throws AuthenticationException {
-        User authenticatedUser = authenticationService.authenticate(loginUserDTO);
-        if (authenticatedUser == null) {
+        String jwtToken = authenticationService.authenticate(loginUserDTO);
+        if (jwtToken == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
-        String jwtToken = jwtService.generateToken(authenticatedUser);
         LoginResponse loginResponse = new LoginResponse(jwtToken, jwtService.getExpirationTime());
         return ResponseEntity.ok(loginResponse);
     }

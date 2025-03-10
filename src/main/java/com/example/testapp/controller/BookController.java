@@ -2,7 +2,7 @@ package com.example.testapp.controller;
 
 import com.example.testapp.DTO.BookDTO;
 import com.example.testapp.DTO.BookShortDTO;
-import com.example.testapp.service.impl.BookServiceImpl;
+import com.example.testapp.impl.BookServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,23 +33,23 @@ public class BookController {
     @Operation(summary = "Удалить книгу по ID",
             description = "Удаляет книгу по ID отправляя статус 410, если не находит по id статус 204")
     public ResponseEntity<BookDTO> deleteBookById(@PathVariable long id) {
-        if (bookService.getBookById(id) == null) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        String response = bookService.deleteBookById(id);
+        if (response.equals("Book not found") || response.equals("Books author not found")) {
+            ResponseEntity.notFound().build();
         }
-        bookService.deleteBookById(id);
         return ResponseEntity.status(HttpStatus.GONE).build();
     }
-
 
     //Отправка запроса и получение ответа на добавление книги
     @PostMapping("/create")
     @Operation(summary = "Создать книгу",
             description = "Создаёт книгу, при неверном введении отправляет статус 400")
     public ResponseEntity<BookDTO> addBook(@RequestBody BookDTO bookDTO) {
+        BookDTO book = bookService.addBook(bookDTO);
         if (bookDTO == null) {
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(bookService.addBook(bookDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(book);
     }
 
     //Отправка запроса и получение ответа на обновление параметра книги
@@ -58,13 +58,15 @@ public class BookController {
             description = "Обновляет книгу, ID которой введено," +
                     " если книга не найдена статус 204, при неверном введении статус 400")
     public ResponseEntity<BookDTO> updateBookById(@PathVariable long id, @RequestBody BookDTO bookDTO) {
+        BookDTO newBook = bookService.updateBookById(id, bookDTO);
+        BookDTO book = bookService.getBookById(id);
         if (bookDTO == null) {
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            ResponseEntity.badRequest().build();
         }
-        if (bookService.getBookById(id) == null) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        if (book == null) {
+            ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(bookService.updateBookById(id, bookDTO));
+        return ResponseEntity.ok(newBook);
     }
 
     @PatchMapping("/update/{id}")
@@ -72,11 +74,12 @@ public class BookController {
             description = "Обновляет поля которые были введены для книги с введенным ID," +
                     " если книга не найдена статус 204, при неверном вводе статус 400")
     public ResponseEntity<BookDTO> updateBook(@PathVariable long id, @RequestBody Map<String, Object> updates) {
-        if (bookService.getBookById(id) == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        BookDTO book = bookService.getBookById(id);
+        if (book == null) {
+            return ResponseEntity.notFound().build();
         }
         if (updates == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
         BookDTO bookDTO = bookService.updateBookFields(id, updates);
         return ResponseEntity.ok(bookDTO);
@@ -134,10 +137,11 @@ public class BookController {
     @Operation(summary = "Получить книгу по названию",
             description = "Возвращает книгу по введенному названию, если книга не найдена статус 204")
     public ResponseEntity<BookDTO> getBookByTitle(@PathVariable String title) {
-        if (bookService.getBookByTitle(title) == null) {
+        BookDTO book = bookService.getBookByTitle(title);
+        if (book == null) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(bookService.getBookByTitle(title));
+        return ResponseEntity.ok(book);
     }
 
     @GetMapping("/sort/popularityDesc")

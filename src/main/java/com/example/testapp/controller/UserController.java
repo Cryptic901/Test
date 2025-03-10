@@ -1,8 +1,9 @@
 package com.example.testapp.controller;
 
+import com.example.testapp.DTO.BookDTO;
 import com.example.testapp.DTO.UserDTO;
-import com.example.testapp.service.impl.BookServiceImpl;
-import com.example.testapp.service.impl.UserServiceImpl;
+import com.example.testapp.impl.BookServiceImpl;
+import com.example.testapp.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,8 @@ public class UserController {
     @Operation(summary = "Вернуть всех пользователей",
             description = "Возвращает список всех пользователей, если список пустой статус 204")
     public ResponseEntity<List<UserDTO>> getAllUser() {
-        if (userService.getAllUser().isEmpty()) {
+        boolean notHaveAnyUser = userService.getAllUser().isEmpty();
+        if (notHaveAnyUser) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return ResponseEntity.ok(userService.getAllUser());
@@ -45,9 +47,9 @@ public class UserController {
             description = "Возвращает пользователя у которого имя совпадает с введенным," +
                     " если пользователь не найден статус 204")
     public ResponseEntity<UserDTO> getUserByUsername(@PathVariable String username) {
-        UserDTO userDTO = userService.getUserByUsername(username);
-        return userDTO == null ? ResponseEntity.noContent().build()
-                : ResponseEntity.ok(userDTO);
+        UserDTO user = userService.getUserByUsername(username);
+        return user == null ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(user);
     }
 
     @GetMapping("/get/id/{userId}")
@@ -55,9 +57,9 @@ public class UserController {
             description = "Возвращает пользователя у которого ID совпадает с введенным," +
                     " если пользователь не найден статус 204")
     public ResponseEntity<UserDTO> getUserById(@PathVariable long userId) {
-        UserDTO userDTO = userService.getUserById(userId);
-        return userDTO == null ? ResponseEntity.noContent().build()
-                : ResponseEntity.ok(userDTO);
+        UserDTO user = userService.getUserById(userId);
+        return user == null ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(user);
     }
 
     @PutMapping("/update/allFields/{userId}")
@@ -65,13 +67,15 @@ public class UserController {
             description = "Обновляет пользователя ID которого введено," +
                     " если пользователь не найден статус 204, при неверном введении статус 400")
     public ResponseEntity<UserDTO> updateUserById(@PathVariable long userId, @RequestBody UserDTO userDTO) {
-        if (userService.getUserById(userId) == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        UserDTO user = userService.getUserById(userId);
+        UserDTO updatedUser = userService.updateUserById(userId, userDTO);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         if (userDTO == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return ResponseEntity.ok(userService.updateUserById(userId, userDTO));
+        return ResponseEntity.ok(updatedUser);
     }
 
     @PatchMapping("/update/{id}")
@@ -79,24 +83,25 @@ public class UserController {
             description = "Обновляет поля которые были введены для пользователя с введенным ID," +
                     " если пользователь не найден статус 204, при неверном вводе статус 400")
     public ResponseEntity<UserDTO> updateUser(@PathVariable long id, @RequestBody Map<String, Object> updates) {
-        if (userService.getUserById(id) == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        UserDTO user = userService.getUserById(id);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         if (updates == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        UserDTO userDTO = userService.updateUserFields(id, updates);
-        return ResponseEntity.ok(userDTO);
+        UserDTO updatedUser = userService.updateUserFields(id, updates);
+        return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/delete/{userId}")
     @Operation(summary = "Удалить пользователя по ID",
             description = "Удаляет пользователя по ID отправляя статус 410, если не находит по id статус 204")
     public ResponseEntity<UserDTO> deleteUserById(@PathVariable long userId) {
-        if (userService.getUserById(userId) == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        String response = userService.deleteUserById(userId);
+        if (response.equals("User not found")) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        userService.deleteUserById(userId);
         return ResponseEntity.status(HttpStatus.GONE).build();
     }
 
@@ -106,10 +111,16 @@ public class UserController {
                     " изменяет статус книги на BORROWED и добавляет в список занятых книг пользователем," +
                     " если не находит статус 204")
     public ResponseEntity<String> borrowBookById(@PathVariable long bookId, @RequestParam long userId) {
-        if (userService.getUserById(userId) == null || bookService.getBookById(bookId) == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        UserDTO user = userService.getUserById(userId);
+        BookDTO book = bookService.getBookById(bookId);
+        String borrowResponse = userService.borrowBookById(bookId, userId);
+        if (user == null || book == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(userService.borrowBookById(bookId, userId));
+        if (borrowResponse.equals("To many borrowed books")) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+        return ResponseEntity.ok(borrowResponse);
     }
 
     @PostMapping("/{bookId}/return")
@@ -118,8 +129,10 @@ public class UserController {
                     " изменяет статус книги на AVAILABLE и удаляет из списка занятых книг пользователем," +
                     " если не находит статус 204")
     public ResponseEntity<String> returnBookById(@PathVariable long bookId, @RequestParam long userId) {
-        if (userService.getUserById(userId) == null || bookService.getBookById(bookId) == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        UserDTO user = userService.getUserById(userId);
+        BookDTO book = bookService.getBookById(bookId);
+        if (user == null || book == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(userService.returnBookById(bookId, userId));
     }

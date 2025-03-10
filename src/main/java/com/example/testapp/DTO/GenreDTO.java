@@ -30,7 +30,7 @@ public class GenreDTO {
         GenreDTO dto = new GenreDTO();
         dto.setId(genre.getId());
         dto.setName(genre.getName());
-        dto.setDescription(genre.getDescription());
+        dto.setDescription(genre.getDescription() == null ? "Описания нет" : genre.getDescription());
         dto.setCountOfBookInThatGenre(genre.getCountOfBookInThatGenre());
         dto.setBook(genre.getBook() != null ? genre.getBook() : new ArrayList<>());
         dto.setCountOfBorrowingBookWithGenre(genre.getCountOfBorrowingBookWithGenre());

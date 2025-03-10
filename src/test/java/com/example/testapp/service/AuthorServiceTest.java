@@ -7,7 +7,7 @@ import com.example.testapp.model.Author;
 import com.example.testapp.model.Book;
 import com.example.testapp.repository.AuthorRepository;
 import com.example.testapp.repository.BookRepository;
-import com.example.testapp.service.impl.AuthorServiceImpl;
+import com.example.testapp.impl.AuthorServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

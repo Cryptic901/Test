@@ -1,10 +1,8 @@
-package com.example.testapp.service.impl;
+package com.example.testapp.impl;
 
 import com.example.testapp.DTO.AuthorDTO;
 import com.example.testapp.DTO.BookShortDTO;
-import com.example.testapp.exceptions.EntityNotFoundException;
 import com.example.testapp.model.Author;
-import com.example.testapp.model.Book;
 import com.example.testapp.repository.AuthorRepository;
 import com.example.testapp.repository.BookRepository;
 import com.example.testapp.service.AuthorService;
@@ -43,12 +41,12 @@ public class AuthorServiceImpl implements AuthorService {
 
     public AuthorDTO getAuthorById(long id) {
         return AuthorDTO.fromEntity(authorsRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Author not found with id: " + id)));
+                .orElse(null));
     }
 
     public AuthorDTO getAuthorByName(String name) {
         return AuthorDTO.fromEntity(authorsRepository.findAuthorByName(name)
-                .orElseThrow(() -> new EntityNotFoundException("Author not found with name: " + name)));
+                .orElse(null));
     }
 
     public List<AuthorDTO> getAllAuthor() {
@@ -60,36 +58,31 @@ public class AuthorServiceImpl implements AuthorService {
 
     public AuthorDTO updateAuthorById(long id, AuthorDTO authorDTO) {
         Author author = authorsRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Author not found with id: " + id));
-        setAuthorParams(author, authorDTO);
-        return AuthorDTO.fromEntity(authorsRepository.save(author));
+                .orElse(null);
+        if (author != null) {
+            setAuthorParams(author, authorDTO);
+            return AuthorDTO.fromEntity(authorsRepository.save(author));
+        } else {
+            return null;
+        }
     }
 
     @Transactional
-    public void deleteAuthorById(long authorId) {
-        if (!authorsRepository.existsById(authorId)) {
-            throw new EntityNotFoundException("Author not found with id: " + authorId);
+    public String deleteAuthorById(long authorId) {
+        boolean exists = authorsRepository.existsById(authorId);
+        if (!exists) {
+            return "Author not found";
         }
 
-        Author author = authorsRepository.findById(authorId)
-                .orElseThrow(() -> new EntityNotFoundException("Author not found with id: " + authorId));
-
-        if (!author.getBookList().isEmpty()) {
-            for (Long id : author.getBookList()) {
-                Book book = booksRepository.findById(id)
-                        .orElseThrow(() -> new EntityNotFoundException("Book not found with id: " + id));
-
-                book.setAuthor(null);
-                booksRepository.save(book);
-                booksRepository.deleteById(id);
-            }
-        }
-        authorsRepository.deleteById(authorId);
+        booksRepository.detachBooksFromAuthor(authorId);
+        booksRepository.deleteById(authorId);
+        return "Author deleted successfully";
     }
 
     public List<BookShortDTO> getAllAuthorBook(long authorId) {
-        if (!authorsRepository.existsById(authorId)) {
-            throw new EntityNotFoundException("Author not found with id: " + authorId);
+        boolean exists = authorsRepository.existsById(authorId);
+        if (!exists) {
+            return new ArrayList<>();
         }
         return booksRepository.findByAuthorId(authorId)
                 .stream()
@@ -99,18 +92,19 @@ public class AuthorServiceImpl implements AuthorService {
 
     public AuthorDTO updateAuthorFields(long id, Map<String, Object> updates) {
         Author author = authorsRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Author not found with id: " + id));
+                .orElse(null);
 
-        if (updates.containsKey("name")) {
-            author.setName((String) updates.get("name"));
+        if (author != null) {
+            if (updates.containsKey("name")) {
+                author.setName((String) updates.get("name"));
+            }
+            if (updates.containsKey("bookList") && updates.get("bookList") instanceof List<?> objList) {
+                List<Long> list = objList.stream()
+                        .map(obj -> Long.valueOf(obj.toString())).toList();
+                author.setBookList(new ArrayList<>(list));
+            }
+            authorsRepository.save(author);
         }
-
-        if (updates.containsKey("bookList") && updates.get("bookList") instanceof List<?> objList) {
-            List<Long> list = objList.stream()
-                    .map(obj -> Long.valueOf(obj.toString())).toList();
-            author.setBookList(new ArrayList<>(list));
-        }
-        authorsRepository.save(author);
         return AuthorDTO.fromEntity(author);
     }
 }

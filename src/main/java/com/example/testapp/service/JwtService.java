@@ -1,16 +1,16 @@
 package com.example.testapp.service;
 
+import com.example.testapp.impl.UserDetailsImpl;
 import io.jsonwebtoken.Claims;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 
 public interface JwtService {
 
-    String generateToken(UserDetails userDetails);
+    String generateToken(UserDetailsImpl userDetails);
 
-    boolean isTokenValid(String token, UserDetails userDetails);
+    boolean isTokenValid(String token, UserDetailsImpl userDetails);
 
     Claims extractAllClaims(String token);
 

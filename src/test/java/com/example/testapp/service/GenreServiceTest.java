@@ -3,7 +3,7 @@ package com.example.testapp.service;
 import com.example.testapp.DTO.GenreDTO;
 import com.example.testapp.model.Genre;
 import com.example.testapp.repository.GenreRepository;
-import com.example.testapp.service.impl.GenreServiceImpl;
+import com.example.testapp.impl.GenreServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

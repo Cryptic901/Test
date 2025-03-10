@@ -1,7 +1,6 @@
 package com.example.testapp.service;
 
 import com.example.testapp.DTO.UserDTO;
-import com.example.testapp.model.User;
 
 import java.util.List;
 import java.util.Map;
@@ -16,7 +15,7 @@ public interface UserService {
 
     UserDTO updateUserById(long id, UserDTO userDTO);
 
-    void deleteUserById(long userId);
+    String deleteUserById(long userId);
 
     String borrowBookById(long bookId, long userId);
 
