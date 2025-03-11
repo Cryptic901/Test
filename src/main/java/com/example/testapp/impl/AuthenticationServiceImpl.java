@@ -1,4 +1,4 @@
-package com.example.testapp.service.impl;
+package com.example.testapp.impl;
 
 import com.example.testapp.DTO.LoginUserDTO;
 import com.example.testapp.DTO.RegisterUserDTO;

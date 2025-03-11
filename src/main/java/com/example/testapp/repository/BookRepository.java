@@ -25,5 +25,9 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     @Query("SELECT b FROM Book b ORDER BY b.countOfBorrowingBook DESC")
     List<Book> sortByBookPopularityDescending();
 
+    @Modifying
+    @Query("UPDATE Book b SET b.author = NULL WHERE b.author.id = :authorId")
+    void detachBooksFromAuthor(@Param("author_id") long authorId);
+
     Optional<Book> findBookByTitle(String title);
 }

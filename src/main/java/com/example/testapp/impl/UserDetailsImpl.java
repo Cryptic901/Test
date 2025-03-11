@@ -1,10 +1,12 @@
-package com.example.testapp.service.impl;
+package com.example.testapp.impl;
 
 import com.example.testapp.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+
+/* Класс для работы получения пользовательских данных */
 
 public class UserDetailsImpl implements UserDetails {
 

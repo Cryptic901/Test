@@ -1,4 +1,4 @@
-package com.example.testapp.service.impl;
+package com.example.testapp.impl;
 
 import com.example.testapp.model.User;
 import com.example.testapp.repository.UserRepository;
@@ -6,6 +6,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+
+/* Сервис для загрузки пользователя по email */
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {

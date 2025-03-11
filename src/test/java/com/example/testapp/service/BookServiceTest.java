@@ -7,7 +7,7 @@ import com.example.testapp.model.Genre;
 import com.example.testapp.repository.AuthorRepository;
 import com.example.testapp.repository.BookRepository;
 import com.example.testapp.repository.GenreRepository;
-import com.example.testapp.service.impl.BookServiceImpl;
+import com.example.testapp.impl.BookServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;

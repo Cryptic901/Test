@@ -8,13 +8,17 @@ import com.example.testapp.model.User;
 import com.example.testapp.repository.BookRepository;
 import com.example.testapp.repository.GenreRepository;
 import com.example.testapp.repository.UserRepository;
-import com.example.testapp.service.impl.UserServiceImpl;
+import com.example.testapp.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.*;
 
@@ -232,6 +236,14 @@ public class UserServiceTest {
         long userId = 1L;
         long bookId = 10L;
         long genreId = 2L;
+
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn("username");
+
+        SecurityContextHolder.setContext(securityContext);
         Genre genre = new Genre();
         genre.setId(genreId);
         User user = new User();
@@ -244,10 +256,10 @@ public class UserServiceTest {
         book.setBorrowedUserIds(new HashSet<>(Set.of(userId)));
 
         when(booksRepository.findById(bookId)).thenReturn(Optional.of(book));
-        when(usersRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(usersRepository.findUserByUsername("username")).thenReturn(Optional.of(user));
         when(booksRepository.save(any(Book.class))).thenReturn(book);
-        when(genresRepository.findById(book.getGenre().getId())).thenReturn(Optional.of(genre));
-        String result = userService.borrowBookById(bookId, userId);
+        when(genresRepository.findById(anyLong())).thenReturn(Optional.of(genre));
+        String result = userService.borrowBookById(bookId);
 
         assertEquals("Book borrowed successfully!", result);
         assertEquals(Optional.of(userId), book.getBorrowedUserIds().stream().findFirst());
@@ -258,6 +270,14 @@ public class UserServiceTest {
     void returnBookById_Success() {
         long userId = 1L;
         long bookId = 10L;
+
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn("username");
+
+        SecurityContextHolder.setContext(securityContext);
         User user = new User();
         Book book = new Book();
         book.setId(bookId);
@@ -267,17 +287,17 @@ public class UserServiceTest {
         user.setUsername("username");
         user.setBorrowedBook(List.of(bookId));
 
-        doReturn(Optional.of(user)).when(usersRepository).findById(userId);
+        doReturn(Optional.of(user)).when(usersRepository).findUserByUsername("username");
         doReturn(Optional.of(book)).when(booksRepository).findById(bookId);
         doReturn(book).when(booksRepository).save(any(Book.class));
         doReturn(user).when(usersRepository).save(any(User.class));
-        String result = userService.returnBookById(bookId, userId);
+        String result = userService.returnBookById(bookId);
 
         assertEquals("Book returned successfully!", result);
         assertEquals(book.getBorrowedUserIds(), Collections.emptySet());
         verify(booksRepository, times(1)).save(book);
         verify(booksRepository, times(1)).findById(bookId);
-        verify(usersRepository, times(1)).findById(userId);
+        verify(usersRepository, times(1)).findUserByUsername("username");
     }
 
     @Test
@@ -299,7 +319,7 @@ public class UserServiceTest {
         doReturn(Optional.of(user)).when(usersRepository).findById(userId);
 
         Exception exception = assertThrows(RuntimeException.class,
-                () -> userService.returnBookById(bookId, userId));
+                () -> userService.returnBookById(bookId));
         assertEquals("Book is not borrowed!", exception.getMessage());
 
         verify(booksRepository, never()).save(any(Book.class));

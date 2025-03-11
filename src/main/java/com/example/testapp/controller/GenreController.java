@@ -1,7 +1,7 @@
 package com.example.testapp.controller;
 
 import com.example.testapp.DTO.GenreDTO;
-import com.example.testapp.service.impl.GenreServiceImpl;
+import com.example.testapp.impl.GenreServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +31,11 @@ public class GenreController {
     @Operation(summary = "Добавление жанра",
             description = "Добавляет жанр, при неверном введении отправляет статус 400")
     public ResponseEntity<GenreDTO> addGenre(@RequestBody GenreDTO genreDTO) {
+        GenreDTO genre = genreService.addGenre(genreDTO);
         if (genreDTO == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(null);
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(genreService.addGenre(genreDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(genre);
     }
 
     @GetMapping("/getAll")
@@ -43,7 +44,7 @@ public class GenreController {
     public ResponseEntity<List<GenreDTO>> getAllGenre() {
         List<GenreDTO> genreDTOList = genreService.getAllGenre();
         if (genreDTOList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(genreDTOList);
     }
@@ -54,7 +55,7 @@ public class GenreController {
     public ResponseEntity<GenreDTO> getGenreById(@PathVariable long id) {
         GenreDTO genreDTO = genreService.getGenreById(id);
         if (genreDTO == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(genreDTO);
     }
@@ -63,12 +64,13 @@ public class GenreController {
     @Operation(summary = "Обновление жанра по ID",
             description = "Обновляет жанр, если не находит по id статус 204, при неверном введении статус 400")
     public ResponseEntity<GenreDTO> updateGenreById(@PathVariable long id, @RequestBody GenreDTO genreDTO) {
+        GenreDTO genre = genreService.getGenreById(id);
         if (genreDTO == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.badRequest().body(null);
         }
         GenreDTO dto = genreService.updateGenreById(id, genreDTO);
-        if (genreService.getGenreById(id) == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        if (genre == null) {
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(dto);
     }
@@ -78,11 +80,12 @@ public class GenreController {
             description = "Обновляет поля которые были введены для пользователя с введенным ID," +
                     " если не находит по id статус 204, при неверном вводе статус 400" )
     public ResponseEntity<GenreDTO> updateGenre(@PathVariable long id, @RequestBody Map<String, Object> updates) {
-        if (genreService.getGenreById(id) == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        GenreDTO genre = genreService.getGenreById(id);
+        if (genre == null) {
+            return ResponseEntity.noContent().build();
         }
         if (updates == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.badRequest().body(null);
         }
         GenreDTO genreDTO = genreService.updateGenreFields(id, updates);
         return ResponseEntity.ok(genreDTO);
@@ -92,11 +95,10 @@ public class GenreController {
     @Operation(summary = "Удаление жанра по ID",
             description = "Удаляет жанр по введенному ID отправляя статус 410, если не находит по id статус 204")
     public ResponseEntity<GenreDTO> deleteGenre(@PathVariable long id) {
-        GenreDTO genreDTO = genreService.getGenreById(id);
-        if (genreDTO == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        String response = genreService.deleteGenreById(id);
+        if (response.equals("Genre not found")) {
+            return ResponseEntity.noContent().build();
         }
-        genreService.deleteGenreById(id);
         return ResponseEntity.status(HttpStatus.GONE).build();
     }
 
@@ -106,7 +108,7 @@ public class GenreController {
     public ResponseEntity<GenreDTO> getGenreByName(@PathVariable String name) {
         GenreDTO genreDTO = genreService.getGenreByName(name);
         if (genreDTO == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(genreDTO);
     }
@@ -118,7 +120,7 @@ public class GenreController {
     public ResponseEntity<List<GenreDTO>> getPopularityDesc() {
         List<GenreDTO> genreDTOList = genreService.getMostPopularGenre();
         if (genreDTOList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(genreDTOList);
     }

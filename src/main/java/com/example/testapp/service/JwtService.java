@@ -1,6 +1,6 @@
 package com.example.testapp.service;
 
-import com.example.testapp.service.impl.UserDetailsImpl;
+import com.example.testapp.impl.UserDetailsImpl;
 import io.jsonwebtoken.Claims;
 
 import javax.crypto.SecretKey;

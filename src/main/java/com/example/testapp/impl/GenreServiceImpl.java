@@ -1,7 +1,6 @@
-package com.example.testapp.service.impl;
+package com.example.testapp.impl;
 
 import com.example.testapp.DTO.GenreDTO;
-import com.example.testapp.exceptions.EntityNotFoundException;
 import com.example.testapp.model.Genre;
 import com.example.testapp.repository.BookRepository;
 import com.example.testapp.repository.GenreRepository;
@@ -52,29 +51,35 @@ public class GenreServiceImpl implements GenreService {
 
     public GenreDTO getGenreById(long id) {
         return GenreDTO.fromEntity(genresRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Genre not found with id: " + id)));
+                .orElse(null));
     }
 
     public GenreDTO updateGenreById(long id, GenreDTO genreDTO) {
         Genre genres = genresRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Genre not found with id: " + id));
-        setGenreParams(genreDTO, genres);
-        return GenreDTO.fromEntity(genresRepository.save(genres));
+                .orElse(null);
+        if (genres != null) {
+            setGenreParams(genreDTO, genres);
+            return GenreDTO.fromEntity(genresRepository.save(genres));
+        } else {
+            return null;
+        }
     }
 
     @Transactional
-    public void deleteGenreById(long id) {
-        if (!genresRepository.existsById(id)) {
-            throw new EntityNotFoundException("Genre not found with id: " + id);
+    public String deleteGenreById(long id) {
+        boolean exists = genresRepository.existsById(id);
+        if (!exists) {
+            return "Genre not found";
         }
         booksRepository.clearGenreByGenreId(id);
         genresRepository.deleteById(id);
+        return "Genre deleted successfully";
     }
 
     public GenreDTO getGenreByName(String name) {
-       Genre genre = genresRepository.getGenreByName(name)
-               .orElseThrow(() -> new EntityNotFoundException("Genre not found with name: " + name));
-       return GenreDTO.fromEntity(genre);
+        Genre genre = genresRepository.getGenreByName(name)
+                .orElse(null);
+        return GenreDTO.fromEntity(genre);
     }
 
     public List<GenreDTO> getMostPopularGenre() {
@@ -84,28 +89,32 @@ public class GenreServiceImpl implements GenreService {
 
     public GenreDTO updateGenreFields(long id, Map<String, Object> updates) {
         Genre genres = genresRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Genre not found with id: " + id));
+                .orElse(null);
 
-        if (updates.containsKey("name")) {
-            genres.setName((String) updates.get("name"));
-        }
-        if (updates.containsKey("description")) {
-            genres.setDescription((String) updates.get("description"));
-        }
+        if (genres != null) {
+            if (updates.containsKey("name")) {
+                genres.setName((String) updates.get("name"));
+            }
+            if (updates.containsKey("description")) {
+                genres.setDescription((String) updates.get("description"));
+            }
 
-        if (updates.containsKey("books") && updates.get("books") instanceof List<?> objects) {
+            if (updates.containsKey("books") && updates.get("books") instanceof List<?> objects) {
                 List<Long> bookIds = objects.stream()
                         .map(obj -> Long.valueOf(obj.toString())).toList();
                 genres.setBook(new ArrayList<>(bookIds));
-        }
-        if (updates.containsKey("countOfBookInThatGenre")) {
-            genres.setCountOfBookInThatGenre((Integer) updates.get("countOfBookInThatGenre"));
-        }
+            }
+            if (updates.containsKey("countOfBookInThatGenre")) {
+                genres.setCountOfBookInThatGenre((Integer) updates.get("countOfBookInThatGenre"));
+            }
 
-        if (updates.containsKey("countOfBorrowingBookWithGenre")) {
-            genres.setCountOfBorrowingBookWithGenre((Long) updates.get("countOfBorrowingBookWithGenre"));
+            if (updates.containsKey("countOfBorrowingBookWithGenre")) {
+                genres.setCountOfBorrowingBookWithGenre((Long) updates.get("countOfBorrowingBookWithGenre"));
+            }
+            genresRepository.save(genres);
+            return GenreDTO.fromEntity(genres);
+        } else {
+            return null;
         }
-        genresRepository.save(genres);
-        return GenreDTO.fromEntity(genres);
     }
 }

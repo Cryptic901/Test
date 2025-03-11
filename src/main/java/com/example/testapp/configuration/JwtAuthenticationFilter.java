@@ -1,8 +1,8 @@
 package com.example.testapp.configuration;
 
-import com.example.testapp.service.impl.JwtServiceImpl;
-import com.example.testapp.service.impl.UserDetailsImpl;
-import com.example.testapp.service.impl.UserDetailsServiceImpl;
+import com.example.testapp.impl.JwtServiceImpl;
+import com.example.testapp.impl.UserDetailsImpl;
+import com.example.testapp.impl.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -11,7 +11,7 @@ public interface BookService {
 
     void setBookParams(Book book, BookDTO bookDTO);
 
-    void deleteBookById(long id);
+    String deleteBookById(long id);
 
     BookDTO addBook(BookDTO bookDTO);
 
