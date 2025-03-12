@@ -11,6 +11,9 @@ import com.example.testapp.repository.UserRepository;
 import com.example.testapp.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -42,16 +45,22 @@ public class UserServiceImpl implements UserService {
         return userDTOs;
     }
 
+    @Cacheable(value = "users", key = "#username", unless = "#result == null")
+    @Transactional
     public UserDTO getUserByUsername(String username) {
         return UserDTO.fromEntity(usersRepository.findUserByUsername(username)
                 .orElse(null));
     }
 
+    @Cacheable(value = "users", key = "#id", unless = "#result == null")
+    @Transactional
     public UserDTO getUserById(long id) {
         return UserDTO.fromEntity(usersRepository.findById(id)
                 .orElse(null));
     }
 
+    @CacheEvict(cacheNames = "users", key = "#id")
+    @Transactional
     public UserDTO updateUserById(long id, UserDTO userDTO) {
         User user = usersRepository.findById(id)
                 .orElse(null);
@@ -68,16 +77,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "users", key = "#userId"),
+            @CacheEvict(value = "users", allEntries = true)
+    })
     public String deleteUserById(long userId) {
         boolean exists = usersRepository.existsById(userId);
         if (!exists) {
             return "User not found";
         }
-        UserDTO user = getUserById(userId);
-        List<Long> borrowedBook = user.getBorrowedBook();
-        if (borrowedBook != null && !borrowedBook.isEmpty()) {
-            for (Long bookId : borrowedBook) {
-                returnBookById(bookId);
+        UserDTO user = UserDTO.fromEntity(usersRepository.findById(userId)
+                .orElse(null));
+        if(user != null) {
+            List<Long> borrowedBook = user.getBorrowedBook();
+            if (borrowedBook != null && !borrowedBook.isEmpty()) {
+                for (Long bookId : borrowedBook) {
+                    returnBookById(bookId);
+                }
             }
         }
         usersRepository.deleteById(userId);
@@ -159,6 +175,8 @@ public class UserServiceImpl implements UserService {
         return "Book returned successfully!";
     }
 
+    @CacheEvict(cacheNames = "users", key = "#id")
+    @Transactional
     public UserDTO updateUserFields(long id, Map<String, Object> updates) {
         User user = usersRepository.findById(id)
                 .orElse(null);

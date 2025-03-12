@@ -10,6 +10,9 @@ import com.example.testapp.repository.BookRepository;
 import com.example.testapp.repository.GenreRepository;
 import com.example.testapp.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +56,10 @@ public class BookServiceImpl implements BookService {
 
     //Метод для удаления книги
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "books", key = "#id"),
+            @CacheEvict(value = "books", allEntries = true)
+    })
     public String deleteBookById(long id) {
         boolean exists = booksRepository.existsById(id);
         Book book = booksRepository.findById(id)
@@ -72,6 +79,8 @@ public class BookServiceImpl implements BookService {
     }
 
     //Метод для добавления книги
+    @CacheEvict(cacheNames = "books", key = "#bookDTO.id")
+    @Transactional
     public BookDTO addBook(BookDTO bookDTO) {
         Book bookToAdd = new Book();
         setBookParams(bookToAdd, bookDTO);
@@ -103,22 +112,28 @@ public class BookServiceImpl implements BookService {
     }
 
     //Метод для получения книги по ID
+    @Cacheable(value = "books", key = "#id")
+    @Transactional
     public BookDTO getBookById(long id) {
         return BookDTO.fromEntity(booksRepository.findById(id)
                 .orElse(null));
     }
-
+    @Cacheable(value = "books", key = "#title")
+    @Transactional
     public BookDTO getBookByTitle(String title) {
         return BookDTO.fromEntity(booksRepository.findBookByTitle(title)
                 .orElse(null));
     }
-
+    @Cacheable(value = "books", key = "#isbn")
+    @Transactional
     public BookDTO getBookByIsbn(String isbn) {
         return BookDTO.fromEntity(booksRepository.findByIsbn(isbn)
                 .orElse(null));
     }
 
     //Метод для обновления книги по ID
+    @CacheEvict(cacheNames = "books", key = "#id")
+    @Transactional
     public BookDTO updateBookById(long id, BookDTO bookDTO) {
         Book existingBook = booksRepository.findById(id)
                 .orElse(null);
@@ -150,7 +165,8 @@ public class BookServiceImpl implements BookService {
         List<Book> books = booksRepository.sortByBookPopularityDescending();
         return books.stream().map(BookDTO::fromEntity).toList();
     }
-
+    @CacheEvict(cacheNames = "books", key = "#id")
+    @Transactional
     public BookDTO updateBookFields(long id, Map<String, Object> updates) {
         Book books = booksRepository.findById(id)
                 .orElse(null);

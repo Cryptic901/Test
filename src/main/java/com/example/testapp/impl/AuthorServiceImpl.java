@@ -8,6 +8,9 @@ import com.example.testapp.repository.BookRepository;
 import com.example.testapp.service.AuthorService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -33,17 +36,23 @@ public class AuthorServiceImpl implements AuthorService {
         author.setBookList(authorDTO.getBookList());
     }
 
+    @CacheEvict(cacheNames = "authors", key = "#authorDTO.id")
+    @Transactional
     public AuthorDTO addAuthor(AuthorDTO authorDTO) {
         Author author = new Author();
         setAuthorParams(author, authorDTO);
         return AuthorDTO.fromEntity(authorsRepository.save(author));
     }
 
+    @Cacheable(value = "authors", key = "#id")
+    @Transactional
     public AuthorDTO getAuthorById(long id) {
         return AuthorDTO.fromEntity(authorsRepository.findById(id)
                 .orElse(null));
     }
 
+    @Cacheable(value = "authors", key = "#name")
+    @Transactional
     public AuthorDTO getAuthorByName(String name) {
         return AuthorDTO.fromEntity(authorsRepository.findAuthorByName(name)
                 .orElse(null));
@@ -56,6 +65,8 @@ public class AuthorServiceImpl implements AuthorService {
                 .toList();
     }
 
+    @CacheEvict(cacheNames = "authors", key = "#id")
+    @Transactional
     public AuthorDTO updateAuthorById(long id, AuthorDTO authorDTO) {
         Author author = authorsRepository.findById(id)
                 .orElse(null);
@@ -68,12 +79,15 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "authors", key = "#authorId"),
+            @CacheEvict(value = "authors", allEntries = true)
+    })
     public String deleteAuthorById(long authorId) {
         boolean exists = authorsRepository.existsById(authorId);
         if (!exists) {
             return "Author not found";
         }
-
         booksRepository.detachBooksFromAuthor(authorId);
         authorsRepository.deleteById(authorId);
         return "Author deleted successfully";
@@ -89,7 +103,8 @@ public class AuthorServiceImpl implements AuthorService {
                 .map(BookShortDTO::fromEntity)
                 .toList();
     }
-
+    @CacheEvict(cacheNames = "authors", key = "#id")
+    @Transactional
     public AuthorDTO updateAuthorFields(long id, Map<String, Object> updates) {
         Author author = authorsRepository.findById(id)
                 .orElse(null);

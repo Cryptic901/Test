@@ -6,6 +6,9 @@ import com.example.testapp.repository.BookRepository;
 import com.example.testapp.repository.GenreRepository;
 import com.example.testapp.service.GenreService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +39,8 @@ public class GenreServiceImpl implements GenreService {
         genres.setCountOfBorrowingBookWithGenre(genreDTO.getCountOfBorrowingBookWithGenre());
     }
 
+    @CacheEvict(value = "genres", key = "#genreDTO.id")
+    @Transactional
     public GenreDTO addGenre(GenreDTO genreDTO) {
         Genre genres = new Genre();
         setGenreParams(genreDTO, genres);
@@ -48,12 +53,14 @@ public class GenreServiceImpl implements GenreService {
                 .map(GenreDTO::fromEntity)
                 .toList();
     }
-
+    @Cacheable(value = "genres", key = "#id")
+    @Transactional
     public GenreDTO getGenreById(long id) {
         return GenreDTO.fromEntity(genresRepository.findById(id)
                 .orElse(null));
     }
-
+    @CacheEvict(value = "genres", key = "#id")
+    @Transactional
     public GenreDTO updateGenreById(long id, GenreDTO genreDTO) {
         Genre genres = genresRepository.findById(id)
                 .orElse(null);
@@ -66,6 +73,10 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "genres", key = "#id"),
+            @CacheEvict(value = "genres", allEntries = true)
+    })
     public String deleteGenreById(long id) {
         boolean exists = genresRepository.existsById(id);
         if (!exists) {
@@ -75,7 +86,7 @@ public class GenreServiceImpl implements GenreService {
         genresRepository.deleteById(id);
         return "Genre deleted successfully";
     }
-
+    @Cacheable(value = "genres", key = "#name")
     public GenreDTO getGenreByName(String name) {
         Genre genre = genresRepository.getGenreByName(name)
                 .orElse(null);
@@ -86,7 +97,7 @@ public class GenreServiceImpl implements GenreService {
         List<Genre> genres = genresRepository.sortByGenrePopularityDescending();
         return genres.stream().map(GenreDTO::fromEntity).toList();
     }
-
+    @CacheEvict(value = "genres", key = "#id")
     public GenreDTO updateGenreFields(long id, Map<String, Object> updates) {
         Genre genres = genresRepository.findById(id)
                 .orElse(null);

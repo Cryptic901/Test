@@ -1,13 +1,15 @@
 package com.example.testapp.model;
 
 import jakarta.persistence.*;
+import org.springframework.data.redis.core.RedisHash;
 
+import java.io.Serializable;
 import java.util.List;
 
 /* Сущность автор */
 
 @Entity
-public class Author {
+public class Author implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

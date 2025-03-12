@@ -1,7 +1,9 @@
 package com.example.testapp.model;
 
 import jakarta.persistence.*;
+import org.springframework.data.redis.core.RedisHash;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Set;
@@ -10,7 +12,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "book")
-public class Book {
+public class Book implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

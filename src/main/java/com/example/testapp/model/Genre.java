@@ -1,14 +1,16 @@
 package com.example.testapp.model;
 
 import jakarta.persistence.*;
+import org.springframework.data.redis.core.RedisHash;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /* Сущность жанр */
 
 @Entity
-public class Genre  {
+public class Genre implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
