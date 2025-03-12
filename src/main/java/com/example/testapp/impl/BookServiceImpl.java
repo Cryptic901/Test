@@ -2,7 +2,6 @@ package com.example.testapp.impl;
 
 import com.example.testapp.DTO.BookDTO;
 import com.example.testapp.DTO.BookShortDTO;
-import com.example.testapp.exceptions.EntityNotFoundException;
 import com.example.testapp.model.Author;
 import com.example.testapp.model.Book;
 import com.example.testapp.model.Genre;
@@ -14,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.*;
 
 
@@ -38,7 +38,7 @@ public class BookServiceImpl implements BookService {
         book.setTitle(bookDTO.getTitle());
         book.setDescription(bookDTO.getDescription());
         book.setPublisher(bookDTO.getPublisher());
-        book.setPublishedDate(bookDTO.getPublishedDate());
+        book.setPublishedDate(LocalDate.now());
         book.setIsbn(bookDTO.getIsbn());
         book.setAmount(bookDTO.getAmount());
         if (bookDTO.getAuthorId() != null) {
@@ -165,7 +165,7 @@ public class BookServiceImpl implements BookService {
                 books.setPublisher((String) updates.get("publisher"));
             }
             if (updates.containsKey("publishedDate")) {
-                books.setPublishedDate((Date) updates.get("publishedDate"));
+                books.setPublishedDate((LocalDate) updates.get("publishedDate"));
             }
             if (updates.containsKey("isbn")) {
                 books.setIsbn((String) updates.get("isbn"));
@@ -182,30 +182,30 @@ public class BookServiceImpl implements BookService {
             if (updates.containsKey("author_id")) {
                 Long authorId = Long.parseLong(updates.get("author_id").toString());
                 Author authors = authorsRepository.findById(authorId)
-                        .orElseThrow(() -> new EntityNotFoundException("Author not found with id " + authorId));
+                        .orElse(null);
                 books.setAuthor(authors);
             }
             if (updates.containsKey("genre_id")) {
                 Long genreId = Long.parseLong(updates.get("genre_id").toString());
                 Genre genres = genresRepository.findById(genreId)
-                        .orElseThrow(() -> new EntityNotFoundException("Genre not found with id " + genreId));
+                        .orElse(null);
                 books.setGenre(genres);
-                genresRepository.save(genres);
+                genresRepository.save(Objects.requireNonNull(genres));
             }
 
             if (updates.containsKey("authorName")) {
                 String name = updates.get("authorName").toString();
                 Author authors = authorsRepository.findAuthorByName(name)
-                        .orElseThrow(() -> new EntityNotFoundException("Author not found with name " + name));
+                        .orElse(null);
                 books.setAuthor(authors);
             }
 
             if (updates.containsKey("genreName")) {
                 String name = (String) updates.get("genreName");
                 Genre genres = genresRepository.findByName(name)
-                        .orElseThrow(() -> new EntityNotFoundException("Genre not found with name " + name));
+                        .orElse(null);
                 books.setGenre(genres);
-                genres.setCountOfBookInThatGenre(genres.getCountOfBookInThatGenre() + 1);
+                Objects.requireNonNull(genres).setCountOfBookInThatGenre(genres.getCountOfBookInThatGenre() + 1);
                 genresRepository.save(genres);
             }
             booksRepository.save(books);

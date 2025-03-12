@@ -105,7 +105,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.GONE).build();
     }
 
-    @PostMapping("/{bookId}/borrow")
+    @PostMapping("/borrow")
     @Operation(summary = "Занять книгу из библиотеки",
             description = "Занимает книгу из библиотеки," +
                     " изменяет статус книги на BORROWED и добавляет в список занятых книг пользователем," +
@@ -122,15 +122,14 @@ public class UserController {
         return ResponseEntity.ok(borrowResponse);
     }
 
-    @PostMapping("/{bookId}/return")
+    @PostMapping("/return")
     @Operation(summary = "Вернуть книгу в библиотеку",
             description = "Возвращает книгу в библиотеку," +
                     " изменяет статус книги на AVAILABLE и удаляет из списка занятых книг пользователем," +
                     " если не находит статус 204")
-    public ResponseEntity<String> returnBookById(@PathVariable long bookId, @RequestParam long userId) {
-        UserDTO user = userService.getUserById(userId);
+    public ResponseEntity<String> returnBookById(@RequestParam long bookId) {
         BookDTO book = bookService.getBookById(bookId);
-        if (user == null || book == null) {
+        if (book == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(userService.returnBookById(bookId));

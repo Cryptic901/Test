@@ -3,7 +3,7 @@ package com.example.testapp.impl;
 import com.example.testapp.DTO.LoginUserDTO;
 import com.example.testapp.DTO.RegisterUserDTO;
 import com.example.testapp.DTO.VerifyUserDTO;
-import com.example.testapp.exceptions.EntityNotFoundException;
+import com.example.testapp.exception.EntityNotFoundException;
 import com.example.testapp.model.User;
 import com.example.testapp.repository.UserRepository;
 import com.example.testapp.service.AuthenticationService;

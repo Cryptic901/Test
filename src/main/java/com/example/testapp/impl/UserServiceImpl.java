@@ -12,7 +12,6 @@ import com.example.testapp.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -95,7 +94,7 @@ public class UserServiceImpl implements UserService {
         }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        User user = usersRepository.findUserByUsername(username)
+        User user = usersRepository.findByEmail(username)
                 .orElse(null);
 
         Genre genre = genresRepository.findById(genreId)
@@ -124,8 +123,9 @@ public class UserServiceImpl implements UserService {
             usersRepository.save(user);
             booksRepository.save(book);
             genresRepository.save(genre);
+            return "Book borrowed successfully!";
         }
-        return "Book borrowed successfully!";
+        return "User, Book or Genre not found";
     }
 
 
@@ -136,14 +136,14 @@ public class UserServiceImpl implements UserService {
                 .orElse(null);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        User user = usersRepository.findUserByUsername(username)
+        User user = usersRepository.findByEmail(username)
                 .orElse(null);
         if (user != null && book != null) {
             List<Long> booksList = user.getBorrowedBook();
             Set<Long> borrowedUserBook = book.getBorrowedUserIds();
 
-            if (!booksList.contains(bookId)) {
-                throw new RuntimeException("Book is not borrowed!");
+            if (booksList == null ||!booksList.contains(bookId)) {
+                return "Book is not borrowed!";
             }
             //Изменение статуса книги
             if (Collections.frequency(booksList, bookId) == 1) {

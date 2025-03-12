@@ -75,7 +75,7 @@ public class GenreController {
         return ResponseEntity.ok(dto);
     }
 
-    @PatchMapping("update/{id}")
+    @PatchMapping("/update/{id}")
     @Operation(summary = "Обновление введенных полей жанра по ID",
             description = "Обновляет поля которые были введены для пользователя с введенным ID," +
                     " если не находит по id статус 204, при неверном вводе статус 400" )

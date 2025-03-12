@@ -75,7 +75,7 @@ public class AuthorServiceImpl implements AuthorService {
         }
 
         booksRepository.detachBooksFromAuthor(authorId);
-        booksRepository.deleteById(authorId);
+        authorsRepository.deleteById(authorId);
         return "Author deleted successfully";
     }
 

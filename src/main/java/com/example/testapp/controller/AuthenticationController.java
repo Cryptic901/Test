@@ -7,6 +7,8 @@ import com.example.testapp.model.User;
 import com.example.testapp.responses.LoginResponse;
 import com.example.testapp.impl.AuthenticationServiceImpl;
 import com.example.testapp.impl.JwtServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Аутентификация",
+        description = "Методы для работы с данными аутентификации")
 public class AuthenticationController {
 
     private final AuthenticationServiceImpl authenticationService;
@@ -25,6 +29,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
+    @Operation(summary = "Зарегистрировать аккаунт", description = "Регистрация и добавление пользователя в БД," +
+            " выдаётся код верификации, который нужно ввести по эндпоинту POST /auth/verify")
     public ResponseEntity<User> register(@RequestBody RegisterUserDTO registerUserDTO) {
         User registeredUser = authenticationService.signUp(registerUserDTO);
         if (registeredUser == null) {
@@ -34,6 +40,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Залогиниться в аккаунт", description = "Вход пользователя в систему(разрешено только верифицированным пользователям)" +
+            " и последующая выдача ему JWT токена который он должен отправлять с каждым запросом для получения доступа к API")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDTO loginUserDTO) throws AuthenticationException {
         String jwtToken = authenticationService.authenticate(loginUserDTO);
         if (jwtToken == null) {
@@ -44,6 +52,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/verify")
+    @Operation(summary = "Верифицировать аккаунт", description = "Верификация посредством введенного email'а, password'a" +
+            " и выданного при регистрации на email верификационного кода")
     public ResponseEntity<?> verifyUser(@RequestBody VerifyUserDTO verifyUserDTO) {
         try {
             authenticationService.verifyUser(verifyUserDTO);
@@ -54,6 +64,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/resend")
+    @Operation(summary = "Повторно отправить верификационный код на email", description = "Отправляет код на email" +
+            " еще раз если пользователь его не получил по какой-либо причине")
     public ResponseEntity<?> resendVerificationCode(@RequestParam String email) {
         try {
             authenticationService.resendVerificationCode(email);

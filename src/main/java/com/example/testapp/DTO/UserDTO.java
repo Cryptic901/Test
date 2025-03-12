@@ -1,27 +1,31 @@
 package com.example.testapp.DTO;
 
 import com.example.testapp.model.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /* Объект для удобной передачи данных о пользователе */
 
-public class UserDTO implements Serializable {
+public class UserDTO {
 
+    @JsonIgnore
     private Long id;
 
     private String username;
 
+    @JsonIgnore
     private String email;
 
+    @JsonIgnore
     private String password;
 
     @JsonProperty("role")
     private String role;
 
+    @JsonIgnore
     private List<Long> borrowedBook;
 
     public static UserDTO fromEntity(User user) {
@@ -38,15 +42,6 @@ public class UserDTO implements Serializable {
     }
 
     public UserDTO() {
-    }
-
-    public UserDTO(User user) {
-        this.id = user.getId();
-        this.username = user.getUsername();
-        this.email = user.getEmail();
-        this.password = user.getPassword();
-        this.role = user.getRole().name();
-        this.borrowedBook = new ArrayList<>();
     }
 
     public Long getId() {

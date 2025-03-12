@@ -109,7 +109,7 @@ public class AuthorController {
         return ResponseEntity.status(HttpStatus.GONE).build();
     }
 
-    @GetMapping("/getAllBook/{authorId}")
+    @GetMapping("/getAllBooks/{authorId}")
     @Operation(summary = "Получить список всех книг автора",
             description = "Возвращает список всех книг которые написал автор, ID которого было введено," +
                     " если автор не найден статус 204")

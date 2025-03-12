@@ -1,13 +1,14 @@
 package com.example.testapp.DTO;
 
 import com.example.testapp.model.Genre;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /* Объект для удобной передачи данных о жанрах */
 public class GenreDTO {
-
+    @JsonIgnore
     private Long id;
 
     private String name;
@@ -18,12 +19,8 @@ public class GenreDTO {
 
     private Integer countOfBookInThatGenre;
 
+    @JsonIgnore
     private Long countOfBorrowingBookWithGenre;
-
-    public GenreDTO(long id) {
-        this.id = id;
-    }
-
 
     public static GenreDTO fromEntity(Genre genre) {
         if (genre == null) return null;
@@ -36,19 +33,6 @@ public class GenreDTO {
         dto.setCountOfBorrowingBookWithGenre(genre.getCountOfBorrowingBookWithGenre());
 
         return dto;
-    }
-
-    public static Genre toEntity(GenreDTO genreDTO) {
-        if (genreDTO == null) return null;
-        Genre genres = new Genre();
-        genres.setId(genreDTO.getId());
-        genres.setName(genreDTO.getName());
-        genres.setDescription(genreDTO.getDescription());
-        genres.setCountOfBookInThatGenre(genreDTO.getCountOfBookInThatGenre());
-        genres.setBook(genreDTO.getBook());
-        genres.setCountOfBorrowingBookWithGenre(genreDTO.getCountOfBorrowingBookWithGenre());
-
-        return genres;
     }
 
     public Long getId() {
@@ -103,19 +87,6 @@ public class GenreDTO {
     }
 
     public GenreDTO() {
-    }
-
-    public GenreDTO(String name) {
-        this.name = name;
-    }
-
-    public GenreDTO(Long id, String name, List<Long> books, String description, Integer countOfBookInThatGenre, Long countOfBorrowingBookWithGenre) {
-        this.id = id;
-        this.name = name;
-        this.books = books;
-        this.description = description;
-        this.countOfBookInThatGenre = countOfBookInThatGenre;
-        this.countOfBorrowingBookWithGenre = countOfBorrowingBookWithGenre;
     }
 
     @Override

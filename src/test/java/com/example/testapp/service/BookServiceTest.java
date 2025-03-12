@@ -51,6 +51,7 @@ class BookServiceTest {
         book.setGenre(genre);
         BookDTO bookDTO = new BookDTO();
         bookDTO.setId(bookId);
+        bookDTO.setTitle("Title");
         bookDTO.setAuthorId(authorId);
         bookDTO.setGenreId(genreId);
 
@@ -61,7 +62,7 @@ class BookServiceTest {
         bookService.setBookParams(book, bookDTO);
         BookDTO dto = bookService.addBook(bookDTO);
 
-        assertEquals(bookId, dto.getId());
+        assertEquals("Title", dto.getTitle());
 
         ArgumentCaptor<Author> authorCaptor = ArgumentCaptor.forClass(Author.class);
         ArgumentCaptor<Genre> genreCaptor = ArgumentCaptor.forClass(Genre.class);
@@ -99,9 +100,7 @@ class BookServiceTest {
     void deleteBookByIdTest_NotFound() {
         long id = 1L;
 
-        Exception exception = assertThrows(RuntimeException.class, () -> bookService.deleteBookById(id));
-
-        assertEquals("Book not found with id " + id, exception.getMessage());
+        assertEquals("Book not found", bookService.deleteBookById(id));
 
         verify(booksRepository, never()).deleteById(id);
     }
@@ -127,10 +126,7 @@ class BookServiceTest {
         long id = 1L;
 
         when(booksRepository.findById(id)).thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(RuntimeException.class, () -> bookService.getBookById(id));
-        assertEquals("Book not found with id: " + id, exception.getMessage());
-
+        assertNull(bookService.getBookById(id));
         verify(booksRepository, times(1)).findById(id);
     }
 
@@ -200,10 +196,7 @@ class BookServiceTest {
         String isbn = "123";
 
         when(booksRepository.findByIsbn(isbn)).thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(RuntimeException.class, () -> bookService.getBookByIsbn(isbn));
-        assertEquals("Book not found with isbn: " + isbn, exception.getMessage());
-
+        assertNull(bookService.getBookByIsbn(isbn));
         verify(booksRepository, times(1)).findByIsbn(isbn);
     }
 
@@ -213,11 +206,11 @@ class BookServiceTest {
         Book book2 = new Book(2L);
         book2.setCountOfBorrowingBook(10L);
         book1.setCountOfBorrowingBook(5L);
-
-        when(booksRepository.sortByBookPopularityDescending()).thenReturn(List.of(book2, book1));
-
-        List<BookDTO> books = bookService.getMostPopularBook();
-        assertEquals(List.of(books.get(0).getId(), books.get(1).getId()), List.of(book2.getId(), book1.getId()));
+        List<Book> mockList = List.of(book2, book1);
+        when(booksRepository.sortByBookPopularityDescending()).thenReturn(mockList);
+        List<BookDTO> dto = List.of(BookDTO.fromEntity(book2), BookDTO.fromEntity(book1));
+        List<BookDTO> result = bookService.getMostPopularBook();
+        assertEquals(dto, result);
         verify(booksRepository, times(1)).sortByBookPopularityDescending();
     }
 

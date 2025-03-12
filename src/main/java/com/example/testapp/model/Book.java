@@ -2,8 +2,8 @@ package com.example.testapp.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Set;
 
 /* Сущность книга */
@@ -30,7 +30,7 @@ public class Book {
     private String publisher;
 
     @Column(nullable = false)
-    private Date publishedDate;
+    private LocalDate publishedDate;
 
     @Column(nullable = false)
     private int amount;
@@ -115,11 +115,11 @@ public class Book {
         this.publisher = publisher;
     }
 
-    public Date getPublishedDate() {
+    public LocalDate getPublishedDate() {
         return publishedDate;
     }
 
-    public void setPublishedDate(Date publishedDate) {
+    public void setPublishedDate(LocalDate publishedDate) {
         this.publishedDate = publishedDate;
     }
 
@@ -142,7 +142,7 @@ public class Book {
         this.countOfBorrowingBook = countOfBorrowingBook;
     }
 
-    public Book(Long id, String title, Author author, String isbn, String publisher, Date publishedDate,
+    public Book(Long id, String title, Author author, String isbn, String publisher, LocalDate publishedDate,
                  int amount,Set<Long> borrowedUserIds, Genre genre, String description, Long countOfBorrowingBook) {
         this.id = id;
         this.title = title;

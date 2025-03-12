@@ -2,12 +2,11 @@ package com.example.testapp.service;
 
 import com.example.testapp.DTO.AuthorDTO;
 import com.example.testapp.DTO.BookShortDTO;
-import com.example.testapp.exceptions.EntityNotFoundException;
+import com.example.testapp.impl.AuthorServiceImpl;
 import com.example.testapp.model.Author;
 import com.example.testapp.model.Book;
 import com.example.testapp.repository.AuthorRepository;
 import com.example.testapp.repository.BookRepository;
-import com.example.testapp.impl.AuthorServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -71,8 +70,7 @@ class AuthorServiceTest {
     void getAuthorById_NotFound() {
         long id = 1L;
         when(authorsRepository.findById(id)).thenReturn(Optional.empty());
-        Exception exception = assertThrows(EntityNotFoundException.class, () -> authorService.getAuthorById(id));
-        assertEquals("Author not found with id: " + id, exception.getMessage());
+        assertNull(authorService.getAuthorById(id));
         verify(authorsRepository, times(1)).findById(id);
     }
 
@@ -132,10 +130,7 @@ class AuthorServiceTest {
 
         when(authorsRepository.findById(id)).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(EntityNotFoundException.class,
-                () -> authorService.updateAuthorById(id, AuthorDTO.fromEntity(updatedAuthor)));
-
-        assertEquals("Author not found with id: " + id, exception.getMessage());
+        assertNull(authorService.updateAuthorById(id, AuthorDTO.fromEntity(updatedAuthor)));
         verify(authorsRepository, times(1)).findById(id);
     }
 
@@ -150,17 +145,15 @@ class AuthorServiceTest {
         Book book = new Book();
         book.setId(bookId);
 
-        doNothing().when(authorsRepository).deleteById(bookId);
-        when(authorsRepository.existsById(bookId)).thenReturn(true);
-        when(authorsRepository.findById(bookId)).thenReturn(Optional.of(authors));
-        when(booksRepository.findById(bookId)).thenReturn(Optional.of(book));
+        doNothing().when(authorsRepository).deleteById(authorId);
+        when(authorsRepository.existsById(authorId)).thenReturn(true);
+        doNothing().when(booksRepository).detachBooksFromAuthor(authorId);
 
         authorService.deleteAuthorById(bookId);
 
-        verify(authorsRepository, times(1)).deleteById(bookId);
-        verify(authorsRepository, times(1)).existsById(bookId);
-        verify(authorsRepository, times(1)).findById(bookId);
-        verify(booksRepository, times(1)).findById(bookId);
+        verify(authorsRepository, times(1)).deleteById(authorId);
+        verify(authorsRepository, times(1)).existsById(authorId);
+        verify(booksRepository, times(1)).detachBooksFromAuthor(authorId);
 
     }
 
@@ -168,8 +161,7 @@ class AuthorServiceTest {
     void deleteAuthorById_NotFound() {
         long id = 1L;
 
-        Exception exception = assertThrows(EntityNotFoundException.class, () -> authorService.deleteAuthorById(id));
-        assertEquals("Author not found with id: " + id, exception.getMessage());
+        assertEquals("Author not found", authorService.deleteAuthorById(id));
         verify(authorsRepository, never()).deleteById(id);
     }
 
@@ -204,11 +196,13 @@ class AuthorServiceTest {
     void getAllAuthorBook_NotFound() {
         long id = 1L;
 
-        Exception exception = assertThrows(EntityNotFoundException.class, () -> authorService.getAuthorById(id));
-
-        assertEquals("Author not found with id: " + id, exception.getMessage());
-        verify(authorsRepository, times(1)).findById(id);
+        assertEquals(booksRepository.findByAuthorId(id)
+                .stream()
+                .map(BookShortDTO::fromEntity)
+                .toList(),authorService.getAllAuthorBook(id));
+        verify(booksRepository, times(1)).findByAuthorId(id);
     }
+
     @Test
     void getAuthorByName_Success() {
         Author authors = new Author();

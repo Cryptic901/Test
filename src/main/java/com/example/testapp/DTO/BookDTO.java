@@ -1,28 +1,23 @@
 package com.example.testapp.DTO;
 
-import com.example.testapp.model.Author;
 import com.example.testapp.model.Book;
-import com.example.testapp.model.Genre;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Objects;
-import java.util.Set;
 
 /* Объект для удобной передачи данных о книгах */
-public class BookDTO implements Serializable {
+public class BookDTO {
 
-    private Long id;
+    @JsonIgnore
+    private long id;
     private String title;
     private String description;
     private String isbn;
     private String publisher;
-    private Date publishedDate;
+    private LocalDate publishedDate;
     private int amount;
-    private Set<Long> borrowedUserIds;
-    private Long countOfBorrowingBook;
 
     private String genreName; //Название жанра
     @JsonProperty(value = "genre_id", access = JsonProperty.Access.WRITE_ONLY)
@@ -34,17 +29,14 @@ public class BookDTO implements Serializable {
     public static BookDTO fromEntity(Book book) {
         if (book == null) return null;
         BookDTO dto = new BookDTO();
-        dto.setId(book.getId());
         dto.setTitle(book.getTitle());
         dto.setDescription(book.getDescription());
         dto.setIsbn(book.getIsbn());
         dto.setPublisher(book.getPublisher());
         dto.setPublishedDate(book.getPublishedDate());
         dto.setAmount(book.getAmount());
-        dto.setCountOfBorrowingBook(book.getCountOfBorrowingBook());
         dto.setAuthorName(book.getAuthor() != null ? book.getAuthor().getName() : "Автор не указан");
         dto.setGenreName(book.getGenre() != null ? book.getGenre().getName() : "Жанр не указан");
-        dto.setBorrowedUserIds(book.getBorrowedUserIds() != null ? book.getBorrowedUserIds() : Collections.emptySet());
 
         dto.setGenreId(book.getGenre() != null ? book.getGenre().getId() : null);
         dto.setAuthorId(book.getAuthor() != null ? book.getAuthor().getId() : null);
@@ -52,60 +44,7 @@ public class BookDTO implements Serializable {
         return dto;
     }
 
-    public static Book toEntity(BookDTO dto) {
-        if (dto == null) return null;
-        Book book = new Book();
-        book.setId(dto.getId());
-        book.setTitle(dto.getTitle());
-        book.setDescription(dto.getDescription());
-        book.setIsbn(dto.getIsbn());
-        book.setPublisher(dto.getPublisher());
-        book.setPublishedDate(dto.getPublishedDate());
-        book.setAmount(dto.getAmount());
-        book.setCountOfBorrowingBook(dto.getCountOfBorrowingBook());
-        if (dto.getAuthorId() != null) {
-            Author authors = new Author();
-            authors.setId(dto.getAuthorId());
-            book.setAuthor(authors);
-        }
-        if (dto.getGenreId() != null) {
-            Genre genres = new Genre();
-            genres.setId(dto.getGenreId());
-            book.setGenre(genres);
-        }
-        if (dto.getAuthorName() != null) {
-            Author authors = new Author();
-            authors.setName(dto.getAuthorName());
-            book.setAuthor(authors);
-        }
-        if (dto.getGenreName() != null) {
-            Genre genres = new Genre();
-            genres.setName(dto.getGenreName());
-            book.setGenre(genres);
-        }
-
-        if (dto.getBorrowedUserIds() != null && !dto.getBorrowedUserIds().isEmpty()) {
-            book.setBorrowedUserIds(dto.getBorrowedUserIds());
-        } else {
-            book.setBorrowedUserIds(Collections.emptySet());
-        }
-        return book;
-    }
-
     public BookDTO() {
-    }
-
-    public BookDTO(long id, String title) {
-        this.id = id;
-        this.title = title;
-    }
-
-    public Long getCountOfBorrowingBook() {
-        return countOfBorrowingBook;
-    }
-
-    public void setCountOfBorrowingBook(Long countOfBorrowingBook) {
-        this.countOfBorrowingBook = countOfBorrowingBook;
     }
 
     public Long getId() {
@@ -122,15 +61,6 @@ public class BookDTO implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-
-    public Set<Long> getBorrowedUserIds() {
-        return borrowedUserIds;
-    }
-
-    public void setBorrowedUserIds(Set<Long> borrowedUserIds) {
-        this.borrowedUserIds = borrowedUserIds;
     }
 
     public String getDescription() {
@@ -190,11 +120,11 @@ public class BookDTO implements Serializable {
         this.publisher = publisher;
     }
 
-    public Date getPublishedDate() {
+    public LocalDate getPublishedDate() {
         return publishedDate;
     }
 
-    public void setPublishedDate(Date publishedDate) {
+    public void setPublishedDate(LocalDate publishedDate) {
         this.publishedDate = publishedDate;
     }
 
@@ -206,8 +136,8 @@ public class BookDTO implements Serializable {
         this.amount = amount;
     }
 
-    public BookDTO(Long id, String title, String description, String isbn, String publisher, Date publishedDate,
-                   int amount, Set<Long> borrowedUserIds, String genreName, Long genreId, String authorName, Long authorId) {
+    public BookDTO(Long id, String title, String description, String isbn, String publisher, LocalDate publishedDate,
+                   int amount, String genreName, Long genreId, String authorName, Long authorId) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -215,7 +145,6 @@ public class BookDTO implements Serializable {
         this.publisher = publisher;
         this.publishedDate = publishedDate;
         this.amount = amount;
-        this.borrowedUserIds = borrowedUserIds;
         this.genreName = genreName;
         this.genreId = genreId;
         this.authorName = authorName;
@@ -233,8 +162,6 @@ public class BookDTO implements Serializable {
                 ", publisher='" + publisher + '\'' +
                 ", publishedDate='" + publishedDate + '\'' +
                 ", amount=" + amount +
-                ", borrowedUserIds=" + borrowedUserIds +
-                ", countOfBorrowingBook=" + countOfBorrowingBook +
                 ", genreName='" + genreName + '\'' +
                 ", genreId=" + genreId +
                 ", authorName='" + authorName + '\'' +
@@ -247,11 +174,22 @@ public class BookDTO implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BookDTO bookDTO = (BookDTO) o;
-        return amount == bookDTO.amount && Objects.equals(id, bookDTO.id) && Objects.equals(title, bookDTO.title) && Objects.equals(description, bookDTO.description) && Objects.equals(isbn, bookDTO.isbn) && Objects.equals(publisher, bookDTO.publisher) && Objects.equals(publishedDate, bookDTO.publishedDate) && Objects.equals(borrowedUserIds, bookDTO.borrowedUserIds) && Objects.equals(genreName, bookDTO.genreName) && Objects.equals(genreId, bookDTO.genreId) && Objects.equals(authorName, bookDTO.authorName) && Objects.equals(authorId, bookDTO.authorId);
+        return amount == bookDTO.amount
+                && Objects.equals(id, bookDTO.id)
+                && Objects.equals(title, bookDTO.title)
+                && Objects.equals(description, bookDTO.description)
+                && Objects.equals(isbn, bookDTO.isbn)
+                && Objects.equals(publisher, bookDTO.publisher)
+                && Objects.equals(publishedDate, bookDTO.publishedDate)
+                && Objects.equals(genreName, bookDTO.genreName)
+                && Objects.equals(genreId, bookDTO.genreId)
+                && Objects.equals(authorName, bookDTO.authorName)
+                && Objects.equals(authorId, bookDTO.authorId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, isbn, publisher, publishedDate, amount, borrowedUserIds, genreName, genreId, authorName, authorId);
+        return Objects.hash(id, title, description, isbn, publisher, publishedDate,
+                amount, genreName, genreId, authorName, authorId);
     }
 }
