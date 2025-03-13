@@ -1,6 +1,8 @@
 package com.example.testapp.impl;
 
+import com.example.testapp.DTO.BookDTO;
 import com.example.testapp.DTO.GenreDTO;
+import com.example.testapp.model.Book;
 import com.example.testapp.model.Genre;
 import com.example.testapp.repository.BookRepository;
 import com.example.testapp.repository.GenreRepository;
@@ -34,12 +36,11 @@ public class GenreServiceImpl implements GenreService {
     public void setGenreParams(GenreDTO genreDTO, Genre genres) {
         genres.setName(genreDTO.getName());
         genres.setDescription(genreDTO.getDescription());
-        genres.setBook(genreDTO.getBook());
         genres.setCountOfBookInThatGenre(genreDTO.getCountOfBookInThatGenre());
         genres.setCountOfBorrowingBookWithGenre(genreDTO.getCountOfBorrowingBookWithGenre());
     }
 
-    @CacheEvict(value = "genres", key = "#genreDTO.id")
+    @CacheEvict(value = "genres", key = "#result.id")
     @Transactional
     public GenreDTO addGenre(GenreDTO genreDTO) {
         Genre genres = new Genre();
@@ -72,6 +73,15 @@ public class GenreServiceImpl implements GenreService {
         }
     }
 
+    @Cacheable(value = "genres", key = "#genreId")
+    @Transactional
+    public List<BookDTO> getAllBooksInGenreById(long genreId) {
+        return booksRepository.findAll()
+                .stream()
+                .filter(book -> book.getGenre().getId() == genreId)
+                .map(BookDTO::fromEntity).toList();
+    }
+
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "genres", key = "#id"),
@@ -87,6 +97,7 @@ public class GenreServiceImpl implements GenreService {
         return "Genre deleted successfully";
     }
     @Cacheable(value = "genres", key = "#name")
+    @Transactional
     public GenreDTO getGenreByName(String name) {
         Genre genre = genresRepository.getGenreByName(name)
                 .orElse(null);
@@ -98,6 +109,7 @@ public class GenreServiceImpl implements GenreService {
         return genres.stream().map(GenreDTO::fromEntity).toList();
     }
     @CacheEvict(value = "genres", key = "#id")
+    @Transactional
     public GenreDTO updateGenreFields(long id, Map<String, Object> updates) {
         Genre genres = genresRepository.findById(id)
                 .orElse(null);

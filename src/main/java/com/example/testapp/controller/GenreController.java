@@ -1,5 +1,6 @@
 package com.example.testapp.controller;
 
+import com.example.testapp.DTO.BookDTO;
 import com.example.testapp.DTO.GenreDTO;
 import com.example.testapp.impl.GenreServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -78,7 +79,7 @@ public class GenreController {
     @PatchMapping("/update/{id}")
     @Operation(summary = "Обновление введенных полей жанра по ID",
             description = "Обновляет поля которые были введены для пользователя с введенным ID," +
-                    " если не находит по id статус 204, при неверном вводе статус 400" )
+                    " если не находит по id статус 204, при неверном вводе статус 400")
     public ResponseEntity<GenreDTO> updateGenre(@PathVariable long id, @RequestBody Map<String, Object> updates) {
         GenreDTO genre = genreService.getGenreById(id);
         if (genre == null) {
@@ -123,5 +124,16 @@ public class GenreController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(genreDTOList);
+    }
+
+    @GetMapping("/getAllBooks")
+    @Operation(summary = "Получить все книги в жанре по айди",
+            description = "Возвращает список книг у которых genreId совпадает с введенным в параметр запроса")
+    public ResponseEntity<List<BookDTO>> getAllBooksInThatGenre(@RequestParam long genreId) {
+        List<BookDTO> books = genreService.getAllBooksInGenreById(genreId);
+        if (books.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(books);
     }
 }

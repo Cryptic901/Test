@@ -3,24 +3,24 @@ package com.example.testapp.DTO;
 /* Объект для удобной передачи данных об авторах */
 
 import com.example.testapp.model.Author;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class AuthorDTO {
+import java.io.Serializable;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class AuthorDTO implements Serializable {
 
     private Long id;
 
     private String name;
 
-    private List<Long> bookList;
+    private String biography;
 
     public static AuthorDTO fromEntity(Author authors) {
         if(authors == null) return null;
         AuthorDTO dto = new AuthorDTO();
         dto.setId(authors.getId());
         dto.setName(authors.getName());
-        dto.setBookList(authors.getBookList() != null ? authors.getBookList() : new ArrayList<>());
+        dto.setBiography(authors.getBiography());
 
         return dto;
     }
@@ -41,12 +41,12 @@ public class AuthorDTO {
         this.name = name;
     }
 
-    public List<Long> getBookList() {
-        return bookList;
+    public String getBiography() {
+        return biography;
     }
 
-    public void setBookList(List<Long> bookList) {
-        this.bookList = bookList;
+    public void setBiography(String biography) {
+        this.biography = biography;
     }
 
     public AuthorDTO() {}
@@ -54,10 +54,9 @@ public class AuthorDTO {
         this.id = id;
     }
 
-    public AuthorDTO(Long id, String name, List<Long> bookList) {
+    public AuthorDTO(Long id, String name) {
         this.id = id;
         this.name = name;
-        this.bookList = bookList;
     }
 
     @Override
@@ -65,7 +64,7 @@ public class AuthorDTO {
         return "AuthorDTO{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", bookList=" + bookList +
+                ", biography='" + biography + '\'' +
                 '}';
     }
 }

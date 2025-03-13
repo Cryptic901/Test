@@ -2,13 +2,16 @@ package com.example.testapp.DTO;
 
 import com.example.testapp.model.Book;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
 /* Объект для удобной передачи данных о книгах */
-public class BookDTO {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class BookDTO implements Serializable {
 
     @JsonIgnore
     private long id;

@@ -33,10 +33,9 @@ public class AuthorServiceImpl implements AuthorService {
 
     public void setAuthorParams(Author author, AuthorDTO authorDTO) {
         author.setName(authorDTO.getName());
-        author.setBookList(authorDTO.getBookList());
     }
 
-    @CacheEvict(cacheNames = "authors", key = "#authorDTO.id")
+    @CacheEvict(cacheNames = "authors", key = "#result.id")
     @Transactional
     public AuthorDTO addAuthor(AuthorDTO authorDTO) {
         Author author = new Author();

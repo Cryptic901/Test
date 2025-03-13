@@ -79,7 +79,7 @@ public class BookServiceImpl implements BookService {
     }
 
     //Метод для добавления книги
-    @CacheEvict(cacheNames = "books", key = "#bookDTO.id")
+    @CacheEvict(cacheNames = "books", key = "#result.id")
     @Transactional
     public BookDTO addBook(BookDTO bookDTO) {
         Book bookToAdd = new Book();

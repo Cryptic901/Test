@@ -2,18 +2,21 @@ package com.example.testapp.DTO;
 
 import com.example.testapp.model.Genre;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.Column;
+import jakarta.persistence.UniqueConstraint;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /* Объект для удобной передачи данных о жанрах */
-public class GenreDTO {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class GenreDTO implements Serializable {
     @JsonIgnore
     private Long id;
 
     private String name;
-
-    private List<Long> books;
 
     private String description;
 
@@ -29,7 +32,6 @@ public class GenreDTO {
         dto.setName(genre.getName());
         dto.setDescription(genre.getDescription() == null ? "Описания нет" : genre.getDescription());
         dto.setCountOfBookInThatGenre(genre.getCountOfBookInThatGenre());
-        dto.setBook(genre.getBook() != null ? genre.getBook() : new ArrayList<>());
         dto.setCountOfBorrowingBookWithGenre(genre.getCountOfBorrowingBookWithGenre());
 
         return dto;
@@ -49,17 +51,6 @@ public class GenreDTO {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<Long> getBook() {
-        if (books == null) {
-            books = new ArrayList<>();
-        }
-        return books;
-    }
-
-    public void setBook(List<Long> books) {
-        this.books = books;
     }
 
     public Long getCountOfBorrowingBookWithGenre() {
@@ -94,7 +85,6 @@ public class GenreDTO {
         return "GenreDTO{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", books=" + books +
                 ", description='" + description + '\'' +
                 ", countOfBookInThatGenre=" + countOfBookInThatGenre +
                 ", countOfBorrowingBookWithGenre=" + countOfBorrowingBookWithGenre +

@@ -39,6 +39,8 @@ public class SecurityConfiguration {
                         authorize.requestMatchers("/auth/**").permitAll()
                                 .requestMatchers("/error").permitAll()
                                 .requestMatchers(HttpMethod.GET).hasAnyRole("USER", "ADMIN")
+                                .requestMatchers(HttpMethod.POST, "/api/v1/users/borrow/**", "/api/v1/users/return/**")
+                                .hasAnyRole("USER", "ADMIN")
                                 .requestMatchers(HttpMethod.POST).hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.PUT).hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.DELETE).hasRole("ADMIN")

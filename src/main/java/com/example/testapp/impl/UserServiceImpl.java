@@ -1,5 +1,6 @@
 package com.example.testapp.impl;
 
+import com.example.testapp.DTO.BookDTO;
 import com.example.testapp.DTO.UserDTO;
 import com.example.testapp.enums.UserRole;
 import com.example.testapp.model.Book;
@@ -196,5 +197,12 @@ public class UserServiceImpl implements UserService {
             usersRepository.save(user);
         }
         return UserDTO.fromEntity(user);
+    }
+
+    public List<BookDTO> getBooksThatUserReadingById(long userId) {
+        return booksRepository.findAll().stream()
+                .filter(book -> book.getBorrowedUserIds().contains(userId))
+                .map(BookDTO::fromEntity)
+                .toList();
     }
 }

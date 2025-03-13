@@ -1,12 +1,15 @@
 package com.example.testapp.DTO;
 
 import com.example.testapp.model.Book;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 
 /* Объект для удобной передачи данных о книгах в краткой форме */
-public class BookShortDTO {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class BookShortDTO implements Serializable {
 
     private Long id;
 
