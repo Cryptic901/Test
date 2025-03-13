@@ -18,6 +18,8 @@ public class Author implements Serializable {
 
     private String name;
 
+    private String biography;
+
     @ElementCollection
     private List<Long> bookList;
 
@@ -49,14 +51,23 @@ public class Author implements Serializable {
         return bookList;
     }
 
+    public String getBiography() {
+        return biography;
+    }
+
+    public void setBiography(String biography) {
+        this.biography = biography;
+    }
+
     public void setBookList(List<Long> bookList) {
         this.bookList = bookList;
     }
 
-    public Author(Long id, String name, List<Long> bookList) {
+    public Author(Long id, String name, List<Long> bookList, String biography) {
         this.id = id;
         this.name = name;
         this.bookList = bookList;
+        this.biography = biography;
     }
     public Author() {}
 
@@ -64,6 +75,8 @@ public class Author implements Serializable {
     public String toString() {
         return "Author{" +
                 "id=" + id +
-                ", name='" + name + '\'' + '}';
+                ", name='" + name + '\'' +
+                ", biography='" + biography + '\'' +
+                '}';
     }
 }

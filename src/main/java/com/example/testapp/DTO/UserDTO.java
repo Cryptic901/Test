@@ -2,14 +2,16 @@ package com.example.testapp.DTO;
 
 import com.example.testapp.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /* Объект для удобной передачи данных о пользователе */
-
-public class UserDTO {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class UserDTO implements Serializable {
 
     @JsonIgnore
     private Long id;

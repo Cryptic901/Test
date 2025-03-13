@@ -2,13 +2,15 @@ package com.example.testapp.DTO;
 
 import com.example.testapp.model.Book;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
 /* Объект для удобной передачи данных о книгах */
-public class BookDTO {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class BookDTO implements Serializable {
 
     @JsonIgnore
     private long id;
@@ -19,12 +21,8 @@ public class BookDTO {
     private LocalDate publishedDate;
     private int amount;
 
-    private String genreName; //Название жанра
-    @JsonProperty(value = "genre_id", access = JsonProperty.Access.WRITE_ONLY)
-    private Long genreId;
-    private String authorName; //Имя автора
-    @JsonProperty(value = "author_id", access = JsonProperty.Access.WRITE_ONLY)
-    private Long authorId;
+    private String genreName;
+    private String authorName;
 
     public static BookDTO fromEntity(Book book) {
         if (book == null) return null;
@@ -37,9 +35,6 @@ public class BookDTO {
         dto.setAmount(book.getAmount());
         dto.setAuthorName(book.getAuthor() != null ? book.getAuthor().getName() : "Автор не указан");
         dto.setGenreName(book.getGenre() != null ? book.getGenre().getName() : "Жанр не указан");
-
-        dto.setGenreId(book.getGenre() != null ? book.getGenre().getId() : null);
-        dto.setAuthorId(book.getAuthor() != null ? book.getAuthor().getId() : null);
 
         return dto;
     }
@@ -87,23 +82,6 @@ public class BookDTO {
         this.authorName = authorName;
     }
 
-    public Long getGenreId() {
-        return genreId;
-    }
-
-    public void setGenreId(Long genreId) {
-        this.genreId = genreId;
-    }
-
-    public Long getAuthorId() {
-        return authorId;
-    }
-
-    public void setAuthorId(Long authorId) {
-        this.authorId = authorId;
-    }
-
-
     public String getIsbn() {
         return isbn;
     }
@@ -137,7 +115,7 @@ public class BookDTO {
     }
 
     public BookDTO(Long id, String title, String description, String isbn, String publisher, LocalDate publishedDate,
-                   int amount, String genreName, Long genreId, String authorName, Long authorId) {
+                   int amount, String genreName, String authorName) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -146,9 +124,7 @@ public class BookDTO {
         this.publishedDate = publishedDate;
         this.amount = amount;
         this.genreName = genreName;
-        this.genreId = genreId;
         this.authorName = authorName;
-        this.authorId = authorId;
     }
 
 
@@ -163,9 +139,7 @@ public class BookDTO {
                 ", publishedDate='" + publishedDate + '\'' +
                 ", amount=" + amount +
                 ", genreName='" + genreName + '\'' +
-                ", genreId=" + genreId +
                 ", authorName='" + authorName + '\'' +
-                ", authorId=" + authorId +
                 '}';
     }
 
@@ -182,14 +156,12 @@ public class BookDTO {
                 && Objects.equals(publisher, bookDTO.publisher)
                 && Objects.equals(publishedDate, bookDTO.publishedDate)
                 && Objects.equals(genreName, bookDTO.genreName)
-                && Objects.equals(genreId, bookDTO.genreId)
-                && Objects.equals(authorName, bookDTO.authorName)
-                && Objects.equals(authorId, bookDTO.authorId);
+                && Objects.equals(authorName, bookDTO.authorName);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, title, description, isbn, publisher, publishedDate,
-                amount, genreName, genreId, authorName, authorId);
+                amount, genreName, authorName);
     }
 }

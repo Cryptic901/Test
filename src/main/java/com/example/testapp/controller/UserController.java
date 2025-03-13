@@ -134,4 +134,12 @@ public class UserController {
         }
         return ResponseEntity.ok(userService.returnBookById(bookId));
     }
+    @GetMapping("/reading")
+    public ResponseEntity<List<BookDTO>> booksThatReadingUser(@RequestParam long userId) {
+        List<BookDTO> books = userService.getBooksThatUserReadingById(userId);
+        if (books == null || books.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(books);
+    }
 }

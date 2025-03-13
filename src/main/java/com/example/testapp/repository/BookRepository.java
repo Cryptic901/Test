@@ -27,7 +27,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     @Modifying
     @Query("UPDATE Book b SET b.author = NULL WHERE b.author.id = :authorId")
-    void detachBooksFromAuthor(@Param("author_id") long authorId);
+    void detachBooksFromAuthor(@Param("authorId") long authorId);
 
     Optional<Book> findBookByTitle(String title);
 }

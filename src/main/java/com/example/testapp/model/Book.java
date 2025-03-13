@@ -21,7 +21,7 @@ public class Book implements Serializable {
 
     private String title;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "author_id")
     private Author author;
 
@@ -37,10 +37,10 @@ public class Book implements Serializable {
     @Column(nullable = false)
     private int amount;
 
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection
     private Set<Long> borrowedUserIds;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "genre_id")
     private Genre genre;
 

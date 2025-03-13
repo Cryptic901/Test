@@ -44,14 +44,8 @@ public class BookServiceImpl implements BookService {
         book.setPublishedDate(LocalDate.now());
         book.setIsbn(bookDTO.getIsbn());
         book.setAmount(bookDTO.getAmount());
-        if (bookDTO.getAuthorId() != null) {
-            book.setAuthor(authorsRepository.findById(bookDTO.getAuthorId())
-                    .orElse(null));
-        }
-        if (bookDTO.getGenreId() != null) {
-            book.setGenre(genresRepository.findById(bookDTO.getGenreId())
-                    .orElse(null));
-        }
+        book.setGenre(genresRepository.findByName(bookDTO.getGenreName()).orElse(null));
+        book.setAuthor(authorsRepository.findAuthorByName(bookDTO.getAuthorName()).orElse(null));
     }
 
     //Метод для удаления книги
@@ -79,20 +73,20 @@ public class BookServiceImpl implements BookService {
     }
 
     //Метод для добавления книги
-    @CacheEvict(cacheNames = "books", key = "#bookDTO.id")
+    @CacheEvict(cacheNames = "books", key = "#result.id")
     @Transactional
     public BookDTO addBook(BookDTO bookDTO) {
         Book bookToAdd = new Book();
         setBookParams(bookToAdd, bookDTO);
         Book savedBook = booksRepository.save(bookToAdd);
 
-        Author author = authorsRepository.findById(bookDTO.getAuthorId())
+        Author author = authorsRepository.findAuthorByName(bookDTO.getAuthorName())
                 .orElse(null);
 
-        Genre genre = genresRepository.findById(bookDTO.getGenreId())
+        Genre genre = genresRepository.findByName(bookDTO.getGenreName())
                 .orElse(null);
+
         if (author != null && genre != null) {
-
             List<Long> authorBookList = author.getBookList();
             if (authorBookList == null) {
                 authorBookList = new ArrayList<>();
@@ -118,12 +112,14 @@ public class BookServiceImpl implements BookService {
         return BookDTO.fromEntity(booksRepository.findById(id)
                 .orElse(null));
     }
+
     @Cacheable(value = "books", key = "#title")
     @Transactional
     public BookDTO getBookByTitle(String title) {
         return BookDTO.fromEntity(booksRepository.findBookByTitle(title)
                 .orElse(null));
     }
+
     @Cacheable(value = "books", key = "#isbn")
     @Transactional
     public BookDTO getBookByIsbn(String isbn) {
@@ -165,6 +161,7 @@ public class BookServiceImpl implements BookService {
         List<Book> books = booksRepository.sortByBookPopularityDescending();
         return books.stream().map(BookDTO::fromEntity).toList();
     }
+
     @CacheEvict(cacheNames = "books", key = "#id")
     @Transactional
     public BookDTO updateBookFields(long id, Map<String, Object> updates) {
@@ -193,20 +190,6 @@ public class BookServiceImpl implements BookService {
                 List<Long> borrowedUserIds = userids.stream()
                         .map(obj -> Long.valueOf(obj.toString())).toList();
                 books.setBorrowedUserIds(new HashSet<>(borrowedUserIds));
-            }
-
-            if (updates.containsKey("author_id")) {
-                Long authorId = Long.parseLong(updates.get("author_id").toString());
-                Author authors = authorsRepository.findById(authorId)
-                        .orElse(null);
-                books.setAuthor(authors);
-            }
-            if (updates.containsKey("genre_id")) {
-                Long genreId = Long.parseLong(updates.get("genre_id").toString());
-                Genre genres = genresRepository.findById(genreId)
-                        .orElse(null);
-                books.setGenre(genres);
-                genresRepository.save(Objects.requireNonNull(genres));
             }
 
             if (updates.containsKey("authorName")) {

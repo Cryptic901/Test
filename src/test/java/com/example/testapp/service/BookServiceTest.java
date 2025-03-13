@@ -45,19 +45,21 @@ class BookServiceTest {
         long authorId = 1L;
         long genreId = 1L;
         Author author = new Author(authorId);
+        author.setName("author");
         Genre genre = new Genre(genreId);
+        genre.setName("genre");
         Book book = new Book(bookId);
         book.setAuthor(author);
         book.setGenre(genre);
         BookDTO bookDTO = new BookDTO();
         bookDTO.setId(bookId);
         bookDTO.setTitle("Title");
-        bookDTO.setAuthorId(authorId);
-        bookDTO.setGenreId(genreId);
+        bookDTO.setAuthorName(author.getName());
+        bookDTO.setGenreName(genre.getName());
 
         when(booksRepository.save(any(Book.class))).thenReturn(book);
-        when(genresRepository.findById(bookDTO.getGenreId())).thenReturn(Optional.of(genre));
-        when(authorsRepository.findById(bookDTO.getAuthorId())).thenReturn(Optional.of(author));
+        when(genresRepository.findByName(bookDTO.getGenreName())).thenReturn(Optional.of(genre));
+        when(authorsRepository.findAuthorByName(bookDTO.getAuthorName())).thenReturn(Optional.of(author));
 
         bookService.setBookParams(book, bookDTO);
         BookDTO dto = bookService.addBook(bookDTO);
