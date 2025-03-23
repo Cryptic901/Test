@@ -43,7 +43,7 @@ public class Book implements Serializable {
     @JoinColumn(name = "genre_id")
     private Genre genre;
 
-    private Long countOfBorrowingBook;
+    private Long countOfBorrowingBook = 0L;
 
     @Column(length = 1000)
     private String description;

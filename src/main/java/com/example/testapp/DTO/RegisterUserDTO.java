@@ -11,6 +11,8 @@ public class RegisterUserDTO {
     @JsonIgnore
     private UserRole role = UserRole.ROLE_USER;
 
+    public RegisterUserDTO() {}
+
     public String getUsername() {
         return username;
     }

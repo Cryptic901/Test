@@ -9,9 +9,12 @@ import com.example.testapp.impl.AuthenticationServiceImpl;
 import com.example.testapp.impl.JwtServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpSession;
 import org.apache.tomcat.websocket.AuthenticationException;
+import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,10 +34,10 @@ public class AuthenticationController {
     @PostMapping("/signup")
     @Operation(summary = "Зарегистрировать аккаунт", description = "Регистрация и добавление пользователя в БД," +
             " выдаётся код верификации, который нужно ввести по эндпоинту POST /auth/verify")
-    public ResponseEntity<User> register(@RequestBody RegisterUserDTO registerUserDTO) {
+    public ResponseEntity<?> register(@RequestBody RegisterUserDTO registerUserDTO) {
         User registeredUser = authenticationService.signUp(registerUserDTO);
         if (registeredUser == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Enter valid data");
         }
         return ResponseEntity.ok(registeredUser);
     }
@@ -42,10 +45,10 @@ public class AuthenticationController {
     @PostMapping("/login")
     @Operation(summary = "Залогиниться в аккаунт", description = "Вход пользователя в систему(разрешено только верифицированным пользователям)" +
             " и последующая выдача ему JWT токена который он должен отправлять с каждым запросом для получения доступа к API")
-    public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDTO loginUserDTO) throws AuthenticationException {
+    public ResponseEntity<?> authenticate(@RequestBody LoginUserDTO loginUserDTO) throws AuthenticationException {
         String jwtToken = authenticationService.authenticate(loginUserDTO);
         if (jwtToken == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are not signed up");
         }
         LoginResponse loginResponse = new LoginResponse(jwtToken, jwtService.getExpirationTime());
         return ResponseEntity.ok(loginResponse);
