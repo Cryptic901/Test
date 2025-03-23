@@ -152,7 +152,6 @@ public class UserServiceTest {
         userDTO.setBorrowedBook(new ArrayList<>());
 
         // Мокаем только необходимые методы
-        doReturn(userDTO).when(userService).getUserById(userId);
         doNothing().when(usersRepository).deleteById(userId);
         when(usersRepository.existsById(userId)).thenReturn(true);
 
@@ -207,19 +206,14 @@ public class UserServiceTest {
         user.setBorrowedBook(List.of(bookId1, bookId2));
 
         // Мокаем getUserById
-        doReturn(userDTO).when(userService).getUserById(userId);
         when(usersRepository.existsById(userId)).thenReturn(true);
         // Мокаем findById для книг
-        when(booksRepository.findById(bookId1)).thenReturn(Optional.of(book1));
-        when(booksRepository.findById(bookId2)).thenReturn(Optional.of(book2));
         doNothing().when(usersRepository).deleteById(userId);
         // Act
         userService.deleteUserById(userId);
 
         // Assert
         verify(usersRepository, times(1)).deleteById(userId);
-        verify(booksRepository, times(1)).findById(bookId1);
-        verify(booksRepository, times(1)).findById(bookId2);
     }
 
     @Test

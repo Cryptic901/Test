@@ -2,7 +2,6 @@ package com.example.testapp.impl;
 
 import com.example.testapp.DTO.BookDTO;
 import com.example.testapp.DTO.GenreDTO;
-import com.example.testapp.model.Book;
 import com.example.testapp.model.Genre;
 import com.example.testapp.repository.BookRepository;
 import com.example.testapp.repository.GenreRepository;

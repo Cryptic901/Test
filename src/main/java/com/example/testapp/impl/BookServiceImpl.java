@@ -43,7 +43,7 @@ public class BookServiceImpl implements BookService {
         book.setPublisher(bookDTO.getPublisher());
         book.setPublishedDate(LocalDate.now());
         book.setIsbn(bookDTO.getIsbn());
-        book.setAmount(bookDTO.getAmount());
+        book.setQuantity(bookDTO.getQuantity());
         book.setGenre(genresRepository.findByName(bookDTO.getGenreName()).orElse(null));
         book.setAuthor(authorsRepository.findAuthorByName(bookDTO.getAuthorName()).orElse(null));
     }
@@ -183,8 +183,8 @@ public class BookServiceImpl implements BookService {
             if (updates.containsKey("isbn")) {
                 books.setIsbn((String) updates.get("isbn"));
             }
-            if (updates.containsKey("amount")) {
-                books.setAmount((Integer) updates.get("amount"));
+            if (updates.containsKey("quantity")) {
+                books.setQuantity((Integer) updates.get("quantity"));
             }
             if (updates.containsKey("borrowedUserIds") && updates.get("borrowedUserIds") instanceof List<?> userids) {
                 List<Long> borrowedUserIds = userids.stream()

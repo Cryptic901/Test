@@ -36,8 +36,7 @@ public class SecurityConfiguration {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers("/auth/**").permitAll()
-                                .requestMatchers("/error").permitAll()
+                        authorize.requestMatchers("/auth/**", "/", "/error", "/login", "/register").permitAll()
                                 .requestMatchers(HttpMethod.GET).hasAnyRole("USER", "ADMIN")
                                 .requestMatchers(HttpMethod.POST, "/api/v1/users/borrow/**", "/api/v1/users/return/**")
                                 .hasAnyRole("USER", "ADMIN")
@@ -47,9 +46,12 @@ public class SecurityConfiguration {
                                 .requestMatchers(HttpMethod.PATCH).hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
+                .oauth2Login(login -> login.loginPage("/login")
+                        .defaultSuccessUrl("/home", true))
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                .logout(logout -> logout.logoutSuccessUrl("/logout"))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

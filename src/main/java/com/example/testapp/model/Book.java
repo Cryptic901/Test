@@ -1,7 +1,6 @@
 package com.example.testapp.model;
 
 import jakarta.persistence.*;
-import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -35,7 +34,7 @@ public class Book implements Serializable {
     private LocalDate publishedDate;
 
     @Column(nullable = false)
-    private int amount;
+    private int quantity;
 
     @ElementCollection
     private Set<Long> borrowedUserIds;
@@ -125,12 +124,12 @@ public class Book implements Serializable {
         this.publishedDate = publishedDate;
     }
 
-    public int getAmount() {
-        return amount;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public Long getCountOfBorrowingBook() {
@@ -145,14 +144,14 @@ public class Book implements Serializable {
     }
 
     public Book(Long id, String title, Author author, String isbn, String publisher, LocalDate publishedDate,
-                 int amount,Set<Long> borrowedUserIds, Genre genre, String description, Long countOfBorrowingBook) {
+                 int quantity,Set<Long> borrowedUserIds, Genre genre, String description, Long countOfBorrowingBook) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.isbn = isbn;
         this.publisher = publisher;
         this.publishedDate = publishedDate;
-        this.amount = amount;
+        this.quantity = quantity;
         this.borrowedUserIds = borrowedUserIds;
         this.genre = genre;
         this.description = description;
@@ -180,7 +179,7 @@ public class Book implements Serializable {
                 ", isbn='" + isbn + '\'' +
                 ", publisher='" + publisher + '\'' +
                 ", publishedDate='" + publishedDate + '\'' +
-                ", amount=" + amount +
+                ", quantity=" + quantity +
                 ", borrowedUserIds=" + borrowedUserIds +
                 ", genre=" + genre +
                 ", countOfBorrowingBook=" + countOfBorrowingBook +

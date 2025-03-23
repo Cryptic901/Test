@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService {
             Set<Long> borrowedUserBook = book.getBorrowedUserIds();
             borrowedUserBook.add(user.getId());
             book.setBorrowedUserIds(borrowedUserBook);
-            book.setAmount(book.getAmount() - 1);
+            book.setQuantity(book.getQuantity() - 1);
             book.setCountOfBorrowingBook(book.getCountOfBorrowingBook() + 1);
             genre.setCountOfBorrowingBookWithGenre(genre.getCountOfBorrowingBookWithGenre() + 1);
 
@@ -168,7 +168,7 @@ public class UserServiceImpl implements UserService {
             }
             // Удаляем книгу из списка пользователя, если он её вернул
             booksList.remove(book.getId());
-            book.setAmount(book.getAmount() + 1);
+            book.setQuantity(book.getQuantity() + 1);
             //Сохранение в репозитории
             usersRepository.save(user);
             booksRepository.save(book);

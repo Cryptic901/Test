@@ -19,7 +19,7 @@ public class BookDTO implements Serializable {
     private String isbn;
     private String publisher;
     private LocalDate publishedDate;
-    private int amount;
+    private int quantity;
 
     private String genreName;
     private String authorName;
@@ -32,7 +32,7 @@ public class BookDTO implements Serializable {
         dto.setIsbn(book.getIsbn());
         dto.setPublisher(book.getPublisher());
         dto.setPublishedDate(book.getPublishedDate());
-        dto.setAmount(book.getAmount());
+        dto.setQuantity(book.getQuantity());
         dto.setAuthorName(book.getAuthor() != null ? book.getAuthor().getName() : "Автор не указан");
         dto.setGenreName(book.getGenre() != null ? book.getGenre().getName() : "Жанр не указан");
 
@@ -106,23 +106,23 @@ public class BookDTO implements Serializable {
         this.publishedDate = publishedDate;
     }
 
-    public int getAmount() {
-        return amount;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public BookDTO(Long id, String title, String description, String isbn, String publisher, LocalDate publishedDate,
-                   int amount, String genreName, String authorName) {
+                   int quantity, String genreName, String authorName) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.isbn = isbn;
         this.publisher = publisher;
         this.publishedDate = publishedDate;
-        this.amount = amount;
+        this.quantity = quantity;
         this.genreName = genreName;
         this.authorName = authorName;
     }
@@ -137,7 +137,7 @@ public class BookDTO implements Serializable {
                 ", isbn='" + isbn + '\'' +
                 ", publisher='" + publisher + '\'' +
                 ", publishedDate='" + publishedDate + '\'' +
-                ", amount=" + amount +
+                ", quantity=" + quantity +
                 ", genreName='" + genreName + '\'' +
                 ", authorName='" + authorName + '\'' +
                 '}';
@@ -148,7 +148,7 @@ public class BookDTO implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BookDTO bookDTO = (BookDTO) o;
-        return amount == bookDTO.amount
+        return quantity == bookDTO.quantity
                 && Objects.equals(id, bookDTO.id)
                 && Objects.equals(title, bookDTO.title)
                 && Objects.equals(description, bookDTO.description)
@@ -162,6 +162,6 @@ public class BookDTO implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id, title, description, isbn, publisher, publishedDate,
-                amount, genreName, authorName);
+                quantity, genreName, authorName);
     }
 }

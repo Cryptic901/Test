@@ -1,7 +1,6 @@
 package com.example.testapp.model;
 
 import jakarta.persistence.*;
-import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -65,8 +64,10 @@ public class Genre implements Serializable {
     }
 
     public Integer getCountOfBookInThatGenre() {
-        if (countOfBookInThatGenre == null && books == null) {
+        if (countOfBookInThatGenre == null) {
             countOfBookInThatGenre = 0;
+        }
+        if (books == null) {
             books = new ArrayList<>();
         }
         return books.size();
@@ -85,7 +86,7 @@ public class Genre implements Serializable {
     }
 
     public Long getCountOfBorrowingBookWithGenre() {
-        if(countOfBorrowingBookWithGenre == null) {
+        if (countOfBorrowingBookWithGenre == null) {
             countOfBorrowingBookWithGenre = 0L;
         }
         return countOfBorrowingBookWithGenre;

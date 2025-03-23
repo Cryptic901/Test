@@ -14,6 +14,14 @@ spring:
       connection-timeout: 30000
       maximum-pool-size: 10
   security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: Ov23ligC8qGKFMvIXmoY
+            client-secret: 291ed9951396019ac3b0b4185bcb821f422463cf
+            scope:
+              - user:email
     jwt:
       secret-key: IqYBdEd70/GLhXYO0JDdiBhTnAk/zxS+gWxtVqTv7oLDmmU+Ze2V6lrkAuVDyLsWesxmRZD9MMDhb25cQWkc/w==
       expiration-time: 3600000
