@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Verify</title>
+</head>
+<body>
+<form th:action="@{auth/verify}" th:object="${verifyUser}" method="post">
+    <label for="verificationCode">Enter code from your email:</label>
+    <input type="text" id="verificationCode" th:field="*{verificationCode}" name="verificationCode" required><br>
+    <button type="submit">Login</button>
+</form>
+
+<form action="resend" method="get">
+    <button type="submit">Resend code</button>
+</form>
+</body>
+</html>

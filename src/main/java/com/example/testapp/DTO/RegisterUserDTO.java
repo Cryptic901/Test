@@ -11,6 +11,14 @@ public class RegisterUserDTO {
     @JsonIgnore
     private UserRole role = UserRole.ROLE_USER;
 
+    public RegisterUserDTO(String email, String password, String username) {
+        this.email = email;
+        this.password = password;
+        this.username = username;
+    }
+
+    public RegisterUserDTO() {}
+
     public String getUsername() {
         return username;
     }
