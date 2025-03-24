@@ -3,7 +3,6 @@ package com.example.testapp.model;
 import com.example.testapp.enums.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import org.springframework.data.redis.core.RedisHash;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 
 /* Сущность пользователь */
@@ -166,5 +166,26 @@ public class User implements UserDetails, Serializable {
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return enabled == user.enabled &&
+                Objects.equals(id, user.id) &&
+                Objects.equals(username, user.username) &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(password, user.password) &&
+                role == user.role &&
+                Objects.equals(verificationCode, user.verificationCode) &&
+                Objects.equals(verificationCodeExpiresAt, user.verificationCodeExpiresAt) &&
+                Objects.equals(borrowedBook, user.borrowedBook);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, email, password, role, enabled,
+                verificationCode, verificationCodeExpiresAt, borrowedBook);
     }
 }

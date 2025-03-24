@@ -17,6 +17,12 @@ public class AuthorDTO implements Serializable {
 
     private String biography;
 
+    public AuthorDTO(Author author) {
+        this.id = author.getId();
+        this.name = author.getName();
+        this.biography = author.getBiography();
+    }
+
     public static AuthorDTO fromEntity(Author authors) {
         if(authors == null) return null;
         AuthorDTO dto = new AuthorDTO();

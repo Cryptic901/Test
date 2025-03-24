@@ -1,10 +1,10 @@
 package com.example.testapp.model;
 
 import jakarta.persistence.*;
-import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 /* Сущность автор */
 
@@ -71,6 +71,11 @@ public class Author implements Serializable {
     }
     public Author() {}
 
+    public Author(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     @Override
     public String toString() {
         return "Author{" +
@@ -78,5 +83,20 @@ public class Author implements Serializable {
                 ", name='" + name + '\'' +
                 ", biography='" + biography + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Author author = (Author) o;
+        return Objects.equals(id, author.id) &&
+                Objects.equals(name, author.name) &&
+                Objects.equals(biography, author.biography) &&
+                Objects.equals(bookList, author.bookList);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, biography, bookList);
     }
 }

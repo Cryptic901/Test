@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /* Сущность жанр */
 
@@ -118,5 +119,23 @@ public class Genre implements Serializable {
     }
 
     public Genre() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Genre genre = (Genre) o;
+        return Objects.equals(id, genre.id) &&
+                Objects.equals(name, genre.name) &&
+                Objects.equals(books, genre.books) &&
+                Objects.equals(description, genre.description) &&
+                Objects.equals(countOfBookInThatGenre, genre.countOfBookInThatGenre) &&
+                Objects.equals(countOfBorrowingBookWithGenre, genre.countOfBorrowingBookWithGenre);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, books, description,
+                countOfBookInThatGenre, countOfBorrowingBookWithGenre);
     }
 }

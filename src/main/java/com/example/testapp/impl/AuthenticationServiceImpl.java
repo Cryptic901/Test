@@ -51,7 +51,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return usersRepository.save(user);
     }
 
-    public String authenticate(LoginUserDTO input) throws AuthenticationException {
+    public String authenticate(LoginUserDTO input) {
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

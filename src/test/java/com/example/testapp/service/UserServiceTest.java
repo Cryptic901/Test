@@ -238,6 +238,7 @@ public class UserServiceTest {
         book.setId(bookId);
         book.setTitle("Book 1");
         book.setGenre(genre);
+        book.setQuantity(1);
         book.setBorrowedUserIds(new HashSet<>(Set.of(userId)));
 
         when(booksRepository.findById(bookId)).thenReturn(Optional.of(book));
@@ -251,6 +252,35 @@ public class UserServiceTest {
         assertEquals("Book borrowed successfully!", result);
         assertEquals(Optional.of(userId), book.getBorrowedUserIds().stream().findFirst());
         verify(booksRepository, times(1)).save(any(Book.class));
+        verify(booksRepository, times(1)).findById(bookId);
+    }
+
+    @Test
+    void borrowBookById_Quantity0() {
+        long userId = 1L;
+        long bookId = 10L;
+        long genreId = 2L;
+
+        SecurityContext securityContext = mock(SecurityContext.class);
+
+        SecurityContextHolder.setContext(securityContext);
+        Genre genre = new Genre();
+        genre.setId(genreId);
+        User user = new User();
+        user.setId(userId);
+        user.setUsername("username");
+        Book book = new Book();
+        book.setId(bookId);
+        book.setTitle("Book 1");
+        book.setGenre(genre);
+        book.setQuantity(0);
+        book.setBorrowedUserIds(new HashSet<>(Set.of(userId)));
+
+        when(booksRepository.findById(bookId)).thenReturn(Optional.of(book));
+        String result = userService.borrowBookById(bookId);
+
+        assertEquals("We don't have that books", result);
+        assertEquals(Optional.of(userId), book.getBorrowedUserIds().stream().findFirst());
         verify(booksRepository, times(1)).findById(bookId);
     }
 

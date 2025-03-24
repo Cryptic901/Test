@@ -106,8 +106,12 @@ public class UserServiceImpl implements UserService {
         long genreId = 0;
         Book book = booksRepository.findById(bookId)
                 .orElse(null);
-        if (book != null) {
+
+        if (book != null && book.getGenre() != null) {
             genreId = book.getGenre().getId();
+            if (book.getQuantity() == 0) {
+                return "We don't have that books";
+            }
         }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();

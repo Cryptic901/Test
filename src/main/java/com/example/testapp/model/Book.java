@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
 /* Сущность книга */
@@ -185,6 +186,29 @@ public class Book implements Serializable {
                 ", countOfBorrowingBook=" + countOfBorrowingBook +
                 ", description='" + description + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return quantity == book.quantity &&
+                Objects.equals(id, book.id) &&
+                Objects.equals(title, book.title) &&
+                Objects.equals(author, book.author) &&
+                Objects.equals(isbn, book.isbn) &&
+                Objects.equals(publisher, book.publisher) &&
+                Objects.equals(publishedDate, book.publishedDate) &&
+                Objects.equals(borrowedUserIds, book.borrowedUserIds) &&
+                Objects.equals(genre, book.genre) &&
+                Objects.equals(countOfBorrowingBook, book.countOfBorrowingBook) &&
+                Objects.equals(description, book.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, author, isbn, publisher, publishedDate, quantity,
+                borrowedUserIds, genre, countOfBorrowingBook, description);
     }
 }
 
