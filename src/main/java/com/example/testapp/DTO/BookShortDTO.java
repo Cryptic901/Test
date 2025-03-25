@@ -24,6 +24,12 @@ public class BookShortDTO implements Serializable {
         this.title = title;
     }
 
+    public BookShortDTO(long id, String title, String description) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+    }
+
     public BookShortDTO() {}
 
     public static BookShortDTO fromEntity(Book book) {

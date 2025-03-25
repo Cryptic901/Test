@@ -97,10 +97,8 @@ public class AuthorServiceImpl implements AuthorService {
         if (!exists) {
             return new ArrayList<>();
         }
-        return booksRepository.findByAuthorId(authorId)
-                .stream()
-                .map(BookShortDTO::fromEntity)
-                .toList();
+        return booksRepository.findByAuthorId(authorId).
+                stream().map(BookShortDTO::fromEntity).toList();
     }
     @CacheEvict(cacheNames = "authors", key = "#id")
     @Transactional

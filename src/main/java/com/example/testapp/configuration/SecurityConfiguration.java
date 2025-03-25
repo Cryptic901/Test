@@ -46,8 +46,6 @@ public class SecurityConfiguration {
                                 .requestMatchers(HttpMethod.PATCH).hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
-                .oauth2Login(login -> login.loginPage("/login")
-                        .defaultSuccessUrl("/home", true))
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )

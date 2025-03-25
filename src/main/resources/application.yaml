@@ -1,3 +1,5 @@
+server:
+  port: 8080
 spring:
   jpa:
     database: postgresql
@@ -50,8 +52,9 @@ spring:
 springdoc:
   api-docs:
     enabled: true
+    path: /v3/api-docs
   swagger-ui:
-    path: "/swagger-ui.html"
+    path: /swagger-ui.html
   show-actuator: true
 
 logging:

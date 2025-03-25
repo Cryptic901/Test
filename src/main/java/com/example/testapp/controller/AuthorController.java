@@ -113,7 +113,7 @@ public class AuthorController {
     @Operation(summary = "Получить список всех книг автора",
             description = "Возвращает список всех книг которые написал автор, ID которого было введено," +
                     " если автор не найден статус 204")
-    public ResponseEntity<List<BookShortDTO>> getAllAuthorBook(@PathVariable long authorId) {
+    public ResponseEntity<List<BookShortDTO>> getAllAuthorBooks(@PathVariable long authorId) {
         AuthorDTO author = authorService.getAuthorById(authorId);
         List<BookShortDTO> result = authorService.getAllAuthorBook(authorId);
         if (author == null) {
