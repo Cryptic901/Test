@@ -3,6 +3,7 @@ package com.example.testapp.model;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,7 +22,7 @@ public class Author implements Serializable {
     private String biography;
 
     @ElementCollection
-    private List<Long> bookList;
+    private List<Long> bookList = new ArrayList<>();
 
     public Author(long authorId) {
         this.id = authorId;

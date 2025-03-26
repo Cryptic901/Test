@@ -101,12 +101,12 @@ public class AuthorController {
     @DeleteMapping("/delete/{id}")
     @Operation(summary = "Удалить автора по ID",
             description = "Удаляет автора по ID возвращая статус 410, если автор не найден статус 204")
-    public ResponseEntity<AuthorDTO> deleteAuthorById(@PathVariable long id) {
+    public ResponseEntity<String> deleteAuthorById(@PathVariable long id) {
         String response = authorService.deleteAuthorById(id);
         if (response.equals("Author not found")) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-        return ResponseEntity.status(HttpStatus.GONE).build();
+        return ResponseEntity.status(HttpStatus.GONE).body(response);
     }
 
     @GetMapping("/getAllBooks/{authorId}")

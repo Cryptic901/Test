@@ -32,12 +32,12 @@ public class BookController {
     @DeleteMapping("/delete/{id}")
     @Operation(summary = "Удалить книгу по ID",
             description = "Удаляет книгу по ID отправляя статус 410, если не находит по id статус 204")
-    public ResponseEntity<BookDTO> deleteBookById(@PathVariable long id) {
+    public ResponseEntity<String> deleteBookById(@PathVariable long id) {
         String response = bookService.deleteBookById(id);
         if (response.equals("Book not found") || response.equals("Books author not found")) {
-            ResponseEntity.notFound().build();
+           return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-        return ResponseEntity.status(HttpStatus.GONE).build();
+        return ResponseEntity.status(HttpStatus.GONE).body(response);
     }
 
     //Отправка запроса и получение ответа на добавление книги
@@ -45,7 +45,7 @@ public class BookController {
     @Operation(summary = "Создать книгу",
             description = "Создаёт книгу, при неверном введении отправляет статус 400")
     public ResponseEntity<BookDTO> addBook(@RequestBody BookDTO bookDTO) {
-        BookDTO book = bookService.addBook(bookDTO);
+       BookDTO book = bookService.addBook(bookDTO);
         if (bookDTO == null) {
             ResponseEntity.badRequest().build();
         }
@@ -57,7 +57,7 @@ public class BookController {
     @Operation(summary = "Обновить книгу по ID",
             description = "Обновляет книгу, ID которой введено," +
                     " если книга не найдена статус 204, при неверном введении статус 400")
-    public ResponseEntity<BookDTO> updateBookById(@PathVariable long id, @RequestBody BookDTO bookDTO) {
+    public ResponseEntity<BookDTO> updateBookAllFields(@PathVariable long id, @RequestBody BookDTO bookDTO) {
         BookDTO newBook = bookService.updateBookById(id, bookDTO);
         BookDTO book = bookService.getBookById(id);
         if (bookDTO == null) {

@@ -11,10 +11,12 @@ spring:
   datasource:
     username: postgres
     password: MTQ4ODUyNDJnb2lkYXpvdnNraWJpZGk=
-    url: jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:5432/postgres?user=postgres.hokbofyvzdugplrhoghf&password=MTQ4ODUyNDJnb2lkYXpvdnNraWJpZGk=
+    url: jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:5432/postgres
     hikari:
       connection-timeout: 30000
       maximum-pool-size: 10
+      idle-timeout: 10000
+      max-lifetime: 30000
   security:
     oauth2:
       client:

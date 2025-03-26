@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -38,7 +39,7 @@ public class Book implements Serializable {
     private int quantity;
 
     @ElementCollection
-    private Set<Long> borrowedUserIds;
+    private Set<Long> borrowedUserIds = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "genre_id")
@@ -48,6 +49,17 @@ public class Book implements Serializable {
 
     @Column(length = 1000)
     private String description;
+
+    public Book(String title, String isbn, LocalDate publishedDate, String publisher,
+                long countOfBorrowingBook, Author author, Genre genre) {
+        this.title = title;
+        this.isbn = isbn;
+        this.publisher = publisher;
+        this.publishedDate = publishedDate;
+        this.author = author;
+        this.genre = genre;
+        this.countOfBorrowingBook = countOfBorrowingBook;
+    }
 
     public Long getId() {
         return id;
@@ -170,7 +182,11 @@ public class Book implements Serializable {
         this.id = id;
         this.title = title;
     }
-
+    public Book(long id, String title, String description) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+    }
     @Override
     public String toString() {
         return "Book{" +

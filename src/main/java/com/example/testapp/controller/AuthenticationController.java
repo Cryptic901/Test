@@ -3,18 +3,15 @@ package com.example.testapp.controller;
 import com.example.testapp.DTO.LoginUserDTO;
 import com.example.testapp.DTO.RegisterUserDTO;
 import com.example.testapp.DTO.VerifyUserDTO;
-import com.example.testapp.model.User;
-import com.example.testapp.responses.LoginResponse;
 import com.example.testapp.impl.AuthenticationServiceImpl;
 import com.example.testapp.impl.JwtServiceImpl;
+import com.example.testapp.model.User;
+import com.example.testapp.responses.LoginResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpSession;
 import org.apache.tomcat.websocket.AuthenticationException;
-import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

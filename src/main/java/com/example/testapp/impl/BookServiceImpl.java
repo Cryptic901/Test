@@ -66,7 +66,9 @@ public class BookServiceImpl implements BookService {
         if (authors == null) {
             return "Books author not found";
         }
-        authors.getBookList().remove(book.getId());
+        if (authors.getBookList() != null) {
+            authors.getBookList().remove(book.getId());
+        }
         authorsRepository.save(authors);
         booksRepository.deleteById(id);
         return "Book deleted successfully";
@@ -95,9 +97,9 @@ public class BookServiceImpl implements BookService {
             authorBookList.add(savedBook.getId());
             author.setBookList(authorBookList);
 
-            List<Long> booksWithThatGenre = genre.getBook();
+            List<Long> booksWithThatGenre = genre.getBooks();
             booksWithThatGenre.add(savedBook.getId());
-            genre.setBook(booksWithThatGenre);
+            genre.setBooks(booksWithThatGenre);
 
             authorsRepository.save(author);
             genresRepository.save(genre);

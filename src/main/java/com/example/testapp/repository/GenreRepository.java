@@ -21,4 +21,6 @@ public interface GenreRepository extends JpaRepository<Genre, Long> {
     List<Genre> sortByGenrePopularityDescending();
 
     Optional<Genre> findByName(String name);
+
+    Optional<Genre> findGenreByDescription(String description);
 }

@@ -124,7 +124,7 @@ public class GenreServiceImpl implements GenreService {
             if (updates.containsKey("books") && updates.get("books") instanceof List<?> objects) {
                 List<Long> bookIds = objects.stream()
                         .map(obj -> Long.valueOf(obj.toString())).toList();
-                genres.setBook(new ArrayList<>(bookIds));
+                genres.setBooks(new ArrayList<>(bookIds));
             }
             if (updates.containsKey("countOfBookInThatGenre")) {
                 genres.setCountOfBookInThatGenre((Integer) updates.get("countOfBookInThatGenre"));

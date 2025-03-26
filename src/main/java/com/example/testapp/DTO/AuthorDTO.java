@@ -17,12 +17,6 @@ public class AuthorDTO implements Serializable {
 
     private String biography;
 
-    public AuthorDTO(Author author) {
-        this.id = author.getId();
-        this.name = author.getName();
-        this.biography = author.getBiography();
-    }
-
     public static AuthorDTO fromEntity(Author authors) {
         if(authors == null) return null;
         AuthorDTO dto = new AuthorDTO();
@@ -58,14 +52,6 @@ public class AuthorDTO implements Serializable {
     }
 
     public AuthorDTO() {}
-    public AuthorDTO(long id) {
-        this.id = id;
-    }
-
-    public AuthorDTO(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
 
     @Override
     public String toString() {

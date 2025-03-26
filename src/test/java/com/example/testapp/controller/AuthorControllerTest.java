@@ -2,23 +2,18 @@ package com.example.testapp.controller;
 
 import com.example.testapp.DTO.AuthorDTO;
 import com.example.testapp.DTO.BookShortDTO;
+import com.example.testapp.SetUpForIntegrationTests;
 import com.example.testapp.exception.EntityNotFoundException;
 import com.example.testapp.model.Author;
-import com.example.testapp.repository.AuthorRepository;
+import com.example.testapp.model.Book;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
@@ -27,46 +22,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@Testcontainers
 @AutoConfigureMockMvc
-public class AuthorControllerTest {
+public class AuthorControllerTest extends SetUpForIntegrationTests {
 
     @Autowired
     private MockMvc mvc;
-
-    @Autowired
-    private AuthorRepository authorRepository;
-
-    @Container
-    @ServiceConnection
-    private final static PostgreSQLContainer<?> container =
-            new PostgreSQLContainer<>("postgres:latest");
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
-    @BeforeEach
-    void setUp() {
-        authorRepository.deleteAll();
-        authorRepository.flush();
-        List<BookShortDTO> books = List.of(
-                new BookShortDTO(1L, "book1"),
-                new BookShortDTO(2L, "book2"),
-                new BookShortDTO(3L, "book3")
-        );
-        Author testAuthor = new Author();
-        testAuthor.setName("Test Author");
-        authorRepository.saveAndFlush(testAuthor);
-        Author testAuthor2 = new Author();
-        testAuthor2.setName("Test Author2");
-        authorRepository.saveAndFlush(testAuthor2);
-        Author testAuthor3 = new Author();
-        testAuthor3.setName("Test Author3");
-        testAuthor3.setBookList(books.stream().map(BookShortDTO::getId).toList());
-        authorRepository.saveAndFlush(testAuthor3);
-        Author testAuthor4 = new Author();
-        testAuthor4.setName("Test Author4");
-        authorRepository.saveAndFlush(testAuthor4);
-    }
 
     @Test
     @WithMockUser
@@ -79,13 +39,13 @@ public class AuthorControllerTest {
                 .map(AuthorDTO::fromEntity).toList();
 
         assertThat(result.getResponse().getContentAsString())
-                .isEqualTo(objectMapper.writeValueAsString(authors));
+                .isEqualTo(mapper.writeValueAsString(authors));
     }
 
     @Test
     @WithMockUser
     void getAuthorById_Success() throws Exception {
-        var testAuthor = authorRepository.findAuthorByName("Test Author")
+        var testAuthor = authorRepository.findAuthorByName("author1")
                 .orElseThrow(() -> new EntityNotFoundException("Author not found"));
         long id = testAuthor.getId();
 
@@ -97,13 +57,13 @@ public class AuthorControllerTest {
                 .orElseThrow(() -> new EntityNotFoundException("Author not found")));
 
         assertThat(result.getResponse().getContentAsString())
-                .isEqualTo(objectMapper.writeValueAsString(author));
+                .isEqualTo(mapper.writeValueAsString(author));
     }
 
     @Test
     @WithMockUser
     void getAuthorByName_Success() throws Exception {
-        var testAuthor = authorRepository.findAuthorByName("Test Author")
+        var testAuthor = authorRepository.findAuthorByName("author1")
                 .orElseThrow(() -> new EntityNotFoundException("Author not found"));
         String name = testAuthor.getName();
 
@@ -115,7 +75,7 @@ public class AuthorControllerTest {
                 .orElseThrow(() -> new EntityNotFoundException("Author not found")));
 
         assertThat(result.getResponse().getContentAsString())
-                .isEqualTo(objectMapper.writeValueAsString(author));
+                .isEqualTo(mapper.writeValueAsString(author));
     }
 
     @Test
@@ -124,7 +84,7 @@ public class AuthorControllerTest {
         Author testAuthor = new Author();
         testAuthor.setName("New Author");
 
-        String jsonRequest = objectMapper.writeValueAsString(testAuthor);
+        String jsonRequest = mapper.writeValueAsString(testAuthor);
 
         var result = mvc.perform(post("/api/v1/authors/create")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -133,7 +93,7 @@ public class AuthorControllerTest {
                 .andReturn();
 
         String jsonResponse = result.getResponse().getContentAsString();
-        AuthorDTO authorDTO = objectMapper.readValue(jsonResponse, AuthorDTO.class);
+        AuthorDTO authorDTO = mapper.readValue(jsonResponse, AuthorDTO.class);
         assertThat(authorDTO.getName()).isEqualTo(testAuthor.getName());
     }
 
@@ -142,11 +102,11 @@ public class AuthorControllerTest {
     void updateAuthorAllFields_Success() throws Exception {
         Author updatedAuthor = new Author();
         updatedAuthor.setName("New Author");
-        Author testAuthor = authorRepository.findAuthorByName("Test Author")
+        Author testAuthor = authorRepository.findAuthorByName("author1")
                 .orElseThrow(() -> new EntityNotFoundException("Author not found"));
         long id = testAuthor.getId();
 
-        String jsonRequest = objectMapper.writeValueAsString(updatedAuthor);
+        String jsonRequest = mapper.writeValueAsString(updatedAuthor);
 
         var result = mvc.perform(put("/api/v1/authors/update/allFields/{id}", id)
                         .content(jsonRequest)
@@ -155,7 +115,7 @@ public class AuthorControllerTest {
                 .andReturn();
 
         String jsonResponse = result.getResponse().getContentAsString();
-        AuthorDTO authorDTO = objectMapper.readValue(jsonResponse, AuthorDTO.class);
+        AuthorDTO authorDTO = mapper.readValue(jsonResponse, AuthorDTO.class);
         assertThat(authorDTO.getName()).isEqualTo(updatedAuthor.getName());
     }
 
@@ -165,12 +125,12 @@ public class AuthorControllerTest {
         Author updatedAuthor = new Author();
         updatedAuthor.setName("New Author");
         updatedAuthor.setBiography("New Biography");
-        Author testAuthor = authorRepository.findAuthorByName("Test Author")
+        Author testAuthor = authorRepository.findAuthorByName("author1")
                 .orElseThrow(() -> new EntityNotFoundException("Author not found"));
         testAuthor.setBiography("Test Biography");
         long id = testAuthor.getId();
 
-        String jsonRequest = objectMapper.writeValueAsString(updatedAuthor);
+        String jsonRequest = mapper.writeValueAsString(updatedAuthor);
 
         var result = mvc.perform(patch("/api/v1/authors/update/{id}", id)
                         .content(jsonRequest)
@@ -179,7 +139,7 @@ public class AuthorControllerTest {
                 .andReturn();
 
         String jsonResponse = result.getResponse().getContentAsString();
-        AuthorDTO authorDTO = objectMapper.readValue(jsonResponse, AuthorDTO.class);
+        AuthorDTO authorDTO = mapper.readValue(jsonResponse, AuthorDTO.class);
         assertThat(authorDTO.getName()).isEqualTo(updatedAuthor.getName());
         assertThat(authorDTO.getBiography()).isNotEqualTo(updatedAuthor.getBiography());
     }
@@ -188,13 +148,18 @@ public class AuthorControllerTest {
     @Test
     @WithMockUser(roles = {"ADMIN"})
     void deleteAuthorById_Success() throws Exception {
-        Author testAuthor = authorRepository.findAuthorByName("Test Author2")
+        List<Book> books = bookRepository.findAllById(List.of(1L, 2L, 3L));
+        Author testAuthor = authorRepository.findAuthorByName("author2")
                 .orElseThrow(() -> new EntityNotFoundException("Author not found"));
+        testAuthor.setBookList(books.stream().map(Book::getId).toList());
         long id = testAuthor.getId();
 
-        mvc.perform(delete("/api/v1/authors/delete/{id}", id))
-                .andExpect(status().isGone());
+       var result = mvc.perform(delete("/api/v1/authors/delete/{id}", id))
+                .andExpect(status().isGone())
+                .andReturn();
 
+        assertThat(result.getResponse().getContentAsString())
+               .isEqualTo("Author deleted successfully");
         assertThat(authorRepository.findById(id).isEmpty()).isTrue();
     }
 
@@ -202,7 +167,7 @@ public class AuthorControllerTest {
     @WithMockUser
     @Transactional
     void getAllAuthorBooks_Success() throws Exception {
-        Author author = authorRepository.findAuthorByName("Test Author3")
+        Author author = authorRepository.findAuthorByName("author2")
                 .orElseThrow(() -> new EntityNotFoundException("Author not found"));
         long id = author.getId();
 
@@ -211,7 +176,10 @@ public class AuthorControllerTest {
                 .andReturn();
 
         List<Long> authorBookList = author.getBookList();
-        assertThat(result.getResponse().getContentAsString())
-                .isEqualTo(objectMapper.writeValueAsString(authorBookList));
+        List<BookShortDTO> bookList = bookRepository.findAllById(authorBookList)
+                .stream().map(BookShortDTO::fromEntity).toList();
+        String jsonResponse = result.getResponse().getContentAsString();
+        assertThat(jsonResponse)
+                .isEqualTo(mapper.writeValueAsString(bookList));
     }
 }

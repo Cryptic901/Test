@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   supabase:
-    image: supabase/postgres:15.8.1.058
+    image: supabase/postgres:latest
     container_name: supabase_db
     environment:
       POSTGRES_USER: postgres

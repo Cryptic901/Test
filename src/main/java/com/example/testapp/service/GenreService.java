@@ -1,5 +1,6 @@
 package com.example.testapp.service;
 
+import com.example.testapp.DTO.BookDTO;
 import com.example.testapp.DTO.GenreDTO;
 import com.example.testapp.model.Genre;
 
@@ -17,6 +18,8 @@ public interface GenreService {
     GenreDTO getGenreById(long id);
 
     GenreDTO updateGenreById(long id, GenreDTO genreDTO);
+
+    List<BookDTO> getAllBooksInGenreById(long genreId);
 
     String deleteGenreById(long id);
 

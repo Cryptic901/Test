@@ -21,7 +21,7 @@ public class Genre implements Serializable {
     private String name;
 
     @ElementCollection
-    private List<Long> books;
+    private List<Long> books = new ArrayList<>();
 
     private String description;
 
@@ -35,6 +35,11 @@ public class Genre implements Serializable {
 
     public Genre(String name) {
         this.name = name;
+    }
+
+    public Genre(String name, String description) {
+        this.name = name;
+        this.description = description;
     }
 
     public Long getId() {
@@ -53,14 +58,11 @@ public class Genre implements Serializable {
         this.name = name;
     }
 
-    public List<Long> getBook() {
-        if (books == null) {
-            books = new ArrayList<>();
-        }
+    public List<Long> getBooks() {
         return books;
     }
 
-    public void setBook(List<Long> books) {
+    public void setBooks(List<Long> books) {
         this.books = books;
     }
 

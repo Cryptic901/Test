@@ -64,7 +64,7 @@ public class GenreController {
     @PutMapping("/update/allFields/{id}")
     @Operation(summary = "Обновление жанра по ID",
             description = "Обновляет жанр, если не находит по id статус 204, при неверном введении статус 400")
-    public ResponseEntity<GenreDTO> updateGenreById(@PathVariable long id, @RequestBody GenreDTO genreDTO) {
+    public ResponseEntity<GenreDTO> updateGenreAllFields(@PathVariable long id, @RequestBody GenreDTO genreDTO) {
         GenreDTO genre = genreService.getGenreById(id);
         if (genreDTO == null) {
             return ResponseEntity.badRequest().body(null);
@@ -95,12 +95,12 @@ public class GenreController {
     @DeleteMapping("/delete/{id}")
     @Operation(summary = "Удаление жанра по ID",
             description = "Удаляет жанр по введенному ID отправляя статус 410, если не находит по id статус 204")
-    public ResponseEntity<GenreDTO> deleteGenre(@PathVariable long id) {
+    public ResponseEntity<String> deleteGenre(@PathVariable long id) {
         String response = genreService.deleteGenreById(id);
         if (response.equals("Genre not found")) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-        return ResponseEntity.status(HttpStatus.GONE).build();
+        return ResponseEntity.status(HttpStatus.GONE).body(response);
     }
 
     @GetMapping("/get/name/{name}")
