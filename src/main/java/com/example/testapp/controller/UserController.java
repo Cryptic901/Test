@@ -35,8 +35,8 @@ public class UserController {
     @Operation(summary = "Вернуть всех пользователей",
             description = "Возвращает список всех пользователей, если список пустой статус 204")
     public ResponseEntity<List<UserDTO>> getAllUser() {
-        boolean notHaveAnyUser = userService.getAllUser().isEmpty();
-        if (notHaveAnyUser) {
+        boolean dontHaveAnyUsers = userService.getAllUser().isEmpty();
+        if (dontHaveAnyUsers) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return ResponseEntity.ok(userService.getAllUser());
@@ -66,7 +66,7 @@ public class UserController {
     @Operation(summary = "Обновить пользователя по ID",
             description = "Обновляет пользователя ID которого введено," +
                     " если пользователь не найден статус 204, при неверном введении статус 400")
-    public ResponseEntity<UserDTO> updateUserById(@PathVariable long userId, @RequestBody UserDTO userDTO) {
+    public ResponseEntity<?> updateUserAllFields(@PathVariable long userId, @RequestBody UserDTO userDTO) {
         UserDTO user = userService.getUserById(userId);
         UserDTO updatedUser = userService.updateUserById(userId, userDTO);
         if (user == null) {
@@ -135,11 +135,20 @@ public class UserController {
         return ResponseEntity.ok(userService.returnBookById(bookId));
     }
     @GetMapping("/reading")
-    public ResponseEntity<List<BookDTO>> booksThatReadingUser(@RequestParam long userId) {
+    public ResponseEntity<List<BookDTO>> getBooksThatUserReading(@RequestParam long userId) {
         List<BookDTO> books = userService.getBooksThatUserReadingById(userId);
         if (books == null || books.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(books);
+    }
+
+    @GetMapping("/get/email/{email}")
+    public ResponseEntity<UserDTO> getUserByEmail(@PathVariable String email) {
+        UserDTO user = userService.getUserByEmail(email);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(user);
     }
 }

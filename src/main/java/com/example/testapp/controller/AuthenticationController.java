@@ -42,7 +42,7 @@ public class AuthenticationController {
     @PostMapping("/login")
     @Operation(summary = "Залогиниться в аккаунт", description = "Вход пользователя в систему(разрешено только верифицированным пользователям)" +
             " и последующая выдача ему JWT токена который он должен отправлять с каждым запросом для получения доступа к API")
-    public ResponseEntity<?> authenticate(@RequestBody LoginUserDTO loginUserDTO) throws AuthenticationException {
+    public ResponseEntity<?> authenticate(@RequestBody LoginUserDTO loginUserDTO) {
         String jwtToken = authenticationService.authenticate(loginUserDTO);
         if (jwtToken == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are not signed up");

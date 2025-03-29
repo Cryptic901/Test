@@ -6,6 +6,15 @@ public class VerifyUserDTO {
     private String password;
     private String verificationCode;
 
+    public VerifyUserDTO(String email, String password, String verificationCode) {
+        this.email = email;
+        this.password = password;
+        this.verificationCode = verificationCode;
+    }
+
+    public VerifyUserDTO() {
+    }
+
     public VerifyUserDTO(String email, String password) {
         this.email = email;
         this.password = password;

@@ -28,4 +28,7 @@ public class LoginResponse {
         this.token = token;
         this.expiresIn = expiresIn;
     }
+
+    public LoginResponse() {
+    }
 }

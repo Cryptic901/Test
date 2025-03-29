@@ -1,7 +1,11 @@
 package com.example.testapp.model;
 
 import com.example.testapp.enums.UserRole;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,6 +22,7 @@ import java.util.Objects;
 /* Сущность пользователь */
 @Entity
 @Table(name = "users")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements UserDetails, Serializable {
 
     @Id
@@ -44,6 +49,7 @@ public class User implements UserDetails, Serializable {
     private String verificationCode;
 
     @Column(name = "verification_expiration")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime verificationCodeExpiresAt;
 
     @ElementCollection
@@ -159,8 +165,19 @@ public class User implements UserDetails, Serializable {
     }
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (role == null) {
+            return List.of(new SimpleGrantedAuthority(UserRole.ROLE_UNDEFINED.toString()));
+        }
         return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @JsonProperty("authorities")
+    public List<String> getAuthorityStrings() {
+        return getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
     }
 
     @Override

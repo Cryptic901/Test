@@ -42,6 +42,16 @@ public class BookShortDTO implements Serializable {
         return dto;
     }
 
+    public static Book toEntity(BookShortDTO dto) {
+        if (dto == null) return null;
+        Book book = new Book();
+        book.setId(dto.getId());
+        book.setTitle(dto.getTitle());
+        book.setDescription(dto.getDescription());
+
+        return book;
+    }
+
     public Long getId() {
         return id;
     }

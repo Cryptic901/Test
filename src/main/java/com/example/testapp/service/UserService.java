@@ -22,4 +22,6 @@ public interface UserService {
     String returnBookById(long bookId);
 
     UserDTO updateUserFields(long id, Map<String, Object> updates);
+
+    UserDTO getUserByEmail(String email);
 }

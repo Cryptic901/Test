@@ -1,11 +1,14 @@
 package com.example.testapp;
 
+import com.example.testapp.enums.UserRole;
 import com.example.testapp.model.Author;
 import com.example.testapp.model.Book;
 import com.example.testapp.model.Genre;
+import com.example.testapp.model.User;
 import com.example.testapp.repository.AuthorRepository;
 import com.example.testapp.repository.BookRepository;
 import com.example.testapp.repository.GenreRepository;
+import com.example.testapp.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
@@ -34,6 +37,9 @@ public abstract class SetUpForIntegrationTests {
     @Autowired
     protected GenreRepository genreRepository;
 
+    @Autowired
+    protected UserRepository userRepository;
+
     @Container
     @ServiceConnection
     public static final PostgreSQLContainer<?> postgres =
@@ -45,6 +51,8 @@ public abstract class SetUpForIntegrationTests {
 
     @BeforeEach
     void setUpTestData() {
+        userRepository.deleteAll();
+        userRepository.flush();
         bookRepository.deleteAll();
         bookRepository.flush();
         authorRepository.deleteAll();
@@ -98,5 +106,12 @@ public abstract class SetUpForIntegrationTests {
                 "Test Publisher3", 17L, author1, genre2));
         bookRepository.saveAndFlush(new Book("Test Book4", "323456789011", LocalDate.now(),
                 "Test Publisher4", 0L, author3, genre3));
+
+        userRepository.saveAndFlush(new User("User№1", "user1@gmail.com",
+                "password1", UserRole.ROLE_USER));
+        userRepository.saveAndFlush(new User("User№2", "user2@gmail.com",
+                "password2", UserRole.ROLE_USER));
+        userRepository.saveAndFlush(new User("User№3", "user3@gmail.com",
+                "password3", UserRole.ROLE_USER));
     }
 }

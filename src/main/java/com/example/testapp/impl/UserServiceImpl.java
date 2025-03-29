@@ -202,6 +202,12 @@ public class UserServiceImpl implements UserService {
         }
         return UserDTO.fromEntity(user);
     }
+    @Cacheable(value = "users", key = "#email", unless = "#result == null")
+    @Transactional
+    public UserDTO getUserByEmail(String email) {
+        return UserDTO.fromEntity(usersRepository.findByEmail(email)
+                .orElse(null));
+    }
 
     public List<BookDTO> getBooksThatUserReadingById(long userId) {
         return booksRepository.findAll().stream()
