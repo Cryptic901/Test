@@ -1,10 +1,8 @@
 package com.example.testapp.controller;
 
-import com.example.testapp.DTO.GenreDTO;
 import com.example.testapp.DTO.UserDTO;
 import com.example.testapp.SetUpForIntegrationTests;
 import com.example.testapp.exception.EntityNotFoundException;
-import com.example.testapp.model.Genre;
 import com.example.testapp.model.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
