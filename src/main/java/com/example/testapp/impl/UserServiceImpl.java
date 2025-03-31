@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
             user.setEmail(userDTO.getEmail());
             user.setPassword(userDTO.getPassword());
             user.setRole(UserRole.valueOf(userDTO.getRole()));
-            user.setBorrowedBook(userDTO.getBorrowedBook());
+            user.setBorrowedBook(userDTO.getBorrowedBooks());
             return UserDTO.fromEntity(usersRepository.save(user));
         } else {
             return null;
@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
         UserDTO user = UserDTO.fromEntity(usersRepository.findById(userId)
                 .orElse(null));
         if(user != null) {
-            List<Long> borrowedBook = user.getBorrowedBook();
+            List<Long> borrowedBook = user.getBorrowedBooks();
             if (borrowedBook != null && !borrowedBook.isEmpty()) {
                 for (Long bookId : borrowedBook) {
                     returnBookById(bookId);
@@ -120,16 +120,16 @@ public class UserServiceImpl implements UserService {
 
         Genre genre = genresRepository.findById(genreId)
                 .orElse(null);
-        if (user != null && user.getBorrowedBook() == null) {
+        if (user != null && user.getBorrowedBooks() == null) {
             user.setBorrowedBook(new ArrayList<>());
         }
 
-        if (user != null && user.getBorrowedBook().size() > 5) {
+        if (user != null && user.getBorrowedBooks().size() > 5) {
             return "Too many borrowed books";
         }
         //Получение списка из аттрибутов пользователя и добавление книги в список
         if (book != null && genre != null && user != null) {
-            List<Long> booksList = user.getBorrowedBook();
+            List<Long> booksList = user.getBorrowedBooks();
             booksList.add(bookId);
 
             //Изменение статуса книги
@@ -160,7 +160,7 @@ public class UserServiceImpl implements UserService {
         User user = usersRepository.findByEmail(username)
                 .orElse(null);
         if (user != null && book != null) {
-            List<Long> booksList = user.getBorrowedBook();
+            List<Long> booksList = user.getBorrowedBooks();
             Set<Long> borrowedUserBook = book.getBorrowedUserIds();
 
             if (booksList == null ||!booksList.contains(bookId)) {
@@ -210,8 +210,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public List<BookDTO> getBooksThatUserReadingById(long userId) {
-        return booksRepository.findAll().stream()
-                .filter(book -> book.getBorrowedUserIds().contains(userId))
+        return booksRepository.getBooksByBorrowedUserIds(userId).stream()
                 .map(BookDTO::fromEntity)
                 .toList();
     }

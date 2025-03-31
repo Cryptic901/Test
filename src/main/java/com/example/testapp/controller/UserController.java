@@ -97,12 +97,12 @@ public class UserController {
     @DeleteMapping("/delete/{userId}")
     @Operation(summary = "Удалить пользователя по ID",
             description = "Удаляет пользователя по ID отправляя статус 410, если не находит по id статус 204")
-    public ResponseEntity<UserDTO> deleteUserById(@PathVariable long userId) {
+    public ResponseEntity<String> deleteUserById(@PathVariable long userId) {
         String response = userService.deleteUserById(userId);
         if (response.equals("User not found")) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.status(HttpStatus.GONE).build();
+        return ResponseEntity.status(HttpStatus.GONE).body(response);
     }
 
     @PostMapping("/borrow")
@@ -116,7 +116,7 @@ public class UserController {
         if (book == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        if (borrowResponse.equals("To many borrowed books")) {
+        if (borrowResponse.equals("Too many borrowed books")) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         return ResponseEntity.ok(borrowResponse);
@@ -132,7 +132,8 @@ public class UserController {
         if (book == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(userService.returnBookById(bookId));
+        String response = userService.returnBookById(bookId);
+        return ResponseEntity.ok(response);
     }
     @GetMapping("/reading")
     public ResponseEntity<List<BookDTO>> getBooksThatUserReading(@RequestParam long userId) {

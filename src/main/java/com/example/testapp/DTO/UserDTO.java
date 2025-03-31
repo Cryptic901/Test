@@ -28,7 +28,7 @@ public class UserDTO implements Serializable {
     private String role;
 
     @JsonIgnore
-    private List<Long> borrowedBook;
+    private List<Long> borrowedBook = new ArrayList<>();
 
     public static UserDTO fromEntity(User user) {
         if (user == null) return null;
@@ -37,9 +37,9 @@ public class UserDTO implements Serializable {
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
         dto.setPassword(user.getPassword());
-        dto.setRole(user.getRole() != null ? user.getRole().name() : "ROLE_UNDEFINED");
-        dto.setBorrowedBook(user.getBorrowedBook() != null
-                ? new ArrayList<>(user.getBorrowedBook()) : new ArrayList<>());
+        dto.setRole(user.getRole() != null ? user.getRole().name() : "ROLE_ANONYMOUS");
+        dto.setBorrowedBook(user.getBorrowedBooks() != null
+                ? new ArrayList<>(user.getBorrowedBooks()) : new ArrayList<>());
         return dto;
     }
 
@@ -87,7 +87,7 @@ public class UserDTO implements Serializable {
         this.role = role;
     }
 
-    public List<Long> getBorrowedBook() {
+    public List<Long> getBorrowedBooks() {
         return borrowedBook;
     }
 

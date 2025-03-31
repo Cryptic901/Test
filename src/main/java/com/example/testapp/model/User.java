@@ -62,7 +62,6 @@ public class User implements UserDetails, Serializable {
         this.password = password;
         this.role = role;
         this.borrowedBook = borrowedBook;
-
     }
 
     public User() {
@@ -73,6 +72,14 @@ public class User implements UserDetails, Serializable {
         this.email = email;
         this.password = encode;
         this.role = role;
+    }
+
+    public User(String username, String email, String password, UserRole role, List<Long> borrowedBook) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.borrowedBook = borrowedBook;
     }
 
     public UserRole getRole() {
@@ -135,7 +142,7 @@ public class User implements UserDetails, Serializable {
         this.password = password;
     }
 
-    public List<Long> getBorrowedBook() {
+    public List<Long> getBorrowedBooks() {
         return borrowedBook;
     }
 
@@ -168,7 +175,7 @@ public class User implements UserDetails, Serializable {
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (role == null) {
-            return List.of(new SimpleGrantedAuthority(UserRole.ROLE_UNDEFINED.toString()));
+            return List.of(new SimpleGrantedAuthority(UserRole.ROLE_ANONYMOUS.toString()));
         }
         return List.of(new SimpleGrantedAuthority(role.name()));
     }

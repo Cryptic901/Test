@@ -30,4 +30,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     void detachBooksFromAuthor(@Param("authorId") long authorId);
 
     Optional<Book> findBookByTitle(String title);
+
+    @Query("SELECT b FROM Book b JOIN b.borrowedUserIds u WHERE u = :userId")
+    List<Book> getBooksByBorrowedUserIds(@Param("userId") Long userId);
 }
