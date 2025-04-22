@@ -1,17 +1,15 @@
-version: '3.8'
-
 services:
-  supabase:
-    image: supabase/postgres:latest
-    container_name: supabase_db
+  postgres:
+    image: postgres:latest
+    container_name: postgres_db
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: MTQ4ODUyNDJnb2lkYXpvdnNraWJpZGk=
-      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: velkom3161127
+      POSTGRES_DB: library_db
     ports:
       - "5432:5432"
     volumes:
-      - supabase_data:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
 
   api:
     build: .
@@ -19,12 +17,12 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - supabase
+      - postgres
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:5432/postgres?user=postgres.hokbofyvzdugplrhoghf&password=MTQ4ODUyNDJnb2lkYXpvdnNraWJpZGk=
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/library_db
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: MTQ4ODUyNDJnb2lkYXpvdnNraWJpZGk=
+      SPRING_DATASOURCE_PASSWORD: velkom3161127
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
 
 volumes:
-  supabase_data:
+  postgres:

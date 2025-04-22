@@ -10,13 +10,8 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   datasource:
     username: postgres
-    password: MTQ4ODUyNDJnb2lkYXpvdnNraWJpZGk=
-    url: jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:5432/postgres
-    hikari:
-      connection-timeout: 30000
-      maximum-pool-size: 10
-      idle-timeout: 10000
-      max-lifetime: 30000
+    password: velkom3161127
+    url: jdbc:postgresql://localhost:5432/library_db
   security:
     oauth2:
       client:

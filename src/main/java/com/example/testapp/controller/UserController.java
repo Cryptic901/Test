@@ -135,6 +135,7 @@ public class UserController {
         String response = userService.returnBookById(bookId);
         return ResponseEntity.ok(response);
     }
+
     @GetMapping("/reading")
     public ResponseEntity<List<BookDTO>> getBooksThatUserReading(@RequestParam long userId) {
         List<BookDTO> books = userService.getBooksThatUserReadingById(userId);
