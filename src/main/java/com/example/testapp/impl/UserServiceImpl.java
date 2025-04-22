@@ -156,8 +156,8 @@ public class UserServiceImpl implements UserService {
         Book book = booksRepository.findById(bookId)
                 .orElse(null);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        User user = usersRepository.findByEmail(email)
+        String username = authentication.getName();
+        User user = usersRepository.findByEmail(username)
                 .orElse(null);
         if (user != null && book != null) {
             List<Long> booksList = user.getBorrowedBooks();

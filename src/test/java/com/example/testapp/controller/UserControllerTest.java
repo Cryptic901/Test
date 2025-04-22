@@ -5,7 +5,9 @@ import com.example.testapp.DTO.UserDTO;
 import com.example.testapp.SetUpForIntegrationTests;
 import com.example.testapp.exception.EntityNotFoundException;
 import com.example.testapp.model.Book;
+import com.example.testapp.model.Genre;
 import com.example.testapp.model.User;
+import com.jayway.jsonpath.spi.cache.CacheProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -162,6 +164,21 @@ class UserControllerTest extends SetUpForIntegrationTests {
         User user = userRepository.findByEmail(auth.getName())
                         .orElseThrow(() -> new EntityNotFoundException("User not found"));
         assertThat(user.getBorrowedBooks().isEmpty()).isFalse();
+    }
+
+    @Test
+    @WithMockUser(username = "user2@gmail.com")
+    @Transactional
+    void returnBookById_Success() throws Exception {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        borrowBook("Test Book3", auth.getName());
+        Book book = bookRepository.findBookByTitle("Test Book3")
+                        .orElseThrow(() -> new EntityNotFoundException("Book not found"));
+        long bookId = book.getId();
+        mvc.perform(post("/api/v1/users/return")
+                .param("bookId", String.valueOf(bookId)))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Book returned successfully!"));
     }
 
     @Test
